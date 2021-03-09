@@ -18,6 +18,7 @@
   "homepage": "https://github.com/pbandierapaiva/dtg#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "pm2": "^4.5.5",
     "simple-git": "^2.36.1",
     "sleep": "^6.3.0"
   }
