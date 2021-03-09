@@ -9,7 +9,7 @@ var sleep = require('sleep');
 const simpleGit = require('simple-git');
 const git = simpleGit();   
 app.get('/deploy', function(req, res) {
-	git.pull()
+	git.pull().pull('origin', 'master', {'--rebase': 'true'})
 
 	//req.flash('atualizando');
 	//res.send('dir atualizando...');
@@ -19,7 +19,7 @@ app.get('/deploy', function(req, res) {
 
 // Alo mundo
 app.get('/', function(req, res) {
-  res.send('Alo mundo. Servidor DTG!!! ');
+  res.send('Alo mundo. <b>Servidor DTG</b> ');
 });
 
 app.listen(port, () => {
