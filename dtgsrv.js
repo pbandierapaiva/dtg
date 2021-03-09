@@ -8,3 +8,8 @@ const port = 8793
 app.get('/', function(req, res) {
   res.send('Alo mundo DTG');
 });
+
+
+app.listen(port, () => {
+  console.log(`DTG server em http://localhost:${port}`)
+})
