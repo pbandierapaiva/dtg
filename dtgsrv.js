@@ -10,16 +10,13 @@ const simpleGit = require('simple-git');
 const git = simpleGit();   
 app.get('/deploy', function(req, res) {
 	git.pull().pull('origin', 'master', {'--rebase': 'true'})
-
-	//req.flash('atualizando');
-	//res.send('dir atualizando...');
 	sleep.sleep(5);
 	res.redirect('/');
 });
 
 // Alo mundo
 app.get('/', function(req, res) {
-  res.send('Alo mundo! <b>Servidor DTG</b> ');
+  res.send('Alo mundo!!!<br/> <b>Servidor DTG</b> ');
 });
 
 app.listen(port, () => {
