@@ -1,0 +1,22 @@
+{
+  "name": "dtg",
+  "version": "1.0.0",
+  "description": "Servidor DTG",
+  "main": "dtgsrv.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pbandierapaiva/dtg.git"
+  },
+  "author": "DIS-EPM-Unifesp",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pbandierapaiva/dtg/issues"
+  },
+  "homepage": "https://github.com/pbandierapaiva/dtg#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

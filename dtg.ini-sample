@@ -1,0 +1,7 @@
+#
+# dtg.ini
+# Arquivo com configurações de senha e acesso
+server=xyz.unifesp.br
+db=dtg
+user=mane
+password=segrdo
