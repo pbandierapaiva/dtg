@@ -14,7 +14,7 @@ app.get('/deploy', function(req, res) {
 
 // Alo mundo
 app.get('/', function(req, res) {
-  res.send('Alo mundo DTG!!!');
+  res.send('Alo mundo DTG!!!<br/>Teste de colocação em produção');
 });
 
 app.listen(port, () => {
