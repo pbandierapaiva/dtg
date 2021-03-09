@@ -19,7 +19,7 @@ app.get('/pmstatus', function(req, res) {
 	pm2.connect(errback);
 	res.send( pm2.list(errback) );
 	pm2.disconnect();
-}
+});
 // Alo mundo
 app.get('/', function(req, res) {
   res.send('Alo mundo!!!<br/> <b>Servidor DTG</b> ');
