@@ -9,7 +9,8 @@ const simpleGit = require('simple-git');
 const git = simpleGit();   
 app.get('/deploy', function(req, res) {
 	git.pull()
-	res.send('dir atualizado');
+	//res.send('dir atualizado');
+	res.redirect('/');
 });
 
 // Alo mundo
