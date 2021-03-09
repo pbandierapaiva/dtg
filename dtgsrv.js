@@ -19,7 +19,7 @@ app.get('/deploy', function(req, res) {
 
 // Alo mundo
 app.get('/', function(req, res) {
-  res.send('Alo mundo. <b>Servidor DTG</b> ');
+  res.send('Alo mundo! <b>Servidor DTG</b> ');
 });
 
 app.listen(port, () => {
