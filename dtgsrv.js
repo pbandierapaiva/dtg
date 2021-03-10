@@ -22,7 +22,7 @@ app.get('/pmstatus', function(req, res) {
 });
 // Alo mundo
 app.get('/', function(req, res) {
-  res.send('Alo mundo!!!<br/> <b>Servidor DTG </b> alterado Capa');
+  res.send('Alo mundo!!!<br/> <b>Servidor DTG </b> alterado Capa2');
 });
 
 app.listen(port, () => {
