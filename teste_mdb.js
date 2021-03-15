@@ -16,10 +16,10 @@ async function asyncFunction() {
     try {
         console.log('iniciando conexão');
         conn = await pool.getConnection();
-        console.log('iniciando conexão');
-        console.log('fazendo o select');
-        const rows = await conn.query("SELECT * from histo_ntg");        
-        console.log(rows); //[ {val: 1}, meta: ... ]        
+        
+        //console.log('fazendo o select');
+        //const rows = await conn.query("SELECT * from histo_ntg");        
+        //console.log(rows); //[ {val: 1}, meta: ... ]        
         console.log('fazendo o insert');
 	    const res = await conn.query("INSERT INTO histo_ntg value (?, ?)", [1, "MI diagnosticada por HTA"]);
         console.log(res); // { affectedRows: 1, insertId: 1, warningStatus: 0 }
