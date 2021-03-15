@@ -5,8 +5,9 @@ const pool = mariadb.createPool({
      password: 'dtg21disepm',
      connectionLimit: 5
 });
-
+console.log('iniciando teste');
 asyncFunction();
+console.log('finalizando teste');
 
 async function asyncFunction() {
   let conn;
