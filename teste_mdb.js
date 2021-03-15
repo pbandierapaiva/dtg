@@ -13,16 +13,23 @@ console.log('finalizando teste');
 
 async function asyncFunction() {
   let conn;
-  try {
-	conn = await pool.getConnection();
-	const rows = await conn.query("SELECT * from histo_ntg");
-	console.log(rows); //[ {val: 1}, meta: ... ]
-	//const res = await conn.query("INSERT INTO myTable value (?, ?)", [1, "mariadb"]);
-	//console.log(res); // { affectedRows: 1, insertId: 1, warningStatus: 0 }
+    try {
+        console.log('iniciando conexão');
+        conn = await pool.getConnection();
+        console.log('iniciando conexão');
+        console.log('fazendo o select');
+        const rows = await conn.query("SELECT * from histo_ntg");        
+        console.log(rows); //[ {val: 1}, meta: ... ]        
+        console.log('fazendo o insert');
+	    const res = await conn.query("INSERT INTO histo_ntg value (?, ?)", [1, "MI diagnosticada por HTA"]);
+        console.log(res); // { affectedRows: 1, insertId: 1, warningStatus: 0 }
+        console.log('fazendo o select denovo');
+        const rows = await conn.query("SELECT * from histo_ntg");        
+        console.log(rows); //[ {val: 1}, meta: ... ]     
 
-  } catch (err) {
-	throw err;
-  } finally {
-	if (conn) return conn.end();
-  }
+    } catch (err) {
+        throw err;
+    } finally {
+        if (conn) return conn.end();
+    }
 }
