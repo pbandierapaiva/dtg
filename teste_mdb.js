@@ -1,4 +1,6 @@
+console.log('importando o mariaDB');
 const mariadb = require('mariadb');
+console.log('criando constante de conexão');
 const pool = mariadb.createPool({
      host: 'db1.bioinfo.unifesp.br', 
      user:'dtg', 
