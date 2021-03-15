@@ -24,8 +24,8 @@ async function asyncFunction() {
 	    const res = await conn.query("INSERT INTO histo_ntg value (?, ?)", [1, "MI diagnosticada por HTA"]);
         console.log(res); // { affectedRows: 1, insertId: 1, warningStatus: 0 }
         console.log('fazendo o select denovo');
-        const rows = await conn.query("SELECT * from histo_ntg");        
-        console.log(rows); //[ {val: 1}, meta: ... ]     
+        const rows2 = await conn.query("SELECT * from histo_ntg");        
+        console.log(rows2); //[ {val: 1}, meta: ... ]     
 
     } catch (err) {
         throw err;
