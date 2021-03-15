@@ -1,0 +1,6 @@
+{
+    "server":"servidor",
+    "db":"dtg",
+    "user":"usuário",
+    "password":"senha"
+}
