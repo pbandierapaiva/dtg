@@ -5,7 +5,7 @@ const pool = mariadb.createPool({
      host: 'db1.bioinfo.unifesp.br', 
      user:'dtg', 
      password: 'dtg21disepm',
-     connectionLimit: 5
+     database: 'dtg'
 });
 console.log('iniciando teste');
 asyncFunction();
