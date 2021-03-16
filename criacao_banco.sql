@@ -206,3 +206,21 @@ CREATE TABLE hcg
   FOREIGN KEY (id_r_mola) REFERENCES registro_mola(id_r_mola),
   FOREIGN KEY (id_imagem) REFERENCES imagens(id_imagem)
 );
+
+INSERT INTO dtg.indicacao (descricao)
+VALUES
+('encaminhada por médico'),
+('regulação'),
+('Facebook');
+
+INSERT INTO dtg.instituicao
+(nome_inst)
+VALUES('HSP');
+
+INSERT INTO dtg.histo_ntg
+(descricao)
+VALUES('não tem'),
+('MI diagnosticada por HTA'),
+('CORIO diagnosticada por HTA'),
+('CORIOCA por CTG/Histeroscopia'),
+('OUTROS por CTG/Histeroscopia');
