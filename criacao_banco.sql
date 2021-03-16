@@ -224,3 +224,15 @@ VALUES('não tem'),
 ('CORIO diagnosticada por HTA'),
 ('CORIOCA por CTG/Histeroscopia'),
 ('OUTROS por CTG/Histeroscopia');
+
+INSERT INTO dtg.mac
+(descricao)
+VALUES('nenhum'),
+('ACHO'),
+('Injetável trimestral'),
+('Injetável mensal'),
+('condom'),
+('outros');
+
+
+
