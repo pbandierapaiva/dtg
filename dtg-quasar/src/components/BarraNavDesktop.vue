@@ -1,13 +1,13 @@
 <template>
   <q-toolbar class="bg-secondary">
-    <q-btn stretch flat to="/paciente" label="Paciente"
-      ><router-link class="nav-link" to="/paciente"></router-link
+    <q-btn stretch flat to="/cadastro_registro_mola" label="Paciente"
+      ><router-link class="nav-link" to="/cadastro_registro_mola"></router-link
     ></q-btn>
     <q-btn stretch flat to="/chat" label="Chat"
       ><router-link class="nav-link" to="/chat"></router-link
     ></q-btn>
-    <q-btn stretch flat to="/cadastro_usuario" label="Cadastro de Usuário"
-      ><router-link class="nav-link" to="/cadastro_usuario"></router-link
+    <q-btn stretch flat to="/area_acesso" label="Área de Acesso"
+      ><router-link class="nav-link" to="/area_acesso"></router-link
     ></q-btn>
     <q-btn-dropdown stretch flat label="Tabelas Auxiliares">
       <q-list class="bg-secondary">
@@ -51,6 +51,18 @@
     <q-btn stretch flat to="/revisao" label="Revisão"
       ><router-link class="nav-link" to="/revisao"></router-link
     ></q-btn>
-    <q-btn stretch flat to="/" label="Sair"></q-btn>
+    <q-btn stretch flat @click="efetuarLogout" label="Sair"></q-btn>
   </q-toolbar>
 </template>
+
+<script>
+export default {
+  name: "BarraNavDesktop",
+  methods: {
+    efetuarLogout() {
+      this.$store.commit("principal/DESLOGAR_USUARIO");
+      this.$router.push({ name: "login" });
+    }
+  }
+};
+</script>

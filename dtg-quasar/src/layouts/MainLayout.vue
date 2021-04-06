@@ -5,7 +5,7 @@
         <q-toolbar-title
           clickable
           v-ripple
-          @click="$router.replace('/')"
+          @click="$router.replace('/consulta_paciente')"
           active-class="my-menu-link"
         >
           <div style="width:130px; float:left;">
@@ -26,19 +26,24 @@
           </div>
           <div style="float: right; margin-right: 1%;" class="fixed-top-right">
             <span style="font-size: 12px;"
-              ><b>Nome:</b> {{ nomeUsuario }} &nbsp; -</span
+              ><b>Nome:</b> {{ usuario.nome }} &nbsp; -</span
             >&nbsp;
             <span style="font-size: 12px;"
-              ><b>Tipo: </b> {{ tipoUsuario }} &nbsp; -</span
+              ><b>Tipo: </b> {{ usuario.tipo }} &nbsp; -</span
             >&nbsp;
             <span style="font-size: 12px;"
-              ><b>Categoria: </b> {{ categoriaUsuario }} &nbsp; -</span
+              ><b>Categoria: </b> {{ usuario.categoria }} &nbsp; -</span
             >&nbsp;
-            <span style="font-size: 12px;"><b>CRM: </b> {{ crmUsuario }} </span>
+            <span style="font-size: 12px;"
+              ><b>CRM: </b> {{ usuario.crm }}
+            </span>
           </div> </q-toolbar-title
         ><br />
       </q-toolbar>
-      <BarraNavegacaoDesktop v-if="estaLogado" class="desktop-only" />
+      <BarraNavegacaoDesktop
+        v-if="usuarioLogado && termoAceito"
+        class="desktop-only"
+      />
     </q-header>
 
     <q-footer elevated class="desktop-only">
@@ -51,7 +56,9 @@
       </q-toolbar>
     </q-footer>
 
-    <q-header reveal bordered class="bg-primary text-white mobile-only">
+    <!-- ESBOÇO MAIN LAYOUT MOBILE - SERÁ REVISADO DEPOIS, POR ISSO ESTÁ COMENTADO -->
+
+    <!--<q-header reveal bordered class="bg-primary text-white mobile-only">
       <q-toolbar>
         <q-toolbar-title
           clickable
@@ -88,7 +95,8 @@
           </div>
         </q-toolbar-title>
       </q-toolbar>
-    </q-footer>
+    </q-footer>-->
+
     <q-page-container>
       <router-view :teste="3" />
     </q-page-container>
@@ -96,22 +104,27 @@
 </template>
 
 <script>
-import BarraNavegacaoDesktop from 'components/BarraNavDesktop.vue';
-import BarraNavegacaoMobile from 'components/BarraNavMobile.vue';
+import BarraNavegacaoDesktop from "components/BarraNavDesktop.vue";
+// NÃO ESTÁ SENDO USADO NO MOMENTO import BarraNavegacaoMobile from "components/BarraNavMobile.vue";
+import { mapGetters } from "vuex";
 
 export default {
-  name: 'MainLayout',
+  name: "MainLayout",
   components: {
-    BarraNavegacaoDesktop,
-    BarraNavegacaoMobile
+    BarraNavegacaoDesktop
+    // NÃO ESTÁ SENDO USADO NO MOMENTO BarraNavegacaoMobile
+  },
+  computed: {
+    ...mapGetters("principal", ["usuarioLogado", "termoAceito"])
   },
   data() {
     return {
-      nomeUsuario: 'Ryan Howard',
-      tipoUsuario: 'Coordenador',
-      categoriaUsuario: 'Docente',
-      crmUsuario: 'SP 78901',
-      estaLogado: true
+      usuario: {
+        nome: "Ryan Howard",
+        tipo: "Coordenador",
+        categoria: "Docente",
+        crm: "SP 78901"
+      }
     };
   }
 };
