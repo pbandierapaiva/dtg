@@ -1,23 +1,126 @@
 <template>
   <q-page class="flex flex-center">
-    <div>
-      <h3>Indicação</h3>
+    <!--<h4>Consulta Indicação</h4>-->
+
+    <q-form
+      @submit="onSubmit"
+      @reset="onReset"
+      class="q-gutter-md q-pa-xs full-width row flex-center"
+    >
+      <q-input
+        v-model="consultaIndicacao.descricao"
+        label="Descrição"
+        class="q-pa-xs col-3"
+        :rules="[val => (val && val.length > 0) || 'Digite alguma descrição']"
+      />
+      
+      <q-btn
+        label="Consultar"
+        type="submit"
+        color="primary"
+        class="q-pa-xs q-ma-md col-1"
+        style="margin-top: 2%;"
+      />
+    </q-form>
+    <div class="q-pa-lg">
+      <b>Indicações</b>
+      <q-btn
+        id="btnCadastrarHist"
+        to=""
+        icon="add"
+        flat
+        dense
+        color="primary"
+      ></q-btn>
       <q-table
-  title="Treats"
-  :data="data"
-  :columns="columns"
-  row-key="name" 
-  @row-click="onRowClick"
->
-  <template v-slot:body-cell-name="props">
-    <q-td :props="props">
-      <div>
-        <q-badge color="purple" :label="props.value"></q-badge>
-        <q-btn icon="info" @click.stop="btnclick" dense flat/>
-      </div>
-    </q-td>
-  </template>
-</q-table>
+        :data="data"
+        :columns="columns"
+        row-key="name"
+        :pagination.sync="pagination"
+      >
+        <template v-slot:body="props">
+          <q-tr :props="props">
+            <q-td key="id" :props="props">
+              {{ props.row.id }}
+            </q-td>
+            <q-td key="descricao" :props="props">
+              {{ props.row.descricao }}
+            </q-td>
+            <q-td key="editar" :props="props"
+              ><q-btn id="editar" flat dense icon="edit_note"></q-btn
+            ></q-td>
+            <q-td key="excluir" :props="props">
+              <q-btn id="excluir" flat dense icon="delete"></q-btn>
+            </q-td>
+          </q-tr>
+        </template>
+      </q-table>
     </div>
   </q-page>
 </template>
+
+<script>
+export default {
+  name: "PageIndex",
+  data() {
+    return {
+      pagination: {
+        rowsPerPage: 7
+      },
+      consultaIndicacao: {
+        descricao: ""
+        
+      },
+     
+      columns: [
+        {
+          name: "id",
+          label: "Id",
+          align: "left",
+          field: row => row.id,
+          format: val => `${val}`
+        },
+        {
+          name: "descricao",
+          label: "Descrição",
+          align: "left",
+          field: row => row.descricao,
+          format: val => `${val}`
+        },
+        
+        {
+          name: "editar",
+          label: "Editar",
+          align: "center"
+        },
+        {
+          name: "excluir",
+          label: "Excluir",
+          align: "center"
+        }
+      ],
+
+      data: [
+        {
+          id: 1,
+          descricao: "Encaminhada por Médico",
+        },
+        {
+          id: 2,
+          descricao: "Regulação",
+        },
+        {
+          id: 3,
+          descricao: "Facebook",
+        }
+      ]
+    };
+  },
+  methods: {
+    onSubmit() {
+      alert("Funcionalidade em construção");
+    },
+    onReset() {}
+  }
+};
+</script>
