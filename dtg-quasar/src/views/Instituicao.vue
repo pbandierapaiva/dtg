@@ -42,7 +42,7 @@
       <b>Instituicões</b>
       <q-btn
         id="btnCadastrarInst"
-        to=""
+        @click="modalCadastroInst=true"
         icon="add"
         flat
         dense
@@ -90,6 +90,77 @@
         </template>
       </q-table>
     </div>
+    <q-dialog
+      v-model="modalCadastroInst"
+      full-width 
+    >
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Cadastro Instituição</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-form @submit="onCadastro" @reset="onLimpar">
+            <q-input
+              type="text"
+              v-model="cadastroInst.nome"
+              label="Nome"
+            >
+            
+            </q-input>
+            <br />
+            <q-input
+              type="text"
+              v-model="cadastroInst.logradoudo"
+              label="Logradouro"
+            >
+            </q-input>
+            <br />
+                        <q-input
+              type="text"
+              v-model="cadastroInst.numero"
+              label="Número"
+            >
+            </q-input>
+            <br />
+            <q-input
+              type="text"
+              v-model="cadastroInst.cep"
+              label="CEP"
+            >
+            </q-input>
+            <br />
+            <q-input
+              type="text"
+              v-model="cadastroInst.bairro"
+              label="Bairro"
+            >
+            </q-input>
+            <br />
+            <q-input
+              type="text"
+              v-model="cadastroInst.cidade"
+              label="Cidade"
+            >
+            </q-input>
+            <br />
+            
+            <q-input
+              type="text"
+              v-model="cadastroInst.uf"
+              label="UF"
+            >
+            </q-input>
+            <br />
+
+            <div class="flex-center q-gutter-xl">
+              <q-btn color="primary" label="Gravar"></q-btn>
+              <q-btn label="Voltar" color="primary" v-close-popup />
+            </div>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -98,6 +169,8 @@ export default {
   name: "PageIndex",
   data() {
     return {
+      modalCadastroInst: false,
+      filter: "",
       pagination: {
         rowsPerPage: 7
       },
@@ -106,6 +179,9 @@ export default {
         cep: "",
         logradouro: "",
         uf: ""
+      },
+      cadastroInst: {
+        descricao: ""
       },
       optUf: [
         "AC",
@@ -220,10 +296,10 @@ export default {
     };
   },
   methods: {
-    onSubmit() {
-      alert("Funcionalidade em construção");
-    },
-    onReset() {}
+    onSubmit() {},
+    onReset() {},
+    onCadastro() {},
+    onLimpar() {}
   }
 };
 </script>
