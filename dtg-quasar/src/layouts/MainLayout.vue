@@ -24,18 +24,23 @@
               Departamento de Obstetricia - HUHSP
             </span>
           </div>
-          <div style="float: right; margin-right: 1%;" class="fixed-top-right">
+          <div
+            style="float: right; margin-right: 1%;"
+            class="fixed-top-right"
+            v-show="usuarioLogado"
+          >
             <span style="font-size: 12px;"
-              ><b>Nome:</b> {{ usuario.nome }} &nbsp; -</span
+              ><b>Nome:</b> {{ dadosUsuarioLogado.nome }} &nbsp; -</span
             >&nbsp;
             <span style="font-size: 12px;"
-              ><b>Tipo: </b> {{ usuario.tipo }} &nbsp; -</span
+              ><b>Tipo: </b> {{ dadosUsuarioLogado.tipo }} &nbsp; -</span
             >&nbsp;
             <span style="font-size: 12px;"
-              ><b>Categoria: </b> {{ usuario.categoria }} &nbsp; -</span
+              ><b>Categoria: </b> {{ dadosUsuarioLogado.categoria }} &nbsp;
+              -</span
             >&nbsp;
             <span style="font-size: 12px;"
-              ><b>CRM: </b> {{ usuario.crm }}
+              ><b>CRM: </b> {{ dadosUsuarioLogado.crm }}
             </span>
           </div> </q-toolbar-title
         ><br />
@@ -115,17 +120,14 @@ export default {
     // NÃO ESTÁ SENDO USADO NO MOMENTO BarraNavegacaoMobile
   },
   computed: {
-    ...mapGetters("principal", ["usuarioLogado", "termoAceito"])
+    ...mapGetters("principal", [
+      "usuarioLogado",
+      "termoAceito",
+      "dadosUsuarioLogado"
+    ])
   },
   data() {
-    return {
-      usuario: {
-        nome: "Ryan Howard",
-        tipo: "Coordenador",
-        categoria: "Docente",
-        crm: "SP 78901"
-      }
-    };
+    return {};
   }
 };
 </script>

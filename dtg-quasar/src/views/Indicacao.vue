@@ -11,9 +11,8 @@
         v-model="consultaIndicacao.descricao"
         label="Descrição"
         class="q-pa-xs col-3"
-        :rules="[val => (val && val.length > 0) || 'Digite alguma descrição']"
       />
-      
+
       <q-btn
         label="Consultar"
         type="submit"
@@ -26,7 +25,7 @@
       <b>Indicações</b>
       <q-btn
         id="btnCadastrarHist"
-        to=""
+        @click="modalCadastroInd = true"
         icon="add"
         flat
         dense
@@ -37,6 +36,7 @@
         :columns="columns"
         row-key="name"
         :pagination.sync="pagination"
+        :filter="consultaIndicacao.descricao"
       >
         <template v-slot:body="props">
           <q-tr :props="props">
@@ -56,6 +56,28 @@
         </template>
       </q-table>
     </div>
+    <q-dialog v-model="modalCadastroInd" style="width: 700px; max-width: 80vw;">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Cadastro Indicação</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-form @submit="onCadastro" @reset="onLimpar">
+            <q-input
+              type="text"
+              v-model="cadastroIndicacao.descricao"
+              label="Descrição"
+            ></q-input
+            ><br />
+            <div class="flex-center q-gutter-xl">
+              <q-btn color="primary" label="Gravar"></q-btn>
+              <q-btn label="Voltar" color="primary" v-close-popup />
+            </div>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -64,14 +86,17 @@ export default {
   name: "PageIndex",
   data() {
     return {
+      modalCadastroInd: false,
+      filter: "",
       pagination: {
         rowsPerPage: 7
       },
       consultaIndicacao: {
         descricao: ""
-        
       },
-     
+      cadastroIndicacao: {
+        descricao: ""
+      },
       columns: [
         {
           name: "id",
@@ -87,7 +112,7 @@ export default {
           field: row => row.descricao,
           format: val => `${val}`
         },
-        
+
         {
           name: "editar",
           label: "Editar",
@@ -103,24 +128,24 @@ export default {
       data: [
         {
           id: 1,
-          descricao: "Encaminhada por Médico",
+          descricao: "Encaminhada por Médico"
         },
         {
           id: 2,
-          descricao: "Regulação",
+          descricao: "Regulação"
         },
         {
           id: 3,
-          descricao: "Facebook",
+          descricao: "Facebook"
         }
       ]
     };
   },
   methods: {
-    onSubmit() {
-      alert("Funcionalidade em construção");
-    },
-    onReset() {}
+    onSubmit() {},
+    onReset() {},
+    onCadastro() {},
+    onLimpar() {}
   }
 };
 </script>

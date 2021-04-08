@@ -3,20 +3,12 @@
     <div class="full-width full-height">
       <h5 class="text-center" style="margin-top: -2%;">Login</h5>
       <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md q-pa-md">
-        <q-input
-          v-model="usuario.login"
-          label="Login"
-          :rules="[
-            val => (val && val.length > 0) || 'Digite um login de usuário'
-          ]"
-          class="q-pa-md"
-        />
+        <q-input v-model="usuario.login" label="Login" class="q-pa-md" />
 
         <q-input
           type="password"
           v-model="usuario.senha"
           label="Senha"
-          :rules="[val => (val && val.length > 0) || 'Digite uma senha']"
           class="q-pa-md"
         />
         <div class="text-center">
@@ -78,20 +70,24 @@ export default {
   },
   methods: {
     onSubmit() {
-      if (this.usuario.login == "teste" && this.usuario.senha == "teste") {
-        this.$store
-          .dispatch("principal/efetuarLogin", this.usuario)
-          .then(() => {
-            this.$router.push({ name: "termo_aceite" });
-          })
-          .catch(erro => {
-            if (erro.request.status === 401) {
-              this.alertaErro = true;
-            }
+      this.$store
+        .dispatch("principal/efetuarLogin", this.usuario)
+        .then(() => {
+          this.$store.dispatch("principal/inicializarUsuarioExemplo");
+          localStorage.setItem("token", "123");
+          localStorage.setItem("usuario.nome", {
+            nome: "Ryan Howard",
+            tipo: "Coordenador",
+            categoria: "Docente",
+            crm: "SP 78901"
           });
-      } else {
-        this.alertaErro = true;
-      }
+          this.$router.push({ name: "termo_aceite" });
+        })
+        .catch(erro => {
+          if (erro.request.status === 401) {
+            this.alertaErro = true;
+          }
+        });
     },
     onReset() {
       this.usuario.login = "";

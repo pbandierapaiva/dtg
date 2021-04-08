@@ -1,7 +1,7 @@
 <template>
   <q-toolbar class="bg-secondary">
-    <q-btn stretch flat to="/cadastro_registro_mola" label="Paciente"
-      ><router-link class="nav-link" to="/cadastro_registro_mola"></router-link
+    <q-btn stretch flat to="/consulta_paciente" label="Paciente"
+      ><router-link class="nav-link" to="/consulta_paciente"></router-link
     ></q-btn>
     <q-btn stretch flat to="/chat" label="Chat"
       ><router-link class="nav-link" to="/chat"></router-link

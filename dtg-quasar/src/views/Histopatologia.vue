@@ -11,22 +11,22 @@
         v-model="consultaHistopatologia.descricao"
         label="Descrição"
         class="q-pa-xs col-3"
-        :rules="[val => (val && val.length > 0) || 'Digite alguma descrição']"
       />
-      
+
       <q-btn
         label="Consultar"
         type="submit"
         color="primary"
         class="q-pa-xs q-ma-md col-1"
         style="margin-top: 2%;"
+        @click="filtroTabela"
       />
     </q-form>
     <div class="q-pa-lg">
       <b>Histopatologias</b>
       <q-btn
         id="btnCadastrarHist"
-        to=""
+        @click="modalCadastroHist = true"
         icon="add"
         flat
         dense
@@ -37,6 +37,7 @@
         :columns="columns"
         row-key="name"
         :pagination.sync="pagination"
+        :filter="consultaHistopatologia.descricao"
       >
         <template v-slot:body="props">
           <q-tr :props="props">
@@ -56,6 +57,31 @@
         </template>
       </q-table>
     </div>
+    <q-dialog
+      v-model="modalCadastroHist"
+      style="width: 700px; max-width: 80vw;"
+    >
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Cadastro Histopatologia</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-form @submit="onCadastro" @reset="onLimpar">
+            <q-input
+              type="text"
+              v-model="cadastroHist.descricao"
+              label="Descrição"
+            ></q-input
+            ><br />
+            <div class="flex-center q-gutter-xl">
+              <q-btn color="primary" label="Gravar"></q-btn>
+              <q-btn label="Voltar" color="primary" v-close-popup />
+            </div>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -64,14 +90,17 @@ export default {
   name: "PageIndex",
   data() {
     return {
+      modalCadastroHist: false,
+      filter: "",
       pagination: {
         rowsPerPage: 7
       },
       consultaHistopatologia: {
         descricao: ""
-        
       },
-     
+      cadastroHist: {
+        descricao: ""
+      },
       columns: [
         {
           name: "id",
@@ -87,7 +116,7 @@ export default {
           field: row => row.descricao,
           format: val => `${val}`
         },
-        
+
         {
           name: "editar",
           label: "Editar",
@@ -103,32 +132,32 @@ export default {
       data: [
         {
           id: 1,
-          descricao: "Não tem",
+          descricao: "Não tem"
         },
         {
           id: 2,
-          descricao: "MI diagnosticada por HTA",
+          descricao: "MI diagnosticada por HTA"
         },
         {
           id: 3,
-          descricao: "CORIO diagnosticada por HTA",
+          descricao: "CORIO diagnosticada por HTA"
         },
         {
           id: 4,
-          descricao: "CORIOCA por CTG/Histeroscopia",
+          descricao: "CORIOCA por CTG/Histeroscopia"
         },
         {
           id: 5,
-          descricao: "Outros por CTG/Histeroscopia",
+          descricao: "Outros por CTG/Histeroscopia"
         }
       ]
     };
   },
   methods: {
-    onSubmit() {
-      alert("Funcionalidade em construção");
-    },
-    onReset() {}
+    onSubmit() {},
+    onReset() {},
+    onCadastro() {},
+    onLimpar() {}
   }
 };
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <q-page class="flex flex-start">
+  <q-page class="flex flex-center">
     <!--<h4>CHAT</h4>-->
 
     <q-form
@@ -7,27 +7,22 @@
       @reset="onReset"
       class="q-gutter-md q-pa-xs full-width row"
     >
+      <q-input v-model="consultaChat.nome" label="Nome" class="q-pa-xs col-3" />
       <q-input
-        v-model="chat.nome"
-        label="Nome"
-        class="q-pa-xs col-3"
-        :rules="[val => (val && val.length > 0) || 'Digite alguma descrição']"
-      />
-      <q-input
-        v-model="chat.cpf"
+        v-model="consultaChat.cpf"
         label="CPF"
         class="q-pa-xs col-2"
-        mask="#####-###"
+        mask="###.###.###-##"
       />
       <q-input
-        v-model="chat.preceptor"
+        v-model="consultaChat.preceptor"
         label="Preceptor"
         class="q-pa-xs col-3"
       />
       <q-select
-        v-model="chat.status"
+        v-model="consultaChat.situacao"
         :options="optStatus"
-        label="STATUS"
+        label="Situação"
         class="q-pa-xs col-2"
       />
       <q-btn
@@ -38,16 +33,16 @@
         style="margin-top: 2%;"
       />
     </q-form>
-    <div class="row full-width q-pa-lg">
-      
-      
-      <q-table class="col-5"
+    <div class="row full-width">
+      <q-table
+        class="col-5 on-right"
         :data="data"
         :columns="columns"
         row-key="name"
         title="Lista de Destinatários"
         :pagination.sync="pagination"
-      > <template v-slot:body="props">
+      >
+        <template v-slot:body="props">
           <q-tr :props="props">
             <q-td key="id" :props="props">
               {{ props.row.id }}
@@ -64,38 +59,46 @@
             <q-td key="hora" :props="props">
               {{ props.row.hora }}
             </q-td>
+            <q-td key="acessar" :props="props">
+              <q-btn flat id="btnAcessar" icon="arrow_forward"></q-btn>
+            </q-td>
           </q-tr>
         </template>
       </q-table>
-      <div class="q-pa-md row justify-right">
-        <div style="width: 100%; max-width: 400px">
+      <div class="col-6 on-left">
+        <div style="width: 100%; max-width: 400px; float:right;">
+          <q-chat-message name="MÉDICO: Angela" :text="['Olá paciente']" sent />
+          <q-chat-message name="Paciente" :text="['Boa tarde Doutora']" />
           <q-chat-message
-              name="me"
-              :text="['hey, how are you?']"
-              sent
-            />
-          <q-chat-message
-            name="Jane"
-            :text="['doing fine, how r you?']"
+            name="MÉDICO: Angela"
+            :text="['Seu exame está pronto?']"
+            sent
           />
         </div>
       </div>
+    </div>
 
+    <q-form
+      class="row full-width on-left"
+      @submit="enviarMensagem"
+      @reset="resetarMensagem"
+    >
+      <div class="col-6"></div>
       <q-input
         v-model="chat.mensagem"
         label="Mensagem"
-        class="q-pa-xs col-3"
-        :rules="[val => (val && val.length > 0) || 'Digite alguma descrição']"
-        style="float-right margin-top: 2%;"
+        class="q-pa-xs col-4"
+        :rules="[val => (val && val.length > 0) || 'Digite alguma mensagem']"
+        style="margin-top: 1%;"
       />
       <q-btn
         label="Enviar"
         type="submit"
         color="primary"
         class="q-pa-xs q-ma-md col-1"
-        style="float-right margin-top: 2%;"
+        style="margin-top: 2%;"
       />
-    </div>
+    </q-form>
   </q-page>
 </template>
 
@@ -107,16 +110,16 @@ export default {
       pagination: {
         rowsPerPage: 7
       },
-      chat: {
+      consultaChat: {
         nome: "",
         cpf: "",
         preceptor: "",
         hora: ""
       },
-      optStatus: [
-        "ATIVO",
-        "INATIVO"
-      ],
+      chat: {
+        mensagem: ""
+      },
+      optStatus: ["Ativo", "Inativo"],
       columns: [
         {
           name: "id",
@@ -152,26 +155,30 @@ export default {
           align: "left",
           field: row => row.hora,
           format: val => `${val}`
+        },
+        {
+          name: "acessar",
+          label: "Acessar",
+          align: "left"
         }
       ],
 
       data: [
         {
           id: 1,
-          nome: "João José",
-          cpf: "123456789-99",
-          preceptor: "Dr Rey",
+          nome: "Erin Hannon",
+          cpf: "963.852.741-32",
+          preceptor: "Angela Martin",
           hora: "12:00"
-          
         }
       ]
     };
   },
   methods: {
-    onSubmit() {
-      alert("Funcionalidade em construção");
-    },
+    onSubmit() {},
     onReset() {}
+    //enviarMensagem() {},
+    //limparMensagem() {}
   }
 };
 </script>

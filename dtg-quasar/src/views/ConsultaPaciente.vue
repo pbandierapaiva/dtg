@@ -3,39 +3,37 @@
     <q-form
       @submit="onSubmit"
       @reset="onReset"
-      class="q-gutter-md q-pa-xs full-width row"
+      class="full-width row flex-center"
     >
       <q-input
         v-model="consultaPaciente.nome"
         label="Nome"
-        class="q-pa-xs col-3"
+        class="q-pl-md col-3"
+        max-length="250"
       />
       <q-input
         v-model="consultaPaciente.cpf"
         label="CPF"
-        class="q-pa-xs col-2"
+        class="q-pl-md col-2"
         mask="###.###.###-##"
       />
       <q-input
         v-model="consultaPaciente.preceptor"
         label="Preceptor"
-        class="q-pa-xs col-3"
+        class="q-pl-md col-3"
+        maxlength="250"
       />
       <q-select
         v-model="consultaPaciente.situacao"
         :options="options"
         label="Situação"
-        class="q-pa-xs col-2"
+        class="q-pl-md col-2"
       />
-      <q-btn
-        label="Consultar"
-        type="submit"
-        color="primary"
-        class="q-pa-xs q-ma-md col-1"
-        style="margin-top: 2%;"
-      />
+      <div class="q-pl-lg col-1" style="margin-top: 1%;">
+        <q-btn label="Consultar" type="submit" color="primary" />
+      </div>
     </q-form>
-    <div class="q-pa-lg">
+    <div class="q-gutter-y-xs">
       <b>Pacientes</b>
       <q-btn
         id="cadastrar_paciente"
@@ -44,7 +42,9 @@
         flat
         dense
         color="primary"
+        style="margin-top: -1%;"
       ></q-btn>
+      {{ consultaPaciente.cpf }}
       <q-table
         :data="data"
         :columns="columns"
@@ -62,6 +62,9 @@
             <q-td key="cpf" :props="props">
               {{ props.row.cpf }}
             </q-td>
+            <q-td key="dataNasc" :props="props">
+              {{ props.row.dataNasc }}
+            </q-td>
             <q-td key="preceptor" :props="props">
               {{ props.row.preceptor }}
             </q-td>
@@ -75,6 +78,7 @@
                 dense
                 icon="account_circle"
                 to="/delegacao"
+                @click="delegarUsuario(props.row)"
               ></q-btn>
             </q-td>
             <q-td key="inativar" :props="props">
@@ -125,6 +129,13 @@ export default {
           format: val => `${val}`
         },
         {
+          name: "dataNasc",
+          label: "Data Nascimento",
+          align: "left",
+          field: row => row.dataNasc,
+          format: val => `${val}`
+        },
+        {
           name: "preceptor",
           label: "Preceptor",
           align: "left",
@@ -153,6 +164,7 @@ export default {
           id: 1,
           nome: "Kelly Kapoor",
           cpf: "123.456.789-10",
+          dataNasc: "12/12/1990",
           preceptor: "Ryan Howard",
           inativar: true
         },
@@ -160,6 +172,7 @@ export default {
           id: 2,
           nome: "Pam Beesly",
           cpf: "321.654.980-13",
+          dataNasc: "12/12/1990",
           preceptor: "Jim Halpert",
           inativar: true
         },
@@ -167,6 +180,7 @@ export default {
           id: 3,
           nome: "Eric Hannon",
           cpf: "963.852.741-32",
+          dataNasc: "12/12/1990",
           preceptor: "Angela Martin",
           inativar: true
         },
@@ -174,6 +188,7 @@ export default {
           id: 4,
           nome: "Meredith Palmer",
           cpf: "321.654.987-25",
+          dataNasc: "12/12/1990",
           preceptor: "Angela Martin",
           inativar: true
         },
@@ -181,6 +196,7 @@ export default {
           id: 5,
           nome: "Phyllis Lapin",
           cpf: "753.951.456-00",
+          dataNasc: "12/12/1990",
           preceptor: "Angela Martin",
           inativar: true
         },
@@ -188,6 +204,7 @@ export default {
           id: 6,
           nome: "Jan Levinson",
           cpf: "852.963.711-22",
+          dataNasc: "12/12/1990",
           preceptor: "Angela Martin",
           inativar: false
         }
@@ -198,7 +215,11 @@ export default {
     onSubmit() {
       alert("Funcionalidade em construção");
     },
-    onReset() {}
+    onReset() {},
+    delegarUsuario(usuario) {
+      console.log(usuario);
+      this.$store.dispatch("principal/delegarUsuario", usuario).then(() => {});
+    }
   }
 };
 </script>
