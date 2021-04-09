@@ -1,7 +1,6 @@
 <template>
   <q-page class="flex flex-center">
     <!--<h4>Consulta Paciente</h4>-->
-
     <q-form
       @submit="onSubmit"
       @reset="onReset"
@@ -38,11 +37,11 @@
         style="margin-top: 2%;"
       />
     </q-form>
-    <div class="q-pa-lg">
+    <div class="q-pa-lg" style="padding-bottom: 135%;">
       <b>Instituicões</b>
       <q-btn
         id="btnCadastrarInst"
-        @click="modalCadastroInst=true"
+        @click="modalCadastroInst = true"
         icon="add"
         flat
         dense
@@ -90,10 +89,7 @@
         </template>
       </q-table>
     </div>
-    <q-dialog
-      v-model="modalCadastroInst"
-      full-width 
-    >
+    <q-dialog v-model="modalCadastroInst" full-width>
       <q-card>
         <q-card-section>
           <div class="text-h6">Cadastro Instituição</div>
@@ -101,12 +97,7 @@
 
         <q-card-section class="q-pt-none">
           <q-form @submit="onCadastro" @reset="onLimpar">
-            <q-input
-              type="text"
-              v-model="cadastroInst.nome"
-              label="Nome"
-            >
-            
+            <q-input type="text" v-model="cadastroInst.nome" label="Nome">
             </q-input>
             <br />
             <q-input
@@ -116,40 +107,20 @@
             >
             </q-input>
             <br />
-                        <q-input
-              type="text"
-              v-model="cadastroInst.numero"
-              label="Número"
-            >
+            <q-input type="text" v-model="cadastroInst.numero" label="Número">
             </q-input>
             <br />
-            <q-input
-              type="text"
-              v-model="cadastroInst.cep"
-              label="CEP"
-            >
+            <q-input type="text" v-model="cadastroInst.cep" label="CEP">
             </q-input>
             <br />
-            <q-input
-              type="text"
-              v-model="cadastroInst.bairro"
-              label="Bairro"
-            >
+            <q-input type="text" v-model="cadastroInst.bairro" label="Bairro">
             </q-input>
             <br />
-            <q-input
-              type="text"
-              v-model="cadastroInst.cidade"
-              label="Cidade"
-            >
+            <q-input type="text" v-model="cadastroInst.cidade" label="Cidade">
             </q-input>
             <br />
-            
-            <q-input
-              type="text"
-              v-model="cadastroInst.uf"
-              label="UF"
-            >
+
+            <q-input type="text" v-model="cadastroInst.uf" label="UF">
             </q-input>
             <br />
 

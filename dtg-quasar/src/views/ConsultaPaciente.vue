@@ -3,7 +3,7 @@
     <q-form
       @submit="onSubmit"
       @reset="onReset"
-      class="full-width row flex-center"
+      class="q-pa-xs q-gutter-md flex-center full-width row"
     >
       <q-input
         v-model="consultaPaciente.nome"
@@ -29,11 +29,11 @@
         label="Situação"
         class="q-pl-md col-2"
       />
-      <div class="q-pl-lg col-1" style="margin-top: 1%;">
+      <div class="q-pl-lg col-1" style="margin-top: 2%;">
         <q-btn label="Consultar" type="submit" color="primary" />
       </div>
     </q-form>
-    <div class="q-gutter-y-xs">
+    <div class="q-pa-lg" style="padding-bottom: 135%;">
       <b>Pacientes</b>
       <q-btn
         id="cadastrar_paciente"

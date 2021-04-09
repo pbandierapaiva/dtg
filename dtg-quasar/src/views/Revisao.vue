@@ -5,9 +5,8 @@
       dense
       active-color="primary"
       indicator-color="primary"
-      class="full-width"
+      class="full-width q-pt-md"
       align="justify"
-      narrow-indicator
     >
       <q-tab name="hcg" label="hCG" />
       <q-tab name="rx" label="RX" />

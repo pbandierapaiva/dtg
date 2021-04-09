@@ -1,5 +1,5 @@
 <template>
-  <q-page class="flex flex-center">
+  <q-page class="flex flex-center" style="padding-bottom: 135%;">
     <q-table
       title="ConsultaMola"
       :data="data"
@@ -87,7 +87,7 @@ export default {
         {
           name: "grauNivelEstadiamento",
           label: "Grau/Nível Estadiamento",
-          align: "left",
+          align: "center",
           field: row => row.grauNivelEstadiamento,
           format: val => `${val}`
         },
@@ -168,7 +168,7 @@ export default {
   },
   mounted() {
     var i = 0;
-    for (i = 0; i < props.row.length; i++) {
+    for (i = 0; i < 100; i++) {
       this.revisado[i] = false;
     }
   }

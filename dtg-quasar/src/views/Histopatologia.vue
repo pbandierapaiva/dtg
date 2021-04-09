@@ -19,10 +19,9 @@
         color="primary"
         class="q-pa-xs q-ma-md col-1"
         style="margin-top: 2%;"
-        @click="filtroTabela"
       />
     </q-form>
-    <div class="q-pa-lg">
+    <div class="q-pa-lg" style="padding-bottom: 135%;">
       <b>Histopatologias</b>
       <q-btn
         id="btnCadastrarHist"

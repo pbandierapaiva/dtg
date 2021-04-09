@@ -1,5 +1,5 @@
 <template>
-  <q-page class="flex flex-center">
+  <q-page class="flex flex-center" style="padding-bottom: 135%;">
     <q-table
       title="RX"
       :data="dataRx"
@@ -125,7 +125,7 @@ export default {
   },
   mounted() {
     var i = 0;
-    for (i = 0; i < props.row.length; i++) {
+    for (i = 0; i < 100; i++) {
       this.revisadoRx[i] = false;
     }
   }

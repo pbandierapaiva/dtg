@@ -19,11 +19,6 @@ const routes = [
         component: () => import("src/views/Chat.vue")
       },
       {
-        path: "/cadastro_usuario",
-        name: "cadastro_usuario",
-        component: () => import("src/views/CadastroUsuario.vue")
-      },
-      {
         path: "/histopatologia",
         name: "histopatologia",
         component: () => import("src/views/Histopatologia.vue")
@@ -72,6 +67,11 @@ const routes = [
         path: "/cadastro_paciente",
         name: "cadastro_paciente",
         component: () => import("src/views/CadastroPaciente.vue")
+      },
+      {
+        path: "/cadastro_medico_coordenador",
+        name: "cadastro_medico_coordenador",
+        component: () => import("src/views/CadastroMedicoCoordenador.vue")
       }
     ]
   }

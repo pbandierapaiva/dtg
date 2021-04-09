@@ -55,11 +55,11 @@
         style="margin-top: 2%;"
       />
     </q-form>
-    <div class="q-pa-lg">
+    <div class="q-pa-lg" style="padding-bottom: 135%;">
       <b>Médico/Coordenador</b>
       <q-btn
-        id="cadastrar_usuario"
-        to="/cadastro_usuario"
+        id="btnCadastrarMedico"
+        to="/cadastro_medico_coordenador"
         icon="add"
         flat
         dense

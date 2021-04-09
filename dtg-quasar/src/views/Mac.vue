@@ -21,7 +21,7 @@
         style="margin-top: 2%;"
       />
     </q-form>
-    <div class="q-pa-lg">
+    <div class="q-pa-lg" style="padding-bottom: 135%;">
       <b>MAC</b>
       <q-btn
         id="btnCadastrarHist"
