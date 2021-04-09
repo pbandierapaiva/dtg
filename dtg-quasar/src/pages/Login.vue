@@ -3,13 +3,19 @@
     <div class="full-width full-height">
       <h5 class="text-center" style="margin-top: -2%;">Login</h5>
       <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md q-pa-md">
-        <q-input v-model="usuario.login" label="Login" class="q-pa-md" />
+        <q-input
+          v-model="loginUsu.login"
+          label="Login"
+          class="q-pa-md"
+          :rules="[val => (val && val.length > 0) || 'Digite um login']"
+        />
 
         <q-input
           type="password"
-          v-model="usuario.senha"
+          v-model="loginUsu.senha"
           label="Senha"
           class="q-pa-md"
+          :rules="[val => (val && val.length > 0) || 'Digite uma senha']"
         />
         <div class="text-center">
           <q-btn label="Entrar" type="submit" color="primary" class="q-ma-md" />
@@ -65,33 +71,47 @@ export default {
     return {
       //alertaConstrucao: true,
       alertaErro: false,
-      usuario: { login: "", senha: "" }
+      usuario: {
+        nome: "Ryan Howard",
+        tipo: "Coordenador",
+        categoria: "Docente",
+        crm: "SP 78901",
+        login: "ryan.howard",
+        senha: "ryanhoward",
+        termo: false
+      },
+      loginUsu: {
+        login: "",
+        senha: ""
+      }
     };
   },
   methods: {
     onSubmit() {
-      this.$store
-        .dispatch("principal/efetuarLogin", this.usuario)
-        .then(() => {
-          this.$store.dispatch("principal/inicializarUsuarioExemplo");
-          localStorage.setItem("token", "123");
-          localStorage.setItem("usuario.nome", {
-            nome: "Ryan Howard",
-            tipo: "Coordenador",
-            categoria: "Docente",
-            crm: "SP 78901"
+      if (
+        this.loginUsu.login == this.usuario.login &&
+        this.loginUsu.senha == this.usuario.senha
+      ) {
+        this.$store
+          .dispatch("principal/efetuarLogin", this.usuario)
+          .then(() => {
+            this.$router.push({ name: "termo_aceite" });
+          })
+          .catch(erro => {
+            /* if (erro.request.status === 401) {
+              alert(erro);
+              this.alertaErro = true;
+            } */
+            console.log(erro);
           });
-          this.$router.push({ name: "termo_aceite" });
-        })
-        .catch(erro => {
-          if (erro.request.status === 401) {
-            this.alertaErro = true;
-          }
-        });
+      } else {
+        this.alertaErro = true;
+        this.onReset();
+      }
     },
     onReset() {
-      this.usuario.login = "";
-      this.usuario.senha = "";
+      this.loginUsu.login = "";
+      this.loginUsu.senha = "";
     }
   }
 };

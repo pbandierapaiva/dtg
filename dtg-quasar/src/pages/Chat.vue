@@ -179,9 +179,9 @@ export default {
   },
   methods: {
     onSubmit() {},
-    onReset() {}
-    //enviarMensagem() {},
-    //limparMensagem() {}
+    onReset() {},
+    enviarMensagem() {},
+    resetarMensagem() {}
   }
 };
 </script>

@@ -2,8 +2,15 @@ export default function() {
   return {
     //
     token: null,
-    usuario: {},
-    termo_aceito: false,
+    usuario: {
+      nome: "",
+      tipo: "",
+      categoria: "",
+      crm: "",
+      login: "",
+      senha: "",
+      termo_aceito: false
+    },
     usuario_delegado: {}
   };
 }

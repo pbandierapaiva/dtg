@@ -258,7 +258,7 @@ export default {
           id: 5,
           nome: "Ryan Howard",
           crm: "78.901",
-          uf: "SP",
+          uf: "MG",
           categoria: "Docente",
           instituicao: "HUHSP",
           inativar: true

@@ -5,23 +5,14 @@ export function efetuarLogin({ commit }, usuario) {
   });
 }
 
-export function aceitarTermo({ commit }) {
-  commit("ACEITAR_TERMO_USUARIO", {
-    termo_aceito: true
+export function responderTermoUsuario({ commit }, resposta_termo) {
+  commit("RESPONDER_TERMO_USUARIO", {
+    resposta_termo: resposta_termo
   });
 }
 
 export function delegarUsuario({ commit }, usuario_delegado) {
   commit("DELEGAR_USUARIO", {
     usuario_delegado: usuario_delegado
-  });
-}
-
-export function inicializarUsuarioExemplo({ commit }) {
-  commit("INICIALIZAR_USUARIO_EXEMPLO", {
-    nome: "Ryan Howard",
-    tipo: "Coordenador",
-    categoria: "Docente",
-    crm: "SP 78901"
   });
 }

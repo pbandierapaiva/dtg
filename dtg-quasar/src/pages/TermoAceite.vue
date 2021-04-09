@@ -1,7 +1,7 @@
 <template>
   <q-page class="flex flex-center ">
     <div class="full-width full-height">
-      <h5 class="text-center" style="margin-top: -2%;">Termo de Aceite</h5>
+      <h5 class="text-center" style="margin-top: -2%;">Termo de Usuário</h5>
       <p class="text-justify" style="width:99%; margin-left:0.5%;">
         Em face do direito à preservação da intimidade e do direito à
         indenização por eventual dano moral ou material, não é permitido a
@@ -69,6 +69,22 @@
         ></q-btn>
       </div>
     </div>
+    <q-dialog v-model="modalTermoAceito">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6 text-center">Alerta</div>
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+          <p class="text-center">
+            É obrigatório aceitar o termo de usuário para continuar na
+            plataforma.
+          </p>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -76,23 +92,23 @@
 export default {
   data() {
     return {
-      termoAceito: false
+      modalTermoAceito: false
     };
   },
   methods: {
     responderTermoAceite(resposta) {
-      if (resposta == true) {
-        this.$store
-          .dispatch("principal/aceitarTermo", this.usuario, resposta)
-          .then(() => {
+      this.$store
+        .dispatch("principal/responderTermoUsuario", resposta)
+        .then(() => {
+          if (resposta == true) {
             this.$router.push({ name: "consulta_paciente" });
-          })
-          .catch(erro => {
-            console.log("Erro");
-          });
-      } else {
-        this.$router.push({ name: "login" });
-      }
+          } else {
+            this.modalTermoAceito = true;
+          }
+        })
+        .catch(erro => {
+          console.log("Erro", erro);
+        });
     }
   }
 };

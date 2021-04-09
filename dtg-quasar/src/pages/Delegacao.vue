@@ -70,7 +70,6 @@
             row-key="name"
             :pagination.sync="pagination"
             class="col-4"
-            :filter="filtroPopup"
           >
             <template v-slot:body="props">
               <q-tr :props="props">
@@ -240,7 +239,7 @@ export default {
         },
         {
           id: 3,
-          nome: "Michael Scott",
+          nome: "Ryan Howard",
           crm: "78.901",
           ufCrm: "MG",
           categoria: "Docente"

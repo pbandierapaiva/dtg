@@ -46,15 +46,18 @@
         ><br />
       </q-toolbar>
       <BarraNavegacaoDesktop
-        v-if="usuarioLogado && termoAceito"
+        v-if="usuarioLogado && dadosUsuarioLogado.termo_aceito"
         class="desktop-only"
       />
     </q-header>
 
-    <q-footer elevated class="desktop-only">
+    <q-footer elevated>
       <q-toolbar>
         <q-toolbar-title>
-          <div class="text-caption" style="float:right;">
+          <div class="text-caption desktop-only" style="float:right;">
+            Desenvolvido pelo Departamento de Informática em Saúde
+          </div>
+          <div class="text-caption flex flex-center mobile-only">
             Desenvolvido pelo Departamento de Informática em Saúde
           </div>
         </q-toolbar-title>
@@ -120,11 +123,7 @@ export default {
     // NÃO ESTÁ SENDO USADO NO MOMENTO BarraNavegacaoMobile
   },
   computed: {
-    ...mapGetters("principal", [
-      "usuarioLogado",
-      "termoAceito",
-      "dadosUsuarioLogado"
-    ])
+    ...mapGetters("principal", ["usuarioLogado", "dadosUsuarioLogado"])
   },
   data() {
     return {};
