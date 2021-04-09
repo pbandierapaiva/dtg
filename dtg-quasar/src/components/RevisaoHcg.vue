@@ -57,7 +57,7 @@
 
 <script>
 export default {
-  name: "Componente Revisão HCG",
+  name: "Componente_Revisao_HCG",
   data() {
     return {
       revisado: [],

@@ -137,8 +137,8 @@
           </q-card>
         </q-expansion-item>
         <q-expansion-item
-          label="Outros"
-          group="outros"
+          label="Dados Login"
+          group="dados_login"
           default-opened
           class="bg-secondary"
           style="color:white"

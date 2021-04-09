@@ -49,7 +49,7 @@
 
 <script>
 export default {
-  name: "Componente Revisão HCG",
+  name: "Componente_Revisao_ConsultaMola",
   data() {
     return {
       revisado: [],

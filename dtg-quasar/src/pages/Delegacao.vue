@@ -6,36 +6,39 @@
       <span><b>Data Nascimento: </b>{{ usuarioDelegacao.dataNasc }}</span>
       <span><b>Preceptor: </b>{{ usuarioDelegacao.preceptor }}</span>
     </div>
-    <q-table
-      :data="dataResponsaveis"
-      :columns="columnsResponsaveis"
-      row-key="name"
-      :pagination.sync="pagination"
-      class="full-width"
-    >
-      <template v-slot:body="props">
-        <q-tr :props="props">
-          <q-td key="id" :props="props">
-            {{ props.row.id }}
-          </q-td>
-          <q-td key="nome" :props="props">
-            {{ props.row.nome }}
-          </q-td>
-          <q-td key="ufCrm" :props="props">
-            {{ props.row.ufCrm }}
-          </q-td>
-          <q-td key="crm" :props="props">
-            {{ props.row.crm }}
-          </q-td>
-          <q-td key="categoria" :props="props">
-            {{ props.row.categoria }}
-          </q-td>
-          <q-td key="excluir" :props="props"
-            ><q-btn id="btnExcluir" flat dense icon="delete"></q-btn
-          ></q-td>
-        </q-tr>
-      </template>
-    </q-table>
+    <div class="full-width" style="padding-left: 20%;">
+      <q-table
+        :data="dataResponsaveis"
+        :columns="columnsResponsaveis"
+        row-key="name"
+        :pagination.sync="pagination"
+        style="width:80%;"
+        title="Responsáveis pela Paciente"
+      >
+        <template v-slot:body="props">
+          <q-tr :props="props">
+            <q-td key="id" :props="props">
+              {{ props.row.id }}
+            </q-td>
+            <q-td key="nome" :props="props">
+              {{ props.row.nome }}
+            </q-td>
+            <q-td key="ufCrm" :props="props">
+              {{ props.row.ufCrm }}
+            </q-td>
+            <q-td key="crm" :props="props">
+              {{ props.row.crm }}
+            </q-td>
+            <q-td key="categoria" :props="props">
+              {{ props.row.categoria }}
+            </q-td>
+            <q-td key="excluir" :props="props"
+              ><q-btn id="btnExcluir" flat dense icon="delete"></q-btn
+            ></q-td>
+          </q-tr>
+        </template>
+      </q-table>
+    </div>
     <q-btn
       label="Novo Acesso"
       color="primary"
@@ -223,41 +226,27 @@ export default {
       dataConsultaMedicos: [
         {
           id: 1,
-          nome: "Jo Bennett",
-          crm: "12.345",
-          ufCrm: "SP",
-          categoria: "Acadêmico"
-        },
-        {
-          id: 2,
-          nome: "Michael Scarn",
-          crm: "23.456",
-          ufCrm: "SP",
-          categoria: "Residente"
-        },
-        {
-          id: 3,
           nome: "Michael Scott",
           crm: "56.789",
           ufCrm: "RJ",
           categoria: "Contratado"
         },
         {
-          id: 4,
+          id: 2,
           nome: "Holly Flax",
           crm: "67.890",
           ufCrm: "RJ",
           categoria: "Pós-Graduando"
         },
         {
-          id: 5,
+          id: 3,
           nome: "Michael Scott",
           crm: "78.901",
           ufCrm: "MG",
           categoria: "Docente"
         },
         {
-          id: 6,
+          id: 4,
           nome: "Angela Martin",
           crm: "89.012",
           ufCrm: "MG",

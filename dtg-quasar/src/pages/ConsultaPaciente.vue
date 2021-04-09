@@ -44,7 +44,6 @@
         color="primary"
         style="margin-top: -1%;"
       ></q-btn>
-      {{ consultaPaciente.cpf }}
       <q-table
         :data="data"
         :columns="columns"
@@ -81,8 +80,8 @@
                 @click="delegarUsuario(props.row)"
               ></q-btn>
             </q-td>
-            <q-td key="inativar" :props="props">
-              <q-toggle v-model="props.row.inativar" color="green" />
+            <q-td key="ativo" :props="props">
+              <q-toggle v-model="props.row.ativo" color="green" />
             </q-td>
           </q-tr>
         </template>
@@ -153,7 +152,7 @@ export default {
           align: "center"
         },
         {
-          name: "inativar",
+          name: "ativo",
           label: "Inativar",
           align: "center"
         }
@@ -166,55 +165,53 @@ export default {
           cpf: "123.456.789-10",
           dataNasc: "12/12/1990",
           preceptor: "Ryan Howard",
-          inativar: true
+          ativo: true
         },
         {
           id: 2,
           nome: "Pam Beesly",
           cpf: "321.654.980-13",
-          dataNasc: "12/12/1990",
+          dataNasc: "01/05/1985",
           preceptor: "Jim Halpert",
-          inativar: true
+          ativo: true
         },
         {
           id: 3,
           nome: "Eric Hannon",
           cpf: "963.852.741-32",
-          dataNasc: "12/12/1990",
+          dataNasc: "10/11/1995",
           preceptor: "Angela Martin",
-          inativar: true
+          ativo: true
         },
         {
           id: 4,
           nome: "Meredith Palmer",
           cpf: "321.654.987-25",
-          dataNasc: "12/12/1990",
+          dataNasc: "20/07/1987",
           preceptor: "Angela Martin",
-          inativar: true
+          ativo: true
         },
         {
           id: 5,
           nome: "Phyllis Lapin",
           cpf: "753.951.456-00",
-          dataNasc: "12/12/1990",
+          dataNasc: "15/06/1993",
           preceptor: "Angela Martin",
-          inativar: true
+          ativo: true
         },
         {
           id: 6,
           nome: "Jan Levinson",
           cpf: "852.963.711-22",
-          dataNasc: "12/12/1990",
+          dataNasc: "03/03/1994",
           preceptor: "Angela Martin",
-          inativar: false
+          ativo: false
         }
       ]
     };
   },
   methods: {
-    onSubmit() {
-      alert("Funcionalidade em construção");
-    },
+    onSubmit() {},
     onReset() {},
     delegarUsuario(usuario) {
       console.log(usuario);

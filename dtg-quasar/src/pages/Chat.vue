@@ -1,5 +1,5 @@
 <template>
-  <q-page class="flex flex-center">
+  <q-page class="flex flex-center" style="padding-bottom: 135%;">
     <!--<h4>CHAT</h4>-->
 
     <q-form
@@ -41,6 +41,7 @@
         row-key="name"
         title="Lista de Destinatários"
         :pagination.sync="pagination"
+        style="margin-top: 4%;"
       >
         <template v-slot:body="props">
           <q-tr :props="props">
@@ -65,8 +66,10 @@
           </q-tr>
         </template>
       </q-table>
-      <div class="col-6 on-left">
-        <div style="width: 100%; max-width: 400px; float:right;">
+      <div class="col-6">
+        <div
+          style="width: 100%; max-width: 400px; float:right; margin-top: 6%;"
+        >
           <q-chat-message name="MÉDICO: Angela" :text="['Olá paciente']" sent />
           <q-chat-message name="Paciente" :text="['Boa tarde Doutora']" />
           <q-chat-message
@@ -89,14 +92,14 @@
         label="Mensagem"
         class="q-pa-xs col-4"
         :rules="[val => (val && val.length > 0) || 'Digite alguma mensagem']"
-        style="margin-top: 1%;"
+        style="margin-top: 6%;"
       />
       <q-btn
         label="Enviar"
         type="submit"
         color="primary"
         class="q-pa-xs q-ma-md col-1"
-        style="margin-top: 2%;"
+        style="margin-top: 7%;"
       />
     </q-form>
   </q-page>

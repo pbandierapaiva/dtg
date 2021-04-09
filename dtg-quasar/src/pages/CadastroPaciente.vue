@@ -43,6 +43,28 @@
                 maxlength="250"
               />
             </q-card-section>
+            <q-card-section class="row">
+              <q-input
+                v-model="cadastroPaciente.rg"
+                label="RG"
+                class="q-pa-xs col-4"
+                maxlength="12"
+                mask="##.###.###-X"
+              />
+              <q-input
+                v-model="cadastroPaciente.rne"
+                label="RNE"
+                class="q-pa-xs col-4"
+                maxlength="9"
+                mask="XXXXXXX-X"
+              />
+              <q-input
+                v-model="cadastroPaciente.nacionalidade"
+                label="Nacionalidade"
+                class="q-pa-xs col-4"
+                maxlength="250"
+              />
+            </q-card-section>
           </q-card>
         </q-expansion-item>
         <q-expansion-item
@@ -208,6 +230,31 @@
             </q-card-section>
           </q-card>
         </q-expansion-item>
+        <q-expansion-item
+          label="Dados Login"
+          group="dados_login"
+          default-opened
+          class="bg-secondary"
+          style="color:white"
+        >
+          <q-card>
+            <q-card-section class="row">
+              <q-input
+                v-model="cadastroPaciente.login"
+                label="Login"
+                class="q-pa-xs col-6"
+                maxlength="50"
+              />
+              <q-input
+                v-model="cadastroPaciente.senha"
+                type="password"
+                label="Senha"
+                class="q-pa-xs col-6"
+                maxlength="100"
+              />
+            </q-card-section>
+          </q-card>
+        </q-expansion-item>
       </q-list>
       <div class="flex flex-center">
         <q-btn
@@ -269,7 +316,12 @@ export default {
         nomeContato: "",
         email: "",
         reacoesAlergicas: "",
-        preceptor: ""
+        preceptor: "",
+        rg: "",
+        rne: "",
+        nacionalidade: "",
+        login: "",
+        senha: ""
       },
       optUf: [
         "AC",
@@ -322,7 +374,7 @@ export default {
       optFatorRh: ["+", "-"],
       optEscolaridade: [
         "Não informado",
-        "Sem instrução/fundamental incompleto",
+        "Sem instrução/Fundamental incompleto",
         "Fundamental completo/Médio incompleto",
         "Médio completo/Superior incompleto",
         "Superior completo/Pós-graduação incompleto",
@@ -361,6 +413,11 @@ export default {
       this.cadastroPaciente.email = "";
       this.cadastroPaciente.reacoesAlergicas = "";
       this.cadastroPaciente.preceptor = "";
+      this.cadastroPaciente.rg = "";
+      this.cadastroPaciente.rne = "";
+      this.cadastroPaciente.nacionalidade = "";
+      this.cadastroPaciente.login = "";
+      this.cadastroPaciente.senha = "";
     }
   }
 };

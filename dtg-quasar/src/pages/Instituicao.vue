@@ -7,10 +7,10 @@
       class="q-gutter-md q-pa-xs full-width row"
     >
       <q-input
-        v-model="consultaInstituicao.descricao"
-        label="Descrição"
+        v-model="consultaInstituicao.nome"
+        label="Nome"
         class="q-pa-xs col-3"
-        :rules="[val => (val && val.length > 0) || 'Digite alguma descrição']"
+        :rules="[val => (val && val.length > 0) || 'Digite algum nome']"
       />
       <q-input
         v-model="consultaInstituicao.cep"
@@ -58,8 +58,11 @@
             <q-td key="id" :props="props">
               {{ props.row.id }}
             </q-td>
-            <q-td key="descricao" :props="props">
-              {{ props.row.descricao }}
+            <q-td key="nome" :props="props">
+              {{ props.row.nome }}
+            </q-td>
+            <q-td key="cep" :props="props">
+              {{ props.row.cep }}
             </q-td>
             <q-td key="logradouro" :props="props">
               {{ props.row.logradouro }}
@@ -67,17 +70,17 @@
             <q-td key="numero" :props="props">
               {{ props.row.numero }}
             </q-td>
-            <q-td key="cep" :props="props">
-              {{ props.row.cep }}
+            <q-td key="complemento" :props="props">
+              {{ props.row.complemento }}
             </q-td>
-            <q-td key="bairro" :props="props">
-              {{ props.row.bairro }}
+            <q-td key="uf" :props="props">
+              {{ props.row.uf }}
             </q-td>
             <q-td key="cidade" :props="props">
               {{ props.row.cidade }}
             </q-td>
-            <q-td key="uf" :props="props">
-              {{ props.row.uf }}
+            <q-td key="bairro" :props="props">
+              {{ props.row.bairro }}
             </q-td>
             <q-td key="editar" :props="props"
               ><q-btn id="editar" flat dense icon="edit_note"></q-btn
@@ -92,39 +95,72 @@
     <q-dialog v-model="modalCadastroInst" full-width>
       <q-card>
         <q-card-section>
-          <div class="text-h6">Cadastro Instituição</div>
+          <div class="text-h6 flex flex-center">Cadastro Instituição</div>
         </q-card-section>
 
         <q-card-section class="q-pt-none">
           <q-form @submit="onCadastro" @reset="onLimpar">
-            <q-input type="text" v-model="cadastroInst.nome" label="Nome">
-            </q-input>
-            <br />
-            <q-input
-              type="text"
-              v-model="cadastroInst.logradoudo"
-              label="Logradouro"
-            >
-            </q-input>
-            <br />
-            <q-input type="text" v-model="cadastroInst.numero" label="Número">
-            </q-input>
-            <br />
-            <q-input type="text" v-model="cadastroInst.cep" label="CEP">
-            </q-input>
-            <br />
-            <q-input type="text" v-model="cadastroInst.bairro" label="Bairro">
-            </q-input>
-            <br />
-            <q-input type="text" v-model="cadastroInst.cidade" label="Cidade">
-            </q-input>
-            <br />
-
-            <q-input type="text" v-model="cadastroInst.uf" label="UF">
-            </q-input>
-            <br />
-
-            <div class="flex-center q-gutter-xl">
+            <q-card-section class="row q-gutter-md">
+              <q-input
+                type="text"
+                v-model="cadastroInst.nome"
+                label="Nome"
+                class="col-4"
+              >
+              </q-input>
+              <q-input
+                v-model="cadastroInst.cep"
+                label="CEP"
+                maxlength="9"
+                mask="#####-###"
+                class="col-2"
+              >
+              </q-input>
+              <q-input
+                type="text"
+                v-model="cadastroInst.logradoudo"
+                label="Logradouro"
+                class="col-3"
+              >
+              </q-input>
+              <q-input
+                type="text"
+                v-model="cadastroInst.numero"
+                label="Número"
+                class="col-2"
+              >
+              </q-input>
+            </q-card-section>
+            <q-card-section class="row q-gutter-md">
+              <q-input
+                v-model="consultaInstituicao.complemento"
+                label="Complemento"
+                class="q-pa-xs col-3"
+              />
+              <q-select
+                v-model="cadastroInst.uf"
+                label="UF"
+                :options="optUf"
+                class="col-2"
+              >
+              </q-select>
+              <q-input
+                type="text"
+                v-model="cadastroInst.cidade"
+                label="Cidade"
+                maxlength="28"
+                class="col-3"
+              >
+              </q-input>
+              <q-input
+                type="text"
+                v-model="cadastroInst.bairro"
+                label="Bairro"
+                class="col-3"
+              >
+              </q-input>
+            </q-card-section>
+            <div class="flex flex-center q-gutter-md">
               <q-btn color="primary" label="Gravar"></q-btn>
               <q-btn label="Voltar" color="primary" v-close-popup />
             </div>
@@ -146,13 +182,20 @@ export default {
         rowsPerPage: 7
       },
       consultaInstituicao: {
-        descricao: "",
+        nome: "",
         cep: "",
         logradouro: "",
         uf: ""
       },
       cadastroInst: {
-        descricao: ""
+        nome: "",
+        uf: "",
+        complemento: "",
+        numero: "",
+        logradouro: "",
+        cidade: "",
+        bairro: "",
+        cep: ""
       },
       optUf: [
         "AC",
@@ -192,10 +235,17 @@ export default {
           format: val => `${val}`
         },
         {
-          name: "descricao",
-          label: "Descrição",
+          name: "nome",
+          label: "Nome",
           align: "left",
-          field: row => row.descricao,
+          field: row => row.nome,
+          format: val => `${val}`
+        },
+        {
+          name: "cep",
+          label: "CEP",
+          align: "left",
+          field: row => row.cep,
           format: val => `${val}`
         },
         {
@@ -213,17 +263,17 @@ export default {
           format: val => `${val}`
         },
         {
-          name: "cep",
-          label: "CEP",
+          name: "complemento",
+          label: "Complemento",
           align: "left",
-          field: row => row.cep,
+          field: row => row.numero,
           format: val => `${val}`
         },
         {
-          name: "bairro",
-          label: "Bairro",
+          name: "uf",
+          label: "UF",
           align: "left",
-          field: row => row.bairro,
+          field: row => row.uf,
           format: val => `${val}`
         },
         {
@@ -234,10 +284,10 @@ export default {
           format: val => `${val}`
         },
         {
-          name: "uf",
-          label: "UF",
+          name: "bairro",
+          label: "Bairro",
           align: "left",
-          field: row => row.uf,
+          field: row => row.bairro,
           format: val => `${val}`
         },
         {
@@ -255,13 +305,14 @@ export default {
       data: [
         {
           id: 1,
-          descricao: "Hospital São Paulo",
+          nome: "Hospital São Paulo",
           logradouro: "Rua Napoleão de Barros",
           numero: "715",
           cep: "04024-002",
           bairro: "Vila Clementino",
           cidade: "São Paulo",
-          uf: "SP"
+          uf: "SP",
+          complemento: "Não há"
         }
       ]
     };

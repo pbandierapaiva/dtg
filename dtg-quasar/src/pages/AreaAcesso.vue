@@ -5,7 +5,7 @@
     <q-form
       @submit="onSubmit"
       @reset="onReset"
-      class="q-gutter-md q-pa-xs full-width row"
+      class="q-gutter-md flex-center full-width row"
     >
       <q-input
         v-model="consultaUsuario.nome"

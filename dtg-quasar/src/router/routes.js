@@ -1,3 +1,6 @@
+import { route } from "quasar/wrappers";
+import router from ".";
+
 const routes = [
   {
     path: "/",
@@ -6,72 +9,72 @@ const routes = [
       {
         path: "",
         name: "login",
-        component: () => import("src/views/Login.vue")
+        component: () => import("src/pages/Login.vue")
       },
       {
         path: "/cadastro_registro_mola",
         name: "cadastro_registro_mola",
-        component: () => import("src/views/CadastroRegistroMola.vue")
+        component: () => import("pages/CadastroRegistroMola.vue")
       },
       {
         path: "/chat",
         name: "chat",
-        component: () => import("src/views/Chat.vue")
+        component: () => import("pages/Chat.vue")
       },
       {
         path: "/histopatologia",
         name: "histopatologia",
-        component: () => import("src/views/Histopatologia.vue")
+        component: () => import("pages/Histopatologia.vue")
       },
       {
         path: "/indicacao",
         name: "indicacao",
-        component: () => import("src/views/Indicacao.vue")
+        component: () => import("pages/Indicacao.vue")
       },
       {
         path: "/instituicao",
         name: "instituicao",
-        component: () => import("src/views/Instituicao.vue")
+        component: () => import("pages/Instituicao.vue")
       },
       {
         path: "/mac",
         name: "mac",
-        component: () => import("src/views/Mac.vue")
+        component: () => import("pages/Mac.vue")
       },
       {
         path: "/revisao",
         name: "revisao",
-        component: () => import("src/views/Revisao.vue")
+        component: () => import("pages/Revisao.vue")
       },
       {
         path: "/termo_aceite",
         name: "termo_aceite",
-        component: () => import("src/views/TermoAceite.vue")
+        component: () => import("pages/TermoAceite.vue")
       },
       {
         path: "/consulta_paciente",
         name: "consulta_paciente",
-        component: () => import("src/views/ConsultaPaciente.vue")
+        component: () => import("pages/ConsultaPaciente.vue")
       },
       {
         path: "/area_acesso",
         name: "area_acesso",
-        component: () => import("src/views/AreaAcesso.vue")
+        component: () => import("pages/AreaAcesso.vue")
       },
       {
         path: "/delegacao",
         name: "delegacao",
-        component: () => import("src/views/Delegacao.vue")
+        component: () => import("pages/Delegacao.vue")
       },
       {
         path: "/cadastro_paciente",
         name: "cadastro_paciente",
-        component: () => import("src/views/CadastroPaciente.vue")
+        component: () => import("pages/CadastroPaciente.vue")
       },
       {
         path: "/cadastro_medico_coordenador",
         name: "cadastro_medico_coordenador",
-        component: () => import("src/views/CadastroMedicoCoordenador.vue")
+        component: () => import("pages/CadastroMedicoCoordenador.vue")
       }
     ]
   }
