@@ -1,6 +1,8 @@
 // Protótipo
 
 var express = require('express');
+var bodyParser = require('body-parser')
+var jsonParser = bodyParser.json()
 var app = express();
 const port = 8793
 
@@ -20,16 +22,22 @@ app.get('/pmstatus', function(req, res) {
 	res.send( pm2.list(errback) );
 	pm2.disconnect();
 });
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+  res.header("Access-Control-Allow-Headers", "*");
+  next();
+});
 // Alo mundo
 app.get('/', function(req, res) {
   res.send('Alo mundo!!!<br/> <b>Servidor DTG </b> alterado Capa2');
 });
 
 //login
-app.post('/auth/login', (req, res) => {
+app.post('/auth/login',jsonParser, (req, res) => {
 	//receber login e senha
 	console.log("login endpoint called; request body:");	
-	console.log(req.body);	
+	console.log('body',req.body);	
 	const { login, senha } = req.body;	
 	console.log("Login:" + login);
 	console.log("senha:" + senha);
