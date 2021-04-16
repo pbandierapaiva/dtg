@@ -2,16 +2,75 @@
 
 var express = require('express');
 var bodyParser = require('body-parser')
+const jwt = require('jsonwebtoken')
+const mariadb = require('mariadb');
+const dbvar = require('./dtg.json');
+const pool = mariadb.createPool({
+    host: dbvar.server,
+    user: dbvar.user,
+    password: dbvar.password,
+    database: dbvar.db
+});
 var jsonParser = bodyParser.json()
 var app = express();
 const port = 8793
-
+const SECRET_KEY = '862475391'
+const expiresIn = '12h'
 // Para colocar em execução no servidor
 var sleep = require('sleep');
 const pm2 = require('pm2')
 
 const simpleGit = require('simple-git');
-const git = simpleGit();   
+const git = simpleGit();
+
+//funções
+
+//faz select no banco de dados
+async function select_mdb(sql) {
+  let conn;
+    try {
+      conn = await pool.getConnection();      
+      const rows = await conn.query(sql);
+      //console.log(rows);
+      return rows;      
+    } catch (err) {
+      console.log(err);
+      throw err;
+    } finally {      
+      if (conn) { conn.end(); }
+    }
+}
+
+//cria token de acesso
+function criarToken(payload){
+  return jwt.sign(payload, SECRET_KEY, {expiresIn})
+}
+//verifica token de acesso
+function verificaToken(token){
+  return  jwt.verify(token, SECRET_KEY, (err, decode) => decode !== undefined ?  decode : err)
+}
+//verifica se o login e senha do medico estão corretos
+async function medEstaAutenticado({ login, senha }) {
+  sql =
+    " select u.senha senha,u.tipo tipo, u.nome nome, mc.categoria categoria " +
+    " from usuario u, med_coord mc " +
+    " where " +
+    " u.id_usuario=mc.id_med_coord and "+
+    " u.login = '" + login + "' ";
+  
+  var senha_banco = await select_mdb(sql);
+  //console.log('senha', senha)
+  //console.log('senha_banco',senha_banco[0].senha)
+  if (senha == senha_banco[0].senha) {
+    const usuario = {login: login,nome: senha_banco[0].nome ,tipo: senha_banco[0].tipo,categoria: senha_banco[0].categoria}
+    return usuario;
+  }
+  else {
+    return false
+  }  
+}
+
+//servidor
 app.get('/deploy', function(req, res) {
 	git.pull().pull('origin', 'master', {'--rebase': 'true'})
 	sleep.sleep(5);
@@ -28,37 +87,30 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "*");
   next();
 });
+
 // Alo mundo
 app.get('/', function(req, res) {
   res.send('Alo mundo!!!<br/> <b>Servidor DTG </b> alterado Capa2');
 });
 
 //login
-app.post('/auth/login',jsonParser, (req, res) => {
-	//receber login e senha
-	console.log("login endpoint called; request body:");	
-	console.log('body',req.body);	
-	const { login, senha } = req.body;	
-	console.log("Login:" + login);
-	console.log("senha:" + senha);
+app.post('/auth/login',jsonParser,async (req, res) => {
+	//receber login e senha	
+	const { login, senha } = req.body;		
 	//critografar em md5
 	//fazer select no banco de dados
-	//criar o token de acesso
-	//retornar o usuario e o token
-	/*
-  if (isAuthenticated({email, senha}) === false) {
+  var credenciais_corretas = await medEstaAutenticado({login, senha})  
+  if (credenciais_corretas === false) {
     const status = 401
     const message = 'E-mail ou senha incorretos!'
     res.status(status).json({status, message})
     return
   }
-  const access_token = createToken({email, senha})
-  let user = { ...userdb.usuarios.find(user => user.email === email && user.senha === senha) }
-  delete user.senha
-  console.log("Access Token:" + access_token);
-  console.log("User:" + user);
-  res.status(200).json({access_token, user})
-  */
+	//criar o token de acesso
+  const access_token = criarToken({login, senha})
+	//retornar o usuario e o token 
+  console.log(login + " está logado");
+  res.status(200).json({ access_token, credenciais: credenciais_corretas });
 })
 
 
