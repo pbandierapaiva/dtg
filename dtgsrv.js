@@ -52,7 +52,7 @@ function verificaToken(token){
 //verifica se o login e senha do medico estão corretos
 async function medEstaAutenticado({ login, senha }) {
   sql =
-    " select u.senha senha,u.tipo tipo, u.nome nome, mc.categoria categoria " +
+    " select u.senha senha,u.tipo tipo, u.nome nome, mc.categoria categoria, CONCAT(mc.uf_crm,' ',mc.crm) crm " +
     " from usuario u, med_coord mc " +
     " where " +
     " u.id_usuario=mc.id_med_coord and "+
@@ -60,9 +60,12 @@ async function medEstaAutenticado({ login, senha }) {
   
   var senha_banco = await select_mdb(sql);
   //console.log('senha', senha)
-  //console.log('senha_banco',senha_banco[0].senha)
+  console.log('senha_banco',senha_banco[0])
+  if (typeof senha_banco[0] == 'undefined') {
+    return false
+  }
   if (senha == senha_banco[0].senha) {
-    const usuario = {login: login,nome: senha_banco[0].nome ,tipo: senha_banco[0].tipo,categoria: senha_banco[0].categoria}
+    const usuario = {login: login,nome: senha_banco[0].nome ,tipo: senha_banco[0].tipo,categoria: senha_banco[0].categoria, crm: senha_banco[0].crm}
     return usuario;
   }
   else {
@@ -96,6 +99,7 @@ app.get('/', function(req, res) {
 //login
 app.post('/auth/login',jsonParser,async (req, res) => {
 	//receber login e senha	
+  console.log(req.body)
 	const { login, senha } = req.body;		
 	//critografar em md5
 	//fazer select no banco de dados
