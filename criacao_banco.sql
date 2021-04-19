@@ -3,8 +3,8 @@ CREATE TABLE usuario
   id_usuario INT NOT NULL AUTO_INCREMENT,
   nome VARCHAR(250) NOT NULL,
   senha VARCHAR(100) NOT NULL,
-  tipo ENUM('Paciente','Médico','Coordenador') NOT NULL,
-  ativo INT NOT NULL,
+  tipo ENUM('paciente','médico','coordenador') NOT NULL,
+  ativo INT NOT NULL DEFAULT 1,
   cep VARCHAR(8),
   uf_resid VARCHAR(2),
   cidade VARCHAR(28),
@@ -13,17 +13,28 @@ CREATE TABLE usuario
   login VARCHAR(50) NOT NULL,
   logradouro VARCHAR(250),
   bairro VARCHAR(100),
-  cpf VARCHAR(11) NOT NULL,
-  dt_nasc DATE NOT NULL,
-  PRIMARY KEY (id_usuario)
+  cpf VARCHAR(11),
+  dt_nasc DATE,
+  PRIMARY KEY (id_usuario),
+  UNIQUE (login)
 );
+
 
 CREATE TABLE instituicao
 (
   id_inst INT NOT NULL AUTO_INCREMENT,
   nome_inst VARCHAR(250) NOT NULL,
+  cidade_inst VARCHAR(28),
+  bairro_inst VARCHAR(100),
+  logradouro_inst VARCHAR(250),
+  num_inst VARCHAR(7),
+  complemento_inst VARCHAR(250),
+  cep_inst VARCHAR(8),
+  ativo INT NOT NULL DEFAULT 1,
+  uf_inst VARCHAR(2),
   PRIMARY KEY (id_inst)
 );
+
 
 CREATE TABLE indicacao
 (
@@ -39,11 +50,11 @@ CREATE TABLE mac
   PRIMARY KEY (id_mac)
 );
 
-CREATE TABLE histo_ntg
+CREATE TABLE resultado_ap
 (
-  id_histo_ntg INT NOT NULL AUTO_INCREMENT,
+  id_resultado_ap INT NOT NULL AUTO_INCREMENT,
   descricao VARCHAR(250) NOT NULL,
-  PRIMARY KEY (id_histo_ntg)
+  PRIMARY KEY (id_resultado_ap)
 );
 
 CREATE TABLE mensagens
@@ -60,9 +71,10 @@ CREATE TABLE mensagens
 
 CREATE TABLE med_coord
 (
-  crm VARCHAR(15),
+  crm VARCHAR(15) ,
   uf_crm VARCHAR(2),
-  categoria ENUM('Acadêmico','Residente','Contratado','Pós-Graduando','Docente','Outros'),
+  categoria ENUM('acadêmico','residente','contratado','pós-graduando','docente','outros'),
+  aceite INT DEFAULT 0,
   id_med_coord INT NOT NULL,
   id_inst INT,
   PRIMARY KEY (id_med_coord),
@@ -74,97 +86,91 @@ CREATE TABLE paciente
 (
   sus VARCHAR(15),
   rh VARCHAR(10),
-  cor ENUM('Branca','Preta','Amarela','Parda','Indígena','sem Declaração'),
+  cor ENUM('branca','preta','amarela','parda','indígena','sem declaração'),
+  tipo_sanguineo ENUM('O','A','B','AB'),
+  rh_tipo_sanguineo ENUM('+','-'),
+  tel_proprio INT,
+  tel_contato INT,
+  nome_contato VARCHAR(50),
+  reacoes_alergicas VARCHAR(250),
+  estado_civil ENUM('casada', 'divorciada', 'viúva', 'solteira','em união estável', 'não desejo declarar'),
+  nome_mae VARCHAR(250),
+  escolaridade ENUM('não informado', 'sem instrução/fundamental incompleto', 'fundamental completo/médio incompleto', 'médio completo/superior incompleto', 'superior completo/pós-graduação incompleto', 'pós-graduação completo'),
+  email VARCHAR(50),
+  rne VARCHAR(8),
+  nacionalidade VARCHAR(25),
+  aceite INT DEFAULT 0,
   id_paciente INT NOT NULL,
   id_indicacao INT,
   preceptor INT,
+  id_inst INT NOT NULL,
   PRIMARY KEY (id_paciente),
   FOREIGN KEY (id_paciente) REFERENCES usuario(id_usuario),
   FOREIGN KEY (id_indicacao) REFERENCES indicacao(id_indicacao),
-  FOREIGN KEY (preceptor) REFERENCES med_coord(id_med_coord)
+  FOREIGN KEY (preceptor) REFERENCES med_coord(id_med_coord),
+  FOREIGN KEY (id_inst) REFERENCES instituicao(id_inst)
 );
 
 CREATE TABLE registro_mola
 (
   id_r_mola INT NOT NULL AUTO_INCREMENT,
   idade INT,
-  escolaridade ENUM('não informado', 'sem instrução/fundamental incompleto', ' fundamental completo/médio incompleto', 'médio completo/superior incompleto', 'superior completo/Pós-graduação incompleto', 'Pós-graduação completo'),
   peso NUMERIC(5,2),
   altura NUMERIC(3,2),
   imc NUMERIC(4,2),
-  n_partos INT,
-  mola_prev INT,
-  abortos INT,
-  ecto INT,
+  n_partos INT DEFAULT 0,
+  mola_prev INT DEFAULT 0,
+  abortos INT DEFAULT 0,
+  ecto INT DEFAULT 0,
   dum_data DATE,
-  dum_conhecido INT,
+  dum_conhecido INT DEFAULT 0,
   dum_consulta DATE,
   data_esvaz1 DATE,
   ig_esvaz1 INT,
-  estado_civil ENUM('casada', 'divorciada', 'Viúva', 'Solteira','Em união estável', 'Não desejo declarar'),
   tipo_esvaz1 ENUM('aspiração eletrica', 'AMIU', 'curetagem', 'HTA com mola'),
   local_esvaz1 ENUM('HSP', 'outros'),
   hosp_esvaz1 VARCHAR(250),
-  nat_hosp_esvaz1 ENUM('Público', 'Particular'),
-  esvaz2 INT,
+  nat_hosp_esvaz1 ENUM('público', 'particular'),
   data_esvaz2 DATE,
   interv_esvaz INT,
-  ntg INT,
-  beta INT,
-  us ENUM('não tem', 'típico de MH', 'Alterações hidrópicas sugestivas de mola SEM embrião', 'alterações hidrópicas sugestivas de mola COM embrião', 'gestação não evolutivaSEM embrião', 'gestação não evolutiva COM embrião', 'imagem de restos ovulares', 'gemelar feto normal + mola'),
-  sangramento INT,
-  hb INT,
-  pressao_alta INT,
-  tsh_disp INT,
-  tsh_valor INT,
-  cistos INT,
-  utero_ig INT,
-  raiox INT,
+  ntg INT DEFAULT 0,
+  beta INT DEFAULT 0,
+  us ENUM('não tem', 'típico de MH', 'alterações hidrópicas sugestivas de mola SEM embrião', 'alterações hidrópicas sugestivas de mola COM embrião', 'gestação não evolutiva SEM embrião', 'gestação não evolutiva COM embrião', 'imagem de restos ovulares', 'gemelar feto normal + mola'),
+  sangramento INT  DEFAULT 0,
+  hb INT  DEFAULT 0,
+  pressao_alta INT  DEFAULT 0,
+  tsh_disp INT  DEFAULT 0,
+  tsh_valor NUMERIC(3,1),
+  cistos INT  DEFAULT 0,
+  utero_ig INT  DEFAULT 0,
+  raiox INT  DEFAULT 0,
   entada_servico ENUM('esvaziamento no HSP', 'para acompanhamento pós-esvaziamento', 'com suspeita ou diagnóstico de NTG', 'após tratamento de NTG'),
+  data_ult DATE NOT NULL,
+  term_caso ENUM('evasão (abandono do serviço com hCG positivo)', 'molar completo', 'molar incompleto', 'NTG completo', 'NTG incompleto') NOT NULL,
+  dum_esvaz1 DATE NOT NULL,
   id_paciente INT NOT NULL,
   id_mac_antes INT,
   id_mac_apos INT,
   revisor INT,
-  med_atend INT,
+  pessoa_ult INT,
   PRIMARY KEY (id_r_mola),
   FOREIGN KEY (id_paciente) REFERENCES paciente(id_paciente),
   FOREIGN KEY (id_mac_antes) REFERENCES mac(id_mac),
   FOREIGN KEY (id_mac_apos) REFERENCES mac(id_mac),
   FOREIGN KEY (revisor) REFERENCES med_coord(id_med_coord),
-  FOREIGN KEY (med_atend) REFERENCES med_coord(id_med_coord)
-);
-
-CREATE TABLE consulta_mola
-(
-  id_consulta INT NOT NULL AUTO_INCREMENT,
-  quimio INT,
-  hcg_pre_esvaz INT,
-  data_pre_esvaz DATE,
-  result_hcg_pre INT,
-  obs_cons_mola VARCHAR(250),
-  term_caso ENUM('Evasão (abandono do serviço com hCG positivo)', 'Molar completo', 'Molar incompleto', 'NTG Completo', 'NTG Incompleto'),
-  grau_estad ENUM('I', 'II', 'III', 'IV'),
-  nivel_estad INT,
-  med_atend INT,
-  id_histo_ntg INT,
-  revisor INT,
-  id_r_mola INT,
-  PRIMARY KEY (id_consulta),
-  FOREIGN KEY (med_atend) REFERENCES med_coord(id_med_coord),
-  FOREIGN KEY (id_histo_ntg) REFERENCES histo_ntg(id_histo_ntg),
-  FOREIGN KEY (revisor) REFERENCES med_coord(id_med_coord),
-  FOREIGN KEY (id_r_mola) REFERENCES registro_mola(id_r_mola)
+  FOREIGN KEY (pessoa_ult) REFERENCES med_coord(id_med_coord)
 );
 
 CREATE TABLE anatomia_patologica
 (
   id_ap INT NOT NULL AUTO_INCREMENT,
-  ap ENUM('MHC',' MHP','MH','abortamento não molar','Gemelar MHC + Feto normal','tumor trofoblástico de sítio placentário','tumor trofoblásticoepitelióide','outros'),
-  ap_proprio INT,
+  ap_proprio INT DEFAULT 0,
   ap_data DATE,
   id_r_mola INT NOT NULL,
+  id_resultado_ap INT NOT NULL,
   PRIMARY KEY (id_ap),
-  FOREIGN KEY (id_r_mola) REFERENCES registro_mola(id_r_mola)
+  FOREIGN KEY (id_r_mola) REFERENCES registro_mola(id_r_mola),
+  FOREIGN KEY (id_resultado_ap) REFERENCES resultado_ap(id_resultado_ap)
 );
 
 CREATE TABLE quimioterapia
@@ -176,6 +182,9 @@ CREATE TABLE quimioterapia
   droga VARCHAR(250),
   toxicidade VARCHAR(250),
   obs VARCHAR(250),
+  grau_estad ENUM('I', 'II', 'III', 'IV'),
+  nivel_estad INT,
+  result_hcg_pre INT,
   id_r_mola INT NOT NULL,
   PRIMARY KEY (id_quimio),
   FOREIGN KEY (id_r_mola) REFERENCES registro_mola(id_r_mola)
@@ -184,55 +193,149 @@ CREATE TABLE quimioterapia
 CREATE TABLE imagens
 (
   id_imagem INT NOT NULL AUTO_INCREMENT,
-  tp_exam ENUM('RX','Ultrassom','Tomografia','HCG') NOT NULL,
+  tp_exam ENUM('rx','ultrassom','tomografia','hcg') NOT NULL,
   url_img VARCHAR(250) NOT NULL,
+  data_upload DATE NOT NULL,
   id_r_mola INT NOT NULL,
   PRIMARY KEY (id_imagem),
   FOREIGN KEY (id_r_mola) REFERENCES registro_mola(id_r_mola)
 );
 
+CREATE TABLE raiox
+(
+  id_raiox INT NOT NULL AUTO_INCREMENT,
+  data_raiox DATE,
+  id_r_mola INT NOT NULL,
+  id_imagem INT NOT NULL,
+  cadastrante INT NOT NULL,
+  revisor INT,
+  PRIMARY KEY (id_raiox),
+  FOREIGN KEY (id_r_mola) REFERENCES registro_mola(id_r_mola),
+  FOREIGN KEY (id_imagem) REFERENCES imagens(id_imagem),
+  FOREIGN KEY (cadastrante) REFERENCES usuario(id_usuario),
+  FOREIGN KEY (revisor) REFERENCES med_coord(id_med_coord)
+);
+
+CREATE TABLE ultrassom
+(
+  id_ultrassom INT NOT NULL AUTO_INCREMENT,
+  data_ultrassom DATE NOT NULL,
+  id_r_mola INT NOT NULL,
+  ultrassom INT,
+  laudo_ultrassom INT,
+  cadastrante INT NOT NULL,
+  revisor INT,
+  PRIMARY KEY (id_ultrassom),
+  FOREIGN KEY (id_r_mola) REFERENCES registro_mola(id_r_mola),
+  FOREIGN KEY (ultrassom) REFERENCES imagens(id_imagem),
+  FOREIGN KEY (laudo_ultrassom) REFERENCES imagens(id_imagem),
+  FOREIGN KEY (cadastrante) REFERENCES usuario(id_usuario),
+  FOREIGN KEY (revisor) REFERENCES med_coord(id_med_coord)
+);
+
+CREATE TABLE tomografia
+(
+  id_tomografia INT NOT NULL AUTO_INCREMENT,
+  data_tomografia DATE NOT NULL,
+  id_r_mola INT NOT NULL,
+  tomografia INT,
+  laudo_tomografia INT,
+  cadastrante INT NOT NULL,
+  revisor INT,
+  PRIMARY KEY (id_tomografia),
+  FOREIGN KEY (id_r_mola) REFERENCES registro_mola(id_r_mola),
+  FOREIGN KEY (tomografia) REFERENCES imagens(id_imagem),
+  FOREIGN KEY (laudo_tomografia) REFERENCES imagens(id_imagem),
+  FOREIGN KEY (cadastrante) REFERENCES usuario(id_usuario),
+  FOREIGN KEY (revisor) REFERENCES med_coord(id_med_coord)
+);
+
+CREATE TABLE delegacao
+(
+  id_deleg INT NOT NULL AUTO_INCREMENT,
+  ativo INT NOT NULL  DEFAULT 1,
+  id_paciente INT NOT NULL,
+  id_med_coord INT NOT NULL,
+  PRIMARY KEY (id_deleg),
+  FOREIGN KEY (id_paciente) REFERENCES paciente(id_paciente),
+  FOREIGN KEY (id_med_coord) REFERENCES med_coord(id_med_coord)
+);
+
+CREATE TABLE calendario_dum
+(
+  id_calend_dum INT NOT NULL AUTO_INCREMENT,
+  dum DATE NOT NULL,
+  id_r_mola INT NOT NULL,
+  cadastrante INT NOT NULL,
+  revisor INT NOT NULL,
+  PRIMARY KEY (id_calend_dum),
+  FOREIGN KEY (id_r_mola) REFERENCES registro_mola(id_r_mola),
+  FOREIGN KEY (cadastrante) REFERENCES med_coord(id_med_coord),
+  FOREIGN KEY (revisor) REFERENCES med_coord(id_med_coord)
+);
+
 CREATE TABLE hcg
 (
   id_hcg INT NOT NULL AUTO_INCREMENT,
-  data_hcg DATE NOT NULL,
-  result_hcg INT NOT NULL,
-  lab_hcg VARCHAR(100) NOT NULL,
-  rev INT,
-  revisor INT NOT NULL,
+  data_hcg DATE,
+  result_hcg INT,
+  lab_hcg VARCHAR(100),
+  revisor INT,
   id_r_mola INT NOT NULL,
   id_imagem INT,
+  cadastrante INT NOT NULL,
   PRIMARY KEY (id_hcg),
   FOREIGN KEY (revisor) REFERENCES med_coord(id_med_coord),
   FOREIGN KEY (id_r_mola) REFERENCES registro_mola(id_r_mola),
-  FOREIGN KEY (id_imagem) REFERENCES imagens(id_imagem)
+  FOREIGN KEY (id_imagem) REFERENCES imagens(id_imagem),
+  FOREIGN KEY (cadastrante) REFERENCES usuario(id_usuario)
 );
 
 INSERT INTO dtg.indicacao (descricao)
 VALUES
 ('encaminhada por médico'),
 ('regulação'),
-('Facebook');
+('facebook');
 
 INSERT INTO dtg.instituicao
-(nome_inst)
-VALUES('HSP');
+( nome_inst,
+  cidade_inst,
+  bairro_inst,
+  logradouro_inst,
+  num_inst,
+  complemento_inst,
+  cep_inst,
+  uf_inst)
+VALUES
+('HUHSP',
+'São Paulo',
+'Vila Clementino',
+'Rua Napoleão de Barros',
+'715',
+'',
+'04024002',
+'SP');
 
-INSERT INTO dtg.histo_ntg
+INSERT INTO dtg.resultado_ap
 (descricao)
-VALUES('não tem'),
+VALUES('Não tem'),
+('MHC'), 
+('MHP'), 
+('MH'), 
+('Abortamento não molar'),
+('Gemelar MHC + Feto normal'),
+('Tumor trofoblástico de sítio placentário'),
+('Tumor trofoblástico epitelióide'),
+('Mola Invasora'),
 ('MI diagnosticada por HTA'),
 ('CORIO diagnosticada por HTA'),
 ('CORIOCA por CTG/Histeroscopia'),
 ('OUTROS por CTG/Histeroscopia');
-
+ 
 INSERT INTO dtg.mac
 (descricao)
-VALUES('nenhum'),
+VALUES('Nenhum'),
 ('ACHO'),
 ('Injetável trimestral'),
 ('Injetável mensal'),
-('condom'),
-('outros');
-
-
-
+('Condom');
