@@ -307,10 +307,10 @@ INSERT INTO dtg.instituicao
   cep_inst,
   uf_inst)
 VALUES
-('HUHSP',
-'São Paulo',
-'Vila Clementino',
-'Rua Napoleão de Barros',
+('huhsp',
+'são paulo',
+'vila clementino',
+'rua napoleão de barros',
 '715',
 '',
 '04024002',
