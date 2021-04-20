@@ -84,6 +84,33 @@ app.get('/pmstatus', function(req, res) {
 	res.send( pm2.list(errback) );
 	pm2.disconnect();
 });
+//verifica token de acesso se a página precisar de autenticação
+app.use(/^(?!\/auth).*$/,  (req, res, next) => {
+  console.log('headers: ',req.headers);
+  
+  if (req.headers.authorization === undefined || req.headers.authorization.split(' ')[0] !== 'Bearer') {
+    const status = 401
+    const message = 'Token inválido'
+    res.status(status).json({status, message})
+    return
+  }
+  try {
+    let verificaResultadoToken;
+     verificaResultadoToken = verificaToken(req.headers.authorization.split(' ')[1]);
+
+     if (verificaResultadoToken instanceof Error) {
+       const status = 401
+       const message = 'Token de autenticação não encontrado'
+       res.status(status).json({status, message})
+       return
+     }
+     next()
+  } catch (err) {
+    const status = 401
+    const message = 'Token revogado'
+    res.status(status).json({status, message})
+  }
+})
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
