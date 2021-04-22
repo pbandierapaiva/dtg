@@ -41,6 +41,22 @@ async function select_mdb(sql) {
     }
 }
 
+//faz update no banco no banco de dados
+async function update_mdb(sql) {
+  let conn;
+    try {
+      conn = await pool.getConnection();      
+      const rows = await conn.query(sql);
+      //console.log(rows);
+      return rows;      
+    } catch (err) {
+      console.log(err);
+      throw err;
+    } finally {      
+      if (conn) { conn.end(); }
+    }
+}
+
 //cria token de acesso
 function criarToken(payload){
   return jwt.sign(payload, SECRET_KEY, {expiresIn})
@@ -52,20 +68,20 @@ function verificaToken(token){
 //verifica se o login e senha do medico estão corretos
 async function medEstaAutenticado({ login, senha }) {
   sql =
-    " select u.senha senha,u.tipo tipo, u.nome nome, mc.categoria categoria, CONCAT(mc.uf_crm,' ',mc.crm) crm " +
+    " select u.senha senha,u.tipo tipo, u.nome nome, mc.categoria categoria, CONCAT(mc.uf_crm,' ',mc.crm) crm, mc.aceite aceite, u.id_usuario id_usuario  " +
     " from usuario u, med_coord mc " +
     " where " +
     " u.id_usuario=mc.id_med_coord and "+
     " u.login = '" + login + "' ";
   
-  var senha_banco = await select_mdb(sql);
+  let senha_banco = await select_mdb(sql);
   //console.log('senha', senha)
   console.log('senha_banco',senha_banco[0])
   if (typeof senha_banco[0] == 'undefined') {
     return false
   }
   if (senha == senha_banco[0].senha) {
-    const usuario = {login: login,nome: senha_banco[0].nome ,tipo: senha_banco[0].tipo,categoria: senha_banco[0].categoria, crm: senha_banco[0].crm}
+    const usuario = {login: login,nome: senha_banco[0].nome ,tipo: senha_banco[0].tipo,categoria: senha_banco[0].categoria, crm: senha_banco[0].crm, aceite: senha_banco[0].aceite, id_usuario: senha_banco[0].id_usuario}
     return usuario;
   }
   else {
@@ -86,7 +102,7 @@ app.get('/pmstatus', function(req, res) {
 });
 //verifica token de acesso se a página precisar de autenticação
 app.use(/^(?!\/auth).*$/,  (req, res, next) => {
-  console.log('headers: ',req.headers);
+  //console.log('headers: ',req.headers);
   
   if (req.headers.authorization === undefined || req.headers.authorization.split(' ')[0] !== 'Bearer') {
     const status = 401
@@ -97,7 +113,7 @@ app.use(/^(?!\/auth).*$/,  (req, res, next) => {
   try {
     let verificaResultadoToken;
      verificaResultadoToken = verificaToken(req.headers.authorization.split(' ')[1]);
-
+     console.log('verificaResultadoToken: ',verificaResultadoToken);
      if (verificaResultadoToken instanceof Error) {
        const status = 401
        const message = 'Token de autenticação não encontrado'
@@ -144,6 +160,27 @@ app.post('/auth/login',jsonParser,async (req, res) => {
   res.status(200).json({ access_token, credenciais: credenciais_corretas });
 })
 
+//função de aceite
+app.post('/auth/aceite_med', jsonParser, async (req, res) => {
+  //receber id_usuario
+  console.log(req.body)
+  const { id_usuario } = req.body;
+  console.log(id_usuario)
+  //fazer o update no banco de dados
+  sql ="update med_coord set aceite=1 where id_med_coord="+id_usuario
+  let resultado = await update_mdb(sql);
+  console.log(resultado);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: 1 });
+    return
+  }
+  else {
+    const status = 404
+    const message = 'Não foi possivel fazer o aceite, usuário não encontrado!';
+    res.status(status).json({status, message})
+    return
+  }
+})
 
 app.listen(port, () => {
   console.log(`DTG server em http://localhost:${port}`)
