@@ -97,6 +97,56 @@ async function medEstaAutenticado({ login, senha }) {
   }  
 }
 
+//################# servidor ###########################
+app.get('/deploy', function(req, res) {
+	git.pull().pull('origin', 'master', {'--rebase': 'true'})
+	sleep.sleep(5);
+	res.redirect('/');
+});
+app.get('/pmstatus', function(req, res) {
+	pm2.connect(errback);
+	res.send( pm2.list(errback) );
+	pm2.disconnect();
+});
+//verifica token de acesso se a página precisar de autenticação
+app.use(/^(?!\/auth).*$/,  (req, res, next) => {
+  //console.log('headers: ',req.headers);
+  
+  if (req.headers.authorization === undefined || req.headers.authorization.split(' ')[0] !== 'Bearer') {
+    const status = 401
+    const message = 'Token inválido'
+    res.status(status).json({status, message})
+    return
+  }
+  try {
+    let verificaResultadoToken;
+     verificaResultadoToken = verificaToken(req.headers.authorization.split(' ')[1]);
+     console.log('verificaResultadoToken: ',verificaResultadoToken);
+     if (verificaResultadoToken instanceof Error) {
+       const status = 401
+       const message = 'Token de autenticação não encontrado'
+       res.status(status).json({status, message})
+       return
+     }
+     next()
+  } catch (err) {
+    const status = 401
+    const message = 'Token revogado'
+    res.status(status).json({status, message})
+  }
+})
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+  res.header("Access-Control-Allow-Headers", "*");
+  next();
+});
+
+// Alo mundo
+app.get('/', function(req, res) {
+  res.send('Alo mundo!!!<br/> <b>Servidor DTG </b> alterado Capa2');
+});
+
 //################################## webservices #########################
 //webservice de login
 app.post('/auth/login',jsonParser,async (req, res) => {
@@ -175,55 +225,7 @@ app.post('/auth/alterar_senha_med', jsonParser, async (req, res) => {
 })
 
 
-//################# servidor ###########################
-app.get('/deploy', function(req, res) {
-	git.pull().pull('origin', 'master', {'--rebase': 'true'})
-	sleep.sleep(5);
-	res.redirect('/');
-});
-app.get('/pmstatus', function(req, res) {
-	pm2.connect(errback);
-	res.send( pm2.list(errback) );
-	pm2.disconnect();
-});
-//verifica token de acesso se a página precisar de autenticação
-app.use(/^(?!\/auth).*$/,  (req, res, next) => {
-  //console.log('headers: ',req.headers);
-  
-  if (req.headers.authorization === undefined || req.headers.authorization.split(' ')[0] !== 'Bearer') {
-    const status = 401
-    const message = 'Token inválido'
-    res.status(status).json({status, message})
-    return
-  }
-  try {
-    let verificaResultadoToken;
-     verificaResultadoToken = verificaToken(req.headers.authorization.split(' ')[1]);
-     console.log('verificaResultadoToken: ',verificaResultadoToken);
-     if (verificaResultadoToken instanceof Error) {
-       const status = 401
-       const message = 'Token de autenticação não encontrado'
-       res.status(status).json({status, message})
-       return
-     }
-     next()
-  } catch (err) {
-    const status = 401
-    const message = 'Token revogado'
-    res.status(status).json({status, message})
-  }
-})
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-  res.header("Access-Control-Allow-Headers", "*");
-  next();
-});
 
-// Alo mundo
-app.get('/', function(req, res) {
-  res.send('Alo mundo!!!<br/> <b>Servidor DTG </b> alterado Capa2');
-});
 
 app.listen(port, () => {
   console.log(`DTG server em http://localhost:${port}`)
