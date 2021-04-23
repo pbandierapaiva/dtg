@@ -210,7 +210,7 @@ app.post('/auth/alterar_senha_med', jsonParser, async (req, res) => {
   //criptografa a senha
   nova_senha =hash.reset().update(nova_senha).digest('hex');;
   //alterar a senha no banco de dados
-  sql = `update usuario set senha='{nova_senha}' where id_usuario={id_usuario}`;
+  sql = "update usuario set senha='"+nova_senha+"' where id_usuario="+id_usuario;
   let resultado = await update_mdb(sql);
  
   if (resultado.affectedRows > 0) {
