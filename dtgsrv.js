@@ -196,7 +196,7 @@ app.post('/auth/aceite_med', jsonParser, async (req, res) => {
 app.post('/auth/alterar_senha_med', jsonParser, async (req, res) => {
   //receber login, senha, nova_senha
   console.log(req.body)
-  const { login, senha, nova_senha } = req.body;
+  let { login, senha, nova_senha } = req.body;
   //verificar se as cedenciais estão corretas
   var credenciais_corretas = await medEstaAutenticado({login, senha})  
   if (credenciais_corretas === false) {
