@@ -74,7 +74,8 @@ function verificaToken(token){
 }
 //verifica se o login e senha do medico estão corretos
 async function medEstaAutenticado({ login, senha }) {
-  senha = hash.update(senha).digest('hex');
+  console.log('senha:', senha)
+  senha = hash.reset().update(senha).digest('hex');
   sql =
     " select u.senha senha,u.tipo tipo, u.nome nome, mc.categoria categoria, CONCAT(mc.uf_crm,' ',mc.crm) crm, mc.aceite aceite, u.id_usuario id_usuario  " +
     " from usuario u, med_coord mc " +
@@ -83,8 +84,8 @@ async function medEstaAutenticado({ login, senha }) {
     " u.login = '" + login + "' ";
   
   let senha_banco = await select_mdb(sql);
-  //console.log('senha', senha)
-  //console.log('senha_banco',senha_banco[0])
+  console.log('senha cripto:', senha)
+  console.log('senha_banco:',senha_banco[0].senha)
   if (typeof senha_banco[0] == 'undefined') {
     return false;
   }
@@ -207,7 +208,7 @@ app.post('/auth/alterar_senha_med', jsonParser, async (req, res) => {
   //pega o id do usuario
   id_usuario = credenciais_corretas.id_usuario;
   //criptografa a senha
-  nova_senha =hash.update(nova_senha).digest('hex');
+  nova_senha =hash.reset().update(nova_senha).digest('hex');;
   //alterar a senha no banco de dados
   sql = `update usuario set senha='{nova_senha}' where id_usuario={id_usuario}`;
   let resultado = await update_mdb(sql);
