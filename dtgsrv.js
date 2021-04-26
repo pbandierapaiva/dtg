@@ -39,8 +39,13 @@ async function select_mdb(sql) {
     try {
       conn = await pool.getConnection();      
       const rows = await conn.query(sql);
+      //esse loop serve para remover o meta que vem no resultado do sql
+      let rows_sem_meta =[]
+      for (let i = 0; i < rows.length; i++){
+        rows_sem_meta.push(rows[i]) 
+      }
       //console.log(rows);
-      return rows;      
+      return rows_sem_meta;      
     } catch (err) {
       console.log(err);
       throw err;
@@ -223,9 +228,19 @@ app.post('/auth/alterar_senha_med', jsonParser, async (req, res) => {
 
 //webservice de consultar dados do médico ou coordenador
 app.post('/consultar_medico', jsonParser, async (req, res) => {
-  //receber login, senha, nova_senha
-  console.log(req.body);
-  res.status(200).json({ resultado: req.body });
+  //receber nome, crm, uf_crm, tipo, situacao,categoria
+  let { nome, crm, uf_crm, tipo, situacao,categoria} = req.body;
+  
+sql =
+    " select u.id_usuario id_usuario, u.nome nome, mc.categoria categoria, mc.uf_crm uf_crm,mc.crm crm, i.nome_inst instituicao,u.ativo ativo  " +
+    " from usuario u, med_coord mc, instituicao i " +
+    " where " +
+  " u.id_usuario=mc.id_med_coord  " +
+  " and mc.id_inst=i.id_inst ";
+  
+  let resultado = await select_mdb(sql);
+  
+  res.status(200).json({ resultado });
   //let { login, senha, nova_senha } = req.body;
   //verificar se as cedenciais estão corretas  
 })
