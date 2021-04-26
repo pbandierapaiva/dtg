@@ -1,5 +1,6 @@
 //################### Importação da bibliotecas ############
 var express = require('express');
+var cors = require('cors')
 var bodyParser = require('body-parser')
 const jwt = require('jsonwebtoken')
 const mariadb = require('mariadb');
@@ -74,23 +75,23 @@ function verificaToken(token){
 }
 //verifica se o login e senha do medico estão corretos
 async function medEstaAutenticado({ login, senha }) {
-  console.log('senha:', senha)
+  //console.log('senha:', senha)
   senha = hash.reset().update(senha).digest('hex');
   sql =
-    " select u.senha senha,u.tipo tipo, u.nome nome, mc.categoria categoria, CONCAT(mc.uf_crm,' ',mc.crm) crm, mc.aceite aceite, u.id_usuario id_usuario  " +
+    " select u.senha senha,cast(u.tipo as int) id_tipo,u.tipo tipo, u.nome nome, cast(mc.categoria as int) id_categoria, mc.categoria categoria, CONCAT(mc.uf_crm,' ',mc.crm) crm, mc.aceite aceite, u.id_usuario id_usuario  " +
     " from usuario u, med_coord mc " +
     " where " +
     " u.id_usuario=mc.id_med_coord and "+
     " u.login = '" + login + "' ";
   
   let senha_banco = await select_mdb(sql);
-  console.log('senha cripto:', senha)
-  console.log('senha_banco:',senha_banco[0].senha)
+  //console.log('senha cripto:', senha)
+  //console.log('senha_banco:',senha_banco[0].senha)
   if (typeof senha_banco[0] == 'undefined') {
     return false;
   }
   if (senha == senha_banco[0].senha) {
-    const usuario = {login: login,nome: senha_banco[0].nome ,tipo: senha_banco[0].tipo,categoria: senha_banco[0].categoria, crm: senha_banco[0].crm, aceite: senha_banco[0].aceite, id_usuario: senha_banco[0].id_usuario}
+    const usuario = {login: login,nome: senha_banco[0].nome ,id_tipo: senha_banco[0].id_tipo,tipo: senha_banco[0].tipo,id_categoria: senha_banco[0].id_categoria,categoria: senha_banco[0].categoria, crm: senha_banco[0].crm, aceite: senha_banco[0].aceite, id_usuario: senha_banco[0].id_usuario}
     return usuario;
   }
   else {
@@ -109,6 +110,7 @@ app.get('/pmstatus', function(req, res) {
 	res.send( pm2.list(errback) );
 	pm2.disconnect();
 });
+app.use(cors())
 //verifica token de acesso se a página precisar de autenticação
 app.use(/^(?!\/auth).*$/,  (req, res, next) => {
   //console.log('headers: ',req.headers);
@@ -122,7 +124,7 @@ app.use(/^(?!\/auth).*$/,  (req, res, next) => {
   try {
     let verificaResultadoToken;
      verificaResultadoToken = verificaToken(req.headers.authorization.split(' ')[1]);
-     console.log('verificaResultadoToken: ',verificaResultadoToken);
+     //console.log('verificaResultadoToken: ',verificaResultadoToken);
      if (verificaResultadoToken instanceof Error) {
        const status = 401
        const message = 'Token de autenticação não encontrado'
@@ -136,12 +138,6 @@ app.use(/^(?!\/auth).*$/,  (req, res, next) => {
     res.status(status).json({status, message})
   }
 })
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-  res.header("Access-Control-Allow-Headers", "*");
-  next();
-});
 
 // Alo mundo
 app.get('/', function(req, res) {
@@ -173,13 +169,13 @@ app.post('/auth/login',jsonParser,async (req, res) => {
 //webservice de aceite do médico ou coordenador
 app.post('/auth/aceite_med', jsonParser, async (req, res) => {
   //receber id_usuario
-  console.log(req.body)
+  //console.log(req.body)
   const { id_usuario } = req.body;
-  console.log(id_usuario)
+  //console.log(id_usuario)
   //fazer o update do aceite no banco de dados
   sql ="update med_coord set aceite=1 where id_med_coord="+id_usuario
   let resultado = await update_mdb(sql);
-  console.log(resultado);
+  //console.log(resultado);
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado: 1 });
     return
@@ -195,7 +191,7 @@ app.post('/auth/aceite_med', jsonParser, async (req, res) => {
 //webservice de alterar senha do médico ou coordenador
 app.post('/auth/alterar_senha_med', jsonParser, async (req, res) => {
   //receber login, senha, nova_senha
-  console.log(req.body)
+  //console.log(req.body)
   let { login, senha, nova_senha } = req.body;
   //verificar se as cedenciais estão corretas
   var credenciais_corretas = await medEstaAutenticado({login, senha})  
@@ -225,6 +221,14 @@ app.post('/auth/alterar_senha_med', jsonParser, async (req, res) => {
   }
 })
 
+//webservice de consultar dados do médico ou coordenador
+app.post('/consultar_medico', jsonParser, async (req, res) => {
+  //receber login, senha, nova_senha
+  console.log(req.body);
+  res.status(200).json({ resultado: req.body });
+  //let { login, senha, nova_senha } = req.body;
+  //verificar se as cedenciais estão corretas  
+})
 
 
 
