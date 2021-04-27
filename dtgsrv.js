@@ -86,7 +86,8 @@ async function medEstaAutenticado({ login, senha }) {
     " select u.senha senha,cast(u.tipo as int) id_tipo,u.tipo tipo, u.nome nome, cast(mc.categoria as int) id_categoria, mc.categoria categoria, CONCAT(mc.uf_crm,' ',mc.crm) crm, mc.aceite aceite, u.id_usuario id_usuario  " +
     " from usuario u, med_coord mc " +
     " where " +
-    " u.id_usuario=mc.id_med_coord and "+
+    " u.id_usuario=mc.id_med_coord and " +
+    " u.ativo=1 and "+
     " u.login = '" + login + "' ";
   
   let senha_banco = await select_mdb(sql);
@@ -272,6 +273,27 @@ app.post('/consultar_medico', jsonParser, async (req, res) => {
   //verificar se as cedenciais estão corretas  
 })
 
+//webservice ativar ou inativar usuario 
+app.post('/ativaInativarUsuario', jsonParser, async (req, res) => {
+  //receber id_usuario
+ 
+  let { id_usuario,valor } = req.body;
+   
+  //alterar o campo ativo no banco de dados
+  sql = "update usuario set ativo='"+valor+"' where id_usuario="+id_usuario;
+  let resultado = await update_mdb(sql);
+ 
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: 1 });
+    return
+  }
+  else {
+    const status = 404
+    const message = 'Não foi possivel ativar/inativar o usuario!';
+    res.status(status).json({status, message})
+    return
+  }
+})
 
 
 app.listen(port, () => {
