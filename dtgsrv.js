@@ -229,15 +229,42 @@ app.post('/auth/alterar_senha_med', jsonParser, async (req, res) => {
 //webservice de consultar dados do médico ou coordenador
 app.post('/consultar_medico', jsonParser, async (req, res) => {
   //receber nome, crm, uf_crm, tipo, situacao,categoria
-  let { nome, crm, uf_crm, tipo, situacao,categoria} = req.body;
-  
-sql =
-    " select u.id_usuario id_usuario, u.nome nome, mc.categoria categoria, mc.uf_crm uf_crm,mc.crm crm, i.nome_inst instituicao,u.ativo ativo  " +
+  let { nome, crm, uf_crm, tipo, situacao, categoria } = req.body;
+  let sql =    
+    " select u.id_usuario id_usuario, u.nome nome, mc.categoria categoria, mc.uf_crm uf_crm,mc.crm crm, i.nome_inst instituicao,u.ativo ativo  " +    
     " from usuario u, med_coord mc, instituicao i " +
     " where " +
-  " u.id_usuario=mc.id_med_coord  " +
-  " and mc.id_inst=i.id_inst ";
-  
+    " u.id_usuario=mc.id_med_coord  " +    
+    " and mc.id_inst=i.id_inst ";  
+  let where = "";
+  if (nome != '') {
+    where += " and UPPER(u.nome) like UPPER('%"+nome+"%') "
+  }
+
+  if (crm != '') {
+    where += " and mc.crm = "+crm+" "
+  }
+
+  if (uf_crm != '') {
+    where += " and mc.uf_crm = '"+uf_crm+"' "
+  }
+
+  if (tipo != '') {
+    where += " and u.tipo = '"+tipo+"' "
+  }
+
+  if (situacao != '') {
+    where += " and u.ativo = '"+situacao+"' "
+  }
+
+  if (categoria != '') {
+    where += " and mc.categoria = '"+categoria+"' "
+  }
+
+  sql += where
+
+  ordem = " order by nome "
+  sql += ordem
   let resultado = await select_mdb(sql);
   
   res.status(200).json({ resultado });
