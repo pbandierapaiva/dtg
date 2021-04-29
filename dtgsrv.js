@@ -295,6 +295,37 @@ app.post('/ativaInativarUsuario', jsonParser, async (req, res) => {
   }
 })
 
+//webservice de consultar MAC (Método anti Concepcional)
+app.post('/consultar_mac', jsonParser, async (req, res) => {
+  //receber descricao
+  let { descricao } = req.body;
+  //definir o sql padrão
+  let sql =    
+    " select id_mac id, descricao " +    
+    " from mac ";
+  //variável que receberá o where
+  let where = "";
+  //se descrição foi enviado define um like no sql
+  if (descricao != '') {
+    where += "  UPPER(descricao) like UPPER('%"+descricao+"%') "
+  }
+  //des
+
+  if (where != '') {
+    where = " where " + where
+  }
+
+
+  sql += where
+
+  ordem = " order by descricao "
+  sql += ordem
+  let resultado = await select_mdb(sql);
+  
+  res.status(200).json({ resultado });
+  //let { login, senha, nova_senha } = req.body;
+  //verificar se as cedenciais estão corretas  
+})
 
 app.listen(port, () => {
   console.log(`DTG server em http://localhost:${port}`)
