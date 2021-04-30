@@ -478,6 +478,30 @@ app.get('/combo_inst', jsonParser, async (req, res) => {
  
 })
 
+//################################## tela de Anatomia Patológica #########################
+//webservice de consulta anatomia patológica
+app.post('/consultar_ap', jsonParser, async (req, res) => {
+  //receber descrição da anatomia patológica
+  let { descricao } = req.body;
+  let sql =
+    " select id_resultado_ap id, descricao " +
+    " from resultado_ap ";
+  let where = "";
+  if (descricao != "") {
+    where += " UPPER(descricao) like UPPER('%" + descricao + "%') "
+  }
+
+  if (where != "") {
+    where = " where " + where
+  }
+
+  sql += where;
+
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+})
+
 //################################## tela de consulta de pacientes #########################
 //webservice de consultar pacientes
 app.post('/consultar_pacientes', jsonParser, async (req, res) => {
