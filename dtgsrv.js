@@ -70,6 +70,22 @@ async function update_mdb(sql) {
     }
 }
 
+//faz insert no banco no banco de dados
+async function insert_mdb(sql,values) {
+  let conn;
+    try {
+      conn = await pool.getConnection();      
+      const rows = await conn.query(sql,values);
+      //console.log(rows);
+      return rows;      
+    } catch (err) {
+      console.log(err);
+      throw err;
+    } finally {      
+      if (conn) { conn.end(); }
+    }
+}
+
 //cria token de acesso
 function criarToken(payload){
   return jwt.sign(payload, SECRET_KEY, { expiresIn });
@@ -151,6 +167,7 @@ app.get('/', function(req, res) {
 });
 
 //################################## webservices #########################
+//################################## tela de Login #########################
 //webservice de login
 app.post('/auth/login',jsonParser,async (req, res) => {
 	//receber login e senha	
@@ -171,7 +188,7 @@ app.post('/auth/login',jsonParser,async (req, res) => {
   console.log(login + " está logado");
   res.status(200).json({ access_token, credenciais: credenciais_corretas });
 })
-
+//################################## tela de termo de aceite #########################
 //webservice de aceite do médico ou coordenador
 app.post('/auth/aceite_med', jsonParser, async (req, res) => {
   //receber id_usuario
@@ -193,7 +210,7 @@ app.post('/auth/aceite_med', jsonParser, async (req, res) => {
     return
   }
 })
-
+//################################## tela de alteração de senha #########################
 //webservice de alterar senha do médico ou coordenador
 app.post('/auth/alterar_senha_med', jsonParser, async (req, res) => {
   //receber login, senha, nova_senha
@@ -210,7 +227,7 @@ app.post('/auth/alterar_senha_med', jsonParser, async (req, res) => {
   //pega o id do usuario
   id_usuario = credenciais_corretas.id_usuario;
   //criptografa a senha
-  nova_senha =hash.reset().update(nova_senha).digest('hex');;
+  nova_senha =hash.reset().update(nova_senha).digest('hex');
   //alterar a senha no banco de dados
   sql = "update usuario set senha='"+nova_senha+"' where id_usuario="+id_usuario;
   let resultado = await update_mdb(sql);
@@ -226,7 +243,7 @@ app.post('/auth/alterar_senha_med', jsonParser, async (req, res) => {
     return
   }
 })
-
+//################################## tela de area de acesso #########################
 //webservice de consultar dados do médico ou coordenador
 app.post('/consultar_medico', jsonParser, async (req, res) => {
   //receber nome, crm, uf_crm, tipo, situacao,categoria
@@ -294,6 +311,94 @@ app.post('/ativaInativarUsuario', jsonParser, async (req, res) => {
   }
 })
 
+//################################## tela de cadastro da area de acesso #########################
+//webservice incluir novo médico ou coordenador
+app.post('/incluir_med_coord', jsonParser, async (req, res) => {
+  //receber nome,dataNasc, cpf, nomeMae, cep,logradouro, numero,complemento, uf, cidade, bairro, ufCrm,crm,  categoria,instituicao,tipoAcesso,login,  senha 
+  let { nome,
+        dataNasc,
+        cpf,
+        cep,
+        logradouro,
+        numero,
+        complemento,
+        uf,
+        cidade,
+        bairro,
+        ufCrm,
+        crm,
+        categoria,
+        instituicao,
+        tipoAcesso,
+        login} = req.body;
+  //criptografa a senha
+  let senha =hash.reset().update(login).digest('hex');
+   //incluir usuario  
+
+  let sql = "insert into usuario (nome," +
+    "tipo," +
+    "cep," +
+    "uf_resid," +
+    "cidade," +
+    "num_resid," +
+    "complemento," +
+    "logradouro," +
+    "bairro," +
+    "cpf," +
+    "dt_nasc," +
+    "login," +
+    "senha) values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+  let values = [nome,
+    tipoAcesso,
+    cep,
+    uf,
+    cidade,
+    numero,
+    complemento,
+    logradouro,
+    bairro,
+    cpf,
+    dataNasc,
+    login,
+    senha]
+  console.log('values',values)
+  let resultado = await insert_mdb(sql, values);
+  console.log(resultado)
+  //se deu certo tenta incluir em medCoord
+  if (resultado.affectedRows > 0) {
+    let sqlMed = "insert into med_coord (crm," +
+    "uf_crm," +
+    "categoria," +
+    "aceite," +
+    "id_med_coord," +
+      "id_inst" +
+    ") values(?,?,?,?,?,?)";
+    let valuesMed = [crm,      
+      ufCrm,      
+      categoria,
+      0,
+      resultado.insertId,
+      instituicao]
+    let resultado2 = await insert_mdb(sqlMed, valuesMed);
+    if (resultado2.affectedRows > 0) {
+      res.status(200).json({ resultado: [values, valuesMed] });
+      return
+    }else {
+    const status = 404
+    const message = 'Não foi possível incluir os dados do médico.';
+    res.status(status).json({status, message})
+    return
+  }
+  }
+  else {
+    const status = 404
+    const message = 'Não foi possível incluir o usuario do médico.';
+    res.status(status).json({status, message})
+    return
+  }
+})
+
+//################################## tela de MAC #########################
 //webservice de consultar MAC (Método anti Concepcional)
 app.post('/consultar_mac', jsonParser, async (req, res) => {
   //receber descricao
@@ -325,6 +430,22 @@ app.post('/consultar_mac', jsonParser, async (req, res) => {
  
 })
 
+//################################## tela de consulta de Instituições #########################
+//webservice de consultar MAC (Método anti Concepcional)
+app.get('/combo_inst', jsonParser, async (req, res) => {
+    //definir o sql padrão
+  let sql =    
+    " select id_inst id, nome_inst " +    
+    " from instituicao " +
+    " order by nome_inst "
+
+  let resultado = await select_mdb(sql);
+  
+  res.status(200).json({ resultado });
+ 
+})
+
+//################################## tela de consulta de pacientes #########################
 //webservice de consultar pacientes
 app.post('/consultar_pacientes', jsonParser, async (req, res) => {
   //receber nome, cpf, preceptor, termino_caso, situacao,categoria
