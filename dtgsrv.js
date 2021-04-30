@@ -361,9 +361,9 @@ app.post('/incluir_med_coord', jsonParser, async (req, res) => {
     dataNasc,
     login,
     senha]
-  console.log('values',values)
+  //console.log('values',values)
   let resultado = await insert_mdb(sql, values);
-  console.log(resultado)
+  //console.log(resultado)
   //se deu certo tenta incluir em medCoord
   if (resultado.affectedRows > 0) {
     let sqlMed = "insert into med_coord (crm," +
@@ -437,6 +437,7 @@ app.get('/combo_inst', jsonParser, async (req, res) => {
   let sql =    
     " select id_inst id, nome_inst " +    
     " from instituicao " +
+    " where  ativo = 1 " +
     " order by nome_inst "
 
   let resultado = await select_mdb(sql);
