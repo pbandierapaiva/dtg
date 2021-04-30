@@ -83,7 +83,7 @@ async function medEstaAutenticado({ login, senha }) {
   //console.log('senha:', senha)
   senha = hash.reset().update(senha).digest('hex');
   sql =
-    " select u.senha senha,cast(u.tipo as int) id_tipo,u.tipo tipo, u.nome nome, cast(mc.categoria as int) id_categoria, mc.categoria categoria, CONCAT(mc.uf_crm,' ',mc.crm) crm, mc.aceite aceite, u.id_usuario id_usuario  " +
+    " select u.senha senha,cast(u.tipo as int) id_tipo, u.tipo tipo, u.nome nome, cast(mc.categoria as int) id_categoria, mc.categoria categoria, CONCAT(mc.uf_crm,' ',mc.crm) crm, mc.aceite aceite, u.id_usuario id_usuario,mc.id_inst id_inst " +
     " from usuario u, med_coord mc " +
     " where " +
     " u.id_usuario=mc.id_med_coord and " +
@@ -97,7 +97,7 @@ async function medEstaAutenticado({ login, senha }) {
     return false;
   }
   if (senha == senha_banco[0].senha) {
-    const usuario = {login: login,nome: senha_banco[0].nome ,id_tipo: senha_banco[0].id_tipo,tipo: senha_banco[0].tipo,id_categoria: senha_banco[0].id_categoria,categoria: senha_banco[0].categoria, crm: senha_banco[0].crm, aceite: senha_banco[0].aceite, id_usuario: senha_banco[0].id_usuario}
+    const usuario = {login: login,nome: senha_banco[0].nome ,id_tipo: senha_banco[0].id_tipo,tipo: senha_banco[0].tipo,id_categoria: senha_banco[0].id_categoria,categoria: senha_banco[0].categoria, crm: senha_banco[0].crm, aceite: senha_banco[0].aceite, id_usuario: senha_banco[0].id_usuario, id_inst: senha_banco[0].id_inst}
     return usuario;
   }
   else {
@@ -230,13 +230,14 @@ app.post('/auth/alterar_senha_med', jsonParser, async (req, res) => {
 //webservice de consultar dados do médico ou coordenador
 app.post('/consultar_medico', jsonParser, async (req, res) => {
   //receber nome, crm, uf_crm, tipo, situacao,categoria
-  let { nome, crm, uf_crm, tipo, situacao, categoria } = req.body;
+  let { nome, crm, uf_crm, tipo, situacao, categoria, id_inst } = req.body;
   let sql =    
     " select u.id_usuario id_usuario, u.nome nome, mc.categoria categoria, mc.uf_crm uf_crm,mc.crm crm, i.nome_inst instituicao,u.ativo ativo  " +    
     " from usuario u, med_coord mc, instituicao i " +
     " where " +
     " u.id_usuario=mc.id_med_coord  " +    
-    " and mc.id_inst=i.id_inst ";  
+    " and mc.id_inst=i.id_inst " +
+    " and mc.id_inst= " + id_inst;
   let where = "";
   if (nome != '') {
     where += " and UPPER(u.nome) like UPPER('%"+nome+"%') "
@@ -269,8 +270,6 @@ app.post('/consultar_medico', jsonParser, async (req, res) => {
   let resultado = await select_mdb(sql);
   
   res.status(200).json({ resultado });
-  //let { login, senha, nova_senha } = req.body;
-  //verificar se as cedenciais estão corretas  
 })
 
 //webservice ativar ou inativar usuario 
@@ -323,10 +322,46 @@ app.post('/consultar_mac', jsonParser, async (req, res) => {
   let resultado = await select_mdb(sql);
   
   res.status(200).json({ resultado });
-  //let { login, senha, nova_senha } = req.body;
-  //verificar se as cedenciais estão corretas  
+ 
 })
 
+//webservice de consultar pacientes
+app.post('/consultar_pacientes', jsonParser, async (req, res) => {
+  //receber nome, cpf, preceptor, termino_caso, situacao,categoria
+  let { nome, cpf, preceptor,term_caso ,id_inst } = req.body;
+  let sql =    
+    " select u.id_usuario id_usuario, u.nome nome_paciente, u2.nome nome_preceptor, u.ativo ativo  " +    
+    " from usuario u,paciente p, usuario u2 " +
+    " where " +
+    " u.id_usuario=p.id_paciente  " +
+    " p.preceptor=u2.id_usuario  " +
+    " and u.id_inst= "+id_inst;  
+  let where = "";
+  if (nome != '') {
+    where += " and UPPER(u.nome) like UPPER('%"+nome+"%') "
+  }
+
+  if (cpf != '') {
+    where += " and u.cpf = "+crm+" "
+  }
+
+  if (preceptor != '') {
+    where += " and UPPER(u2.nome) like UPPER('%"+preceptor+"%') "
+  }
+
+  if (term_caso != '') {
+    //where += " and u.tipo = '"+tipo+"' "
+  }
+  
+
+  sql += where
+
+  ordem = " order by nome_paciente "
+  sql += ordem
+  let resultado = await select_mdb(sql);
+  
+  res.status(200).json({ resultado });
+})
 app.listen(port, () => {
   console.log(`DTG server em http://localhost:${port}`)
 })
