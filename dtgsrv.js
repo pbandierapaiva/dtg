@@ -526,18 +526,19 @@ app.post("/alterar_med_coord", jsonParser, async (req, res) => {
   //se deu certo tenta incluir em medCoord
   if (resultado.affectedRows > 0) {
     let sqlMed =
-      "update med_coord set crm = '"+ cpf +"'," +
+      "update med_coord set crm = '"+ crm +"'," +
       "uf_crm = '"+ ufCrm +"'," +
       "categoria = '"+ categoria +"'," +            
       "id_inst = '"+ instituicao +"'" +
-      ") where id_med_coord = "+id_usuario;
+      " where id_med_coord = " + id_usuario;
+    //console.log(sqlMed)
     let resultado2 = await update_mdb(sqlMed);
     if (resultado2.affectedRows > 0) {
-      res.status(200).json({ resultado: [values, valuesMed] });
+      res.status(200).json({ resultado: [req.body,resultado,resultado2] });
       return;
     } else {
       const status = 404;
-      const message = "Não foi possível incluir os dados do médico.";
+      const message = "Não foi possível alterar os dados do médico.";
       res.status(status).json({ status, message });
       return;
     }
@@ -576,30 +577,14 @@ app.post("/consultar_mac", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
-//################################## tela de MAC #########################
-//webservice de consultar MAC (Método anti Concepcional)
+//################################## tela de Intituição #########################
+//webservice de consultar Instituição
 app.post("/consultar_instituicao", jsonParser, async (req, res) => {
   //receber descricao
-  /*
-  nome: "",
-        cep: "",
-        logradouro: "",
-        uf: ""
-  */
+  
   let { nome, cep, logradouro, uf } = req.body;
   //definir o sql padrão
 
-  /*
-  id: 1,
-          nome: "Hospital São Paulo",
-          logradouro: "Rua Napoleão de Barros",
-          numero: "715",
-          cep: "04024-002",
-          bairro: "Vila Clementino",
-          cidade: "São Paulo",
-          uf: "SP",
-          complemento: "Não há"
-           */
   let sql = " select " +
     " id_inst id, " +
     " nome_inst nome, " +
