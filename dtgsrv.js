@@ -272,7 +272,7 @@ app.post("/auth/alterar_senha_med", jsonParser, async (req, res) => {
 });
 //################################## tela de area de acesso #########################
 //webservice de consultar dados do médico ou coordenador
-app.post("/consultar_medico", jsonParser, async (req, res) => {
+app.post("/consultar_medicos", jsonParser, async (req, res) => {
   //receber nome, crm, uf_crm, tipo, situacao,categoria
   let { nome, crm, uf_crm, tipo, situacao, categoria, id_inst } = req.body;
   let sql =
@@ -312,6 +312,60 @@ app.post("/consultar_medico", jsonParser, async (req, res) => {
 
   ordem = " order by nome ";
   sql += ordem;
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+
+
+//webservice retorna todos os dados de um médico ou coordenador
+app.post("/dados_medico", jsonParser, async (req, res) => {
+  //receber nome, crm, uf_crm, tipo, situacao,categoria
+  /*
+  nome,
+    dataNasc,
+    cpf,
+    cep,
+    logradouro,
+    numero,
+    complemento,
+    uf,
+    cidade,
+    bairro,
+    ufCrm,
+    crm,
+    categoria,
+    instituicao,
+    tipoAcesso,
+    login, */
+  let { id_usuario } = req.body;
+  let sql =  
+    " select u.id_usuario id_usuario," +
+    " u.nome nome," +
+    " u.tipo tipoAcesso, " +
+    " u.cep cep, " +
+    " u.uf_resid uf, " +
+    " u.cidade cidade, " +
+    " u.num_resid numero, " +
+    " u.complemento complemento, " +
+    " u.logradouro logradouro, " +
+    " u.bairro bairro, " +
+    " u.cpf cpf, " +
+    " date_format(u.dt_nasc,'%Y-%m-%d') dataNasc, " +
+    " u.login login, " +
+    " mc.crm crm, " +
+    " mc.uf_crm ufCrm, " +
+    " mc.categoria categoria, " +
+    " mc.aceite, " +
+    " mc.id_med_coord, " +
+    " mc.id_inst instituicao" +
+    " from usuario u, med_coord mc, instituicao i " +
+    " where " +
+    " u.id_usuario=mc.id_med_coord  " +
+    " and mc.id_inst=i.id_inst " +
+    " and u.id_usuario = "+id_usuario
+    ;
+  
   let resultado = await select_mdb(sql);
 
   res.status(200).json({ resultado });
@@ -529,7 +583,7 @@ app.post("/consultar_pacientes", jsonParser, async (req, res) => {
     " from usuario u,paciente p, usuario u2, registro_mola rm " +
     " where " +
     " u.id_usuario=p.id_paciente  " +
-    " and p.id_usuario=rm.id_paciente  " +
+    " and p.id_paciente=rm.id_paciente  " +
     " and p.preceptor=u2.id_usuario  " +    
     " and p.id_inst= " +
     id_inst;
@@ -554,6 +608,7 @@ app.post("/consultar_pacientes", jsonParser, async (req, res) => {
 
   ordem = " order by nome_paciente ";
   sql += ordem;
+  console.log(sql)
   let resultado = await select_mdb(sql);
 
   res.status(200).json({ resultado });
