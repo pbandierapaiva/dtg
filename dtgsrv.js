@@ -317,7 +317,6 @@ app.post("/consultar_medicos", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
-
 //webservice retorna todos os dados de um médico ou coordenador
 app.post("/dados_medico", jsonParser, async (req, res) => {
   //receber nome, crm, uf_crm, tipo, situacao,categoria
@@ -339,7 +338,7 @@ app.post("/dados_medico", jsonParser, async (req, res) => {
     tipoAcesso,
     login, */
   let { id_usuario } = req.body;
-  let sql =  
+  let sql =
     " select u.id_usuario id_usuario," +
     " u.nome nome," +
     " u.tipo tipoAcesso, " +
@@ -363,9 +362,8 @@ app.post("/dados_medico", jsonParser, async (req, res) => {
     " where " +
     " u.id_usuario=mc.id_med_coord  " +
     " and mc.id_inst=i.id_inst " +
-    " and u.id_usuario = "+id_usuario
-    ;
-  
+    " and u.id_usuario = " +
+    id_usuario;
   let resultado = await select_mdb(sql);
 
   res.status(200).json({ resultado });
@@ -480,7 +478,6 @@ app.post("/incluir_med_coord", jsonParser, async (req, res) => {
   }
 });
 
-
 //webservice alterar os dados de um médico ou coordenador
 app.post("/alterar_med_coord", jsonParser, async (req, res) => {
   //receber nome,dataNasc, cpf, nomeMae, cep,logradouro, numero,complemento, uf, cidade, bairro, ufCrm,crm,  categoria,instituicao,tipoAcesso,login,  senha
@@ -503,38 +500,72 @@ app.post("/alterar_med_coord", jsonParser, async (req, res) => {
     tipoAcesso,
     login,
   } = req.body;
-  
+
   //alterar usuario
 
   let sql =
-    "update usuario set nome = '"+ nome +"'," +
-    "tipo = '"+ tipoAcesso +"'," +
-    "cep = '"+ cep +"'," +
-    "uf_resid = '"+ uf +"'," +
-    "cidade = '"+ cidade +"'," +
-    "num_resid = '"+ numero +"'," +
-    "complemento = '"+ complemento +"'," +
-    "logradouro = '"+ logradouro +"'," +
-    "bairro = '"+ bairro +"'," +
-    "cpf = '"+ cpf +"'," +
-    "dt_nasc = '"+ dataNasc +"'," +
-    "login = '"+ login +"' where id_usuario = "+id_usuario;
-  
+    "update usuario set nome = '" +
+    nome +
+    "'," +
+    "tipo = '" +
+    tipoAcesso +
+    "'," +
+    "cep = '" +
+    cep +
+    "'," +
+    "uf_resid = '" +
+    uf +
+    "'," +
+    "cidade = '" +
+    cidade +
+    "'," +
+    "num_resid = '" +
+    numero +
+    "'," +
+    "complemento = '" +
+    complemento +
+    "'," +
+    "logradouro = '" +
+    logradouro +
+    "'," +
+    "bairro = '" +
+    bairro +
+    "'," +
+    "cpf = '" +
+    cpf +
+    "'," +
+    "dt_nasc = '" +
+    dataNasc +
+    "'," +
+    "login = '" +
+    login +
+    "' where id_usuario = " +
+    id_usuario;
+
   //console.log('values',values)
   let resultado = await update_mdb(sql);
   //console.log(resultado)
   //se deu certo tenta incluir em medCoord
   if (resultado.affectedRows > 0) {
     let sqlMed =
-      "update med_coord set crm = '"+ crm +"'," +
-      "uf_crm = '"+ ufCrm +"'," +
-      "categoria = '"+ categoria +"'," +            
-      "id_inst = '"+ instituicao +"'" +
-      " where id_med_coord = " + id_usuario;
+      "update med_coord set crm = '" +
+      crm +
+      "'," +
+      "uf_crm = '" +
+      ufCrm +
+      "'," +
+      "categoria = '" +
+      categoria +
+      "'," +
+      "id_inst = '" +
+      instituicao +
+      "'" +
+      " where id_med_coord = " +
+      id_usuario;
     //console.log(sqlMed)
     let resultado2 = await update_mdb(sqlMed);
     if (resultado2.affectedRows > 0) {
-      res.status(200).json({ resultado: [req.body,resultado,resultado2] });
+      res.status(200).json({ resultado: [req.body, resultado, resultado2] });
       return;
     } else {
       const status = 404;
@@ -581,11 +612,12 @@ app.post("/consultar_mac", jsonParser, async (req, res) => {
 //webservice de consultar Instituição
 app.post("/consultar_instituicao", jsonParser, async (req, res) => {
   //receber descricao
-  
+
   let { nome, cep, logradouro, uf } = req.body;
   //definir o sql padrão
 
-  let sql = " select " +
+  let sql =
+    " select " +
     " id_inst id, " +
     " nome_inst nome, " +
     " logradouro_inst logradouro," +
@@ -614,7 +646,6 @@ app.post("/consultar_instituicao", jsonParser, async (req, res) => {
   if (logradouro != "") {
     where += "  UPPER(uf_inst) = UPPER('%" + uf + "%') ";
   }
-   
 
   if (where != "") {
     where = " where " + where;
@@ -705,7 +736,7 @@ app.post("/consultar_pacientes", jsonParser, async (req, res) => {
     " where " +
     " u.id_usuario=p.id_paciente  " +
     " and p.id_paciente=rm.id_paciente  " +
-    " and p.preceptor=u2.id_usuario  " +    
+    " and p.preceptor=u2.id_usuario  " +
     " and p.id_inst= " +
     id_inst;
   let where = "";
@@ -722,14 +753,18 @@ app.post("/consultar_pacientes", jsonParser, async (req, res) => {
   }
 
   if (term_caso != "") {
-    where += " and rm.term_caso = '"+term_caso+"' "
+    if (term_caso == "Em andamento") {
+      where += " and rm.term_caso is null";
+    } else {
+      where += " and rm.term_caso = '" + term_caso + "' ";
+    }
   }
 
   sql += where;
 
   ordem = " order by nome_paciente ";
   sql += ordem;
-  console.log(sql)
+  //console.log(sql);
   let resultado = await select_mdb(sql);
 
   res.status(200).json({ resultado });
