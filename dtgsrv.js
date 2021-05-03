@@ -590,10 +590,10 @@ app.post("/consultar_instituicao", jsonParser, async (req, res) => {
     " nome_inst nome, " +
     " logradouro_inst lagradouro," +
     " num_inst numero," +
-    " cep_inst cep " +
-    " bairro_inst bairro " +
-    " cidade_inst cidade " +
-    " uf_inst uf " +
+    " cep_inst cep, " +
+    " bairro_inst bairro, " +
+    " cidade_inst cidade, " +
+    " uf_inst uf, " +
     " complemento_inst complemento " +
     " from instituicao ";
   //variável que receberá o where
