@@ -525,11 +525,12 @@ app.post("/consultar_pacientes", jsonParser, async (req, res) => {
   //receber nome, cpf, preceptor, termino_caso, situacao,categoria
   let { nome, cpf, preceptor, term_caso, id_inst } = req.body;
   let sql =
-    " select u.id_usuario id_usuario, u.nome nome_paciente, u2.nome nome_preceptor, u.ativo ativo, u.cpf cpf  " +
-    " from usuario u,paciente p, usuario u2 " +
+    " select u.id_usuario id_usuario, u.nome nome_paciente, u2.nome nome_preceptor, u.ativo ativo, u.cpf cpf, rm.term_caso term_caso, cast(rm.term_caso as int) id_term_caso  " +
+    " from usuario u,paciente p, usuario u2, registro_mola rm " +
     " where " +
     " u.id_usuario=p.id_paciente  " +
-    " and p.preceptor=u2.id_usuario  " +
+    " and p.id_usuario=rm.id_paciente  " +
+    " and p.preceptor=u2.id_usuario  " +    
     " and p.id_inst= " +
     id_inst;
   let where = "";
@@ -546,7 +547,7 @@ app.post("/consultar_pacientes", jsonParser, async (req, res) => {
   }
 
   if (term_caso != "") {
-    //where += " and u.tipo = '"+tipo+"' "
+    where += " and rm.term_caso = '"+term_caso+"' "
   }
 
   sql += where;
