@@ -576,6 +576,74 @@ app.post("/consultar_mac", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
+//################################## tela de MAC #########################
+//webservice de consultar MAC (Método anti Concepcional)
+app.post("/consultar_instituicao", jsonParser, async (req, res) => {
+  //receber descricao
+  /*
+  nome: "",
+        cep: "",
+        logradouro: "",
+        uf: ""
+  */
+  let { nome, cep, logradouro, uf } = req.body;
+  //definir o sql padrão
+
+  /*
+  id: 1,
+          nome: "Hospital São Paulo",
+          logradouro: "Rua Napoleão de Barros",
+          numero: "715",
+          cep: "04024-002",
+          bairro: "Vila Clementino",
+          cidade: "São Paulo",
+          uf: "SP",
+          complemento: "Não há"
+           */
+  let sql = " select " +
+    " id_inst id, " +
+    " nome_inst nome, " +
+    " logradouro_inst lagradouro," +
+    " num_inst numero," +
+    " cep_inst cep " +
+    " bairro_inst bairro " +
+    " cidade_inst cidade " +
+    " uf_inst uf " +
+    " complemento_inst complemento " +
+    " from instituicao ";
+  //variável que receberá o where
+  let where = "";
+  //se nome foi enviado define um like no sql
+  if (nome != "") {
+    where += "  UPPER(nome_inst) like UPPER('%" + nome + "%') ";
+  }
+  //se cep foi enviado define um like no sql
+  if (cep != "") {
+    where += "  UPPER(cep_inst) like UPPER('%" + cep + "%') ";
+  }
+  //se nome foi enviado define um like no sql
+  if (logradouro != "") {
+    where += "  UPPER(logradouro_inst) like UPPER('%" + logradouro + "%') ";
+  }
+  //se nome foi enviado define uma igualdade no sql
+  if (logradouro != "") {
+    where += "  UPPER(uf_inst) = UPPER('%" + uf + "%') ";
+  }
+   
+
+  if (where != "") {
+    where = " where " + where;
+  }
+
+  sql += where;
+
+  ordem = " order by nome ";
+  sql += ordem;
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+
 //################################## tela de Indicação #########################
 //webservice de consultar Indicação
 app.post("/consultar_indicacao", jsonParser, async (req, res) => {
