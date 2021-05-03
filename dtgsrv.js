@@ -588,7 +588,7 @@ app.post("/consultar_instituicao", jsonParser, async (req, res) => {
   let sql = " select " +
     " id_inst id, " +
     " nome_inst nome, " +
-    " logradouro_inst lagradouro," +
+    " logradouro_inst logradouro," +
     " num_inst numero," +
     " cep_inst cep, " +
     " bairro_inst bairro, " +
