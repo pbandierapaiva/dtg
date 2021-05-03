@@ -480,6 +480,74 @@ app.post("/incluir_med_coord", jsonParser, async (req, res) => {
   }
 });
 
+
+//webservice alterar os dados de um médico ou coordenador
+app.post("/alterar_med_coord", jsonParser, async (req, res) => {
+  //receber nome,dataNasc, cpf, nomeMae, cep,logradouro, numero,complemento, uf, cidade, bairro, ufCrm,crm,  categoria,instituicao,tipoAcesso,login,  senha
+  let {
+    id_usuario,
+    nome,
+    dataNasc,
+    cpf,
+    cep,
+    logradouro,
+    numero,
+    complemento,
+    uf,
+    cidade,
+    bairro,
+    ufCrm,
+    crm,
+    categoria,
+    instituicao,
+    tipoAcesso,
+    login,
+  } = req.body;
+  
+  //alterar usuario
+
+  let sql =
+    "update usuario set nome = '"+ nome +"'," +
+    "tipo = '"+ tipoAcesso +"'," +
+    "cep = '"+ cep +"'," +
+    "uf_resid = '"+ uf +"'," +
+    "cidade = '"+ cidade +"'," +
+    "num_resid = '"+ numero +"'," +
+    "complemento = '"+ complemento +"'," +
+    "logradouro = '"+ logradouro +"'," +
+    "bairro = '"+ bairro +"'," +
+    "cpf = '"+ cpf +"'," +
+    "dt_nasc = '"+ dataNasc +"'," +
+    "login = '"+ login +"' where id_usuario = "+id_usuario;
+  
+  //console.log('values',values)
+  let resultado = await update_mdb(sql);
+  //console.log(resultado)
+  //se deu certo tenta incluir em medCoord
+  if (resultado.affectedRows > 0) {
+    let sqlMed =
+      "update med_coord set crm = '"+ cpf +"'," +
+      "uf_crm = '"+ ufCrm +"'," +
+      "categoria = '"+ categoria +"'," +            
+      "id_inst = '"+ instituicao +"'" +
+      ") where id_med_coord = "+id_usuario;
+    let resultado2 = await update_mdb(sqlMed);
+    if (resultado2.affectedRows > 0) {
+      res.status(200).json({ resultado: [values, valuesMed] });
+      return;
+    } else {
+      const status = 404;
+      const message = "Não foi possível incluir os dados do médico.";
+      res.status(status).json({ status, message });
+      return;
+    }
+  } else {
+    const status = 404;
+    const message = "Não foi possível incluir o usuario do médico.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
 //################################## tela de MAC #########################
 //webservice de consultar MAC (Método anti Concepcional)
 app.post("/consultar_mac", jsonParser, async (req, res) => {
