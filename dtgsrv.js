@@ -228,7 +228,7 @@ app.post("/auth/aceite_med", jsonParser, async (req, res) => {
     res.status(200).json({ resultado: 1 });
     return;
   } else {
-    const status = 404;
+    const status = 409;
     const message = "Não foi possivel fazer o aceite, usuário não encontrado!";
     res.status(status).json({ status, message });
     return;
@@ -264,7 +264,7 @@ app.post("/auth/alterar_senha_med", jsonParser, async (req, res) => {
     res.status(200).json({ resultado: 1 });
     return;
   } else {
-    const status = 404;
+    const status = 409;
     const message = "Não foi possivel alterar a senha!";
     res.status(status).json({ status, message });
     return;
@@ -384,7 +384,7 @@ app.post("/ativaInativarUsuario", jsonParser, async (req, res) => {
     res.status(200).json({ resultado: 1 });
     return;
   } else {
-    const status = 404;
+    const status = 409;
     const message = "Não foi possivel ativar/inativar o usuario!";
     res.status(status).json({ status, message });
     return;
@@ -465,13 +465,13 @@ app.post("/incluir_med_coord", jsonParser, async (req, res) => {
       res.status(200).json({ resultado: [values, valuesMed] });
       return;
     } else {
-      const status = 404;
+      const status = 409;
       const message = "Não foi possível incluir os dados do médico.";
       res.status(status).json({ status, message });
       return;
     }
   } else {
-    const status = 404;
+    const status = 409;
     const message = "Não foi possível incluir o usuario do médico.";
     res.status(status).json({ status, message });
     return;
@@ -568,19 +568,19 @@ app.post("/alterar_med_coord", jsonParser, async (req, res) => {
       res.status(200).json({ resultado: [req.body, resultado, resultado2] });
       return;
     } else {
-      const status = 404;
+      const status = 409;
       const message = "Não foi possível alterar os dados do médico.";
       res.status(status).json({ status, message });
       return;
     }
   } else {
-    const status = 404;
+    const status = 409;
     const message = "Não foi possível incluir o usuario do médico.";
     res.status(status).json({ status, message });
     return;
   }
 });
-//################################## tela de MAC #########################
+//################################## tela de consulta MAC #########################
 //webservice de consultar MAC (Método anti Concepcional)
 app.post("/consultar_mac", jsonParser, async (req, res) => {
   //receber descricao
@@ -608,7 +608,28 @@ app.post("/consultar_mac", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
-//################################## tela de Intituição #########################
+//################################## tela de Cadastro de MAC #########################
+//webservice de incluir de  MAC (Método anti Concepcional)
+app.post("/incluir_mac", jsonParser, async (req, res) => {
+  //receber descricao
+  let { descricao } = req.body;
+  //definir o sql padrão
+  let sql =
+    "insert into mac (descricao) values(?)";
+  let values = [descricao];
+  let resultado = await insert_mdb(sql, values);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: [values, resultado,insertId] });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível incluir os dados do MAC.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
+//################################## tela de Instituição #########################
 //webservice de consultar Instituição
 app.post("/consultar_instituicao", jsonParser, async (req, res) => {
   //receber descricao
@@ -777,41 +798,6 @@ app.listen(port, () => {
 //webservice de incluir paciente
 app.post("/incluir_med_coord", jsonParser, async (req, res) => {
   //receber nome,dataNasc, cpf, nomeMae, cep,logradouro, numero,complemento, uf, cidade, bairro, ufCrm,crm,  categoria,instituicao,tipoAcesso,login,  senha
-
-  /*
-  nome
-  dataNasc
-  cpf
-  nomeMae
-  cep
-  logradouro: "",
-  numero: "",
-  complemento: "",
-  uf: "",
-  cidade: "",
-  bairro: "",
-  sus: "",
-  rh: "",
-  instituicao: "",
-  cor: "",
-  escoladoridade: "",
-  tipoSanguineo: "",
-  fatorRh: "",
-  indicacao: "",
-  instituicao: "",
-  estadoCivil: "",
-  outros: "",        
-  telefoneProprio - 
-  telefoneContato -
-  nomeContato - 
-  email - 
-  reacoesAlergicas -
-  preceptor -  
-  rg: - 
-  rne - 
-  nacionalidade -
-  login 
-  */
   let {
     nome,    
     data_nasc,
@@ -948,19 +934,19 @@ app.post("/incluir_med_coord", jsonParser, async (req, res) => {
         return;
       }
       else {
-        const status = 404;
+        const status = 409;
         const message = "Não foi possível incluir os dados do registro mola do paciente.";
         res.status(status).json({ status, message });
         return;
       }
     } else {
-      const status = 404;
+      const status = 409;
       const message = "Não foi possível incluir os dados do paciente.";
       res.status(status).json({ status, message });
       return;
     }
   } else {
-    const status = 404;
+    const status = 409;
     const message = "Não foi possível incluir o usuario do paciente.";
     res.status(status).json({ status, message });
     return;
