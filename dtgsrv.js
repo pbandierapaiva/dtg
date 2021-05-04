@@ -629,7 +629,7 @@ app.post("/incluir_mac", jsonParser, async (req, res) => {
   }
 });
 
-//################################## tela de Instituição #########################
+//################################## tela de consulta Instituição #########################
 //webservice de consultar Instituição
 app.post("/consultar_instituicao", jsonParser, async (req, res) => {
   //receber descricao
@@ -680,6 +680,44 @@ app.post("/consultar_instituicao", jsonParser, async (req, res) => {
 
   res.status(200).json({ resultado });
 });
+//################################## tela de Cadastro de Instituição #########################
+//webservice de incluir Instituição
+app.post("/incluir_instituicao", jsonParser, async (req, res) => {
+  //receber dados para inclusão
+  let { nome,
+    cep,
+    logradouro,
+    numero,
+    complemento,
+    uf,
+    cidade,
+    bairro
+  } = req.body;
+  //definir o sql padrão
+  let sql =
+    "insert into instituicao ( " +
+    " nome_inst , " +
+    " logradouro_inst ," +
+    " num_inst ," +
+    " cep_inst , " +
+    " bairro_inst , " +
+    " cidade_inst , " +
+    " uf_inst , " +
+    " complemento_inst  " +
+    ") values(?,?,?,?,?,?,?,?)";
+  let values = [nome, logradouro, numero, cep, bairro, cidade, uf, complemento];
+  let resultado = await insert_mdb(sql, values);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: [values, resultado.insertId] });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível incluir os dados da Instituição.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
 
 //################################## tela de Indicação #########################
 //webservice de consultar Indicação
