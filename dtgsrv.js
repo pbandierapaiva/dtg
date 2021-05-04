@@ -709,6 +709,27 @@ app.post("/consultar_indicacao", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
+//################################## tela de Cadastro de Indicações #########################
+//webservice de incluir Indicação
+app.post("/incluir_indicacao", jsonParser, async (req, res) => {
+  //receber descricao
+  let { descricao } = req.body;
+  //definir o sql padrão
+  let sql =
+    "insert into indicacao (descricao) values(?)";
+  let values = [descricao];
+  let resultado = await insert_mdb(sql, values);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: [values, resultado,insertId] });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível incluir os dados da Indicação.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
 //################################## tela de consulta de Instituições #########################
 //webservice de consultar MAC (Método anti Concepcional)
 app.get("/combo_inst", jsonParser, async (req, res) => {
