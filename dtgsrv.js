@@ -772,3 +772,197 @@ app.post("/consultar_pacientes", jsonParser, async (req, res) => {
 app.listen(port, () => {
   console.log(`DTG server em http://localhost:${port}`);
 });
+
+//################################## tela de cadastro de pacientes  #########################
+//webservice de incluir paciente
+app.post("/incluir_med_coord", jsonParser, async (req, res) => {
+  //receber nome,dataNasc, cpf, nomeMae, cep,logradouro, numero,complemento, uf, cidade, bairro, ufCrm,crm,  categoria,instituicao,tipoAcesso,login,  senha
+
+  /*
+  nome
+  dataNasc
+  cpf
+  nomeMae
+  cep
+  logradouro: "",
+  numero: "",
+  complemento: "",
+  uf: "",
+  cidade: "",
+  bairro: "",
+  sus: "",
+  rh: "",
+  instituicao: "",
+  cor: "",
+  escoladoridade: "",
+  tipoSanguineo: "",
+  fatorRh: "",
+  indicacao: "",
+  instituicao: "",
+  estadoCivil: "",
+  outros: "",        
+  telefoneProprio - 
+  telefoneContato -
+  nomeContato - 
+  email - 
+  reacoesAlergicas -
+  preceptor -  
+  rg: - 
+  rne - 
+  nacionalidade -
+  login 
+  */
+  let {
+    nome,    
+    data_nasc,
+    cpf,
+    nome_mae,
+    cep,
+    logradouro,
+    numero,
+    complemento,
+    uf,
+    cidade,
+    bairro,
+    sus,
+    rh,
+    instituicao,
+    cor,
+    indicacao,
+    estado_civil,
+    tipo_sanguineo,
+    fator_rh,
+    tel_proprio,
+    tel_contato,
+    nome_contato,
+    email,
+    reacoes_alergicas,
+    preceptor,
+    rg,
+    rne,
+    nacionalidade,
+    login,
+    escolaridade,
+    cadastrante
+  } = req.body;
+  
+  //criptografa a senha
+  let senha = hash.reset().update(login).digest("hex");
+  //incluir usuario
+
+  let sql =
+    "insert into usuario (nome," +
+    "tipo," +
+    "cep," +
+    "uf_resid," +
+    "cidade," +
+    "num_resid," +
+    "complemento," +
+    "logradouro," +
+    "bairro," +
+    "cpf," +
+    "dt_nasc," +
+    "login," +
+    "senha) values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+  let values = [
+    nome,
+    1,
+    cep,
+    uf,
+    cidade,
+    numero,
+    complemento,
+    logradouro,
+    bairro,
+    cpf,
+    data_nasc,
+    login,
+    senha
+  ];
+  //console.log('values',values)
+  let resultado = await insert_mdb(sql, values);
+  //console.log(resultado)
+  //se deu certo tenta incluir em medCoord
+  if (resultado.affectedRows > 0) {
+    let sqlPaci =
+      "insert into pacientes ("+
+      "sus, "+
+      "rh, "+
+      "cor, "+
+      "tipo_sanguineo, "+
+      "rh_tipo_sanguineo, "+
+      "tel_proprio, "+
+      "tel_contato, "+
+      "nome_contato, "+
+      "reacoes_alergicas, "+
+      "estado_civil, "+
+      "nome_mae, "+
+      "escolaridade, "+
+      "email, "+
+      "rne, " +
+      "rg, "+
+      "nacionalidade, "+        
+      "id_paciente, "+
+      "id_indicacao, "+
+      "preceptor, "+
+      "id_inst)" +
+      ") values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    let valuesPaci = [
+      sus,
+      rh,
+      cor,
+      tipo_sanguineo,
+      fator_rh,
+      tel_proprio,
+      tel_contato,
+      nome_contato,
+      reacoes_alergicas,
+      estado_civil,
+      nome_mae,
+      escolaridade,
+      email,
+      rne,
+      rg,
+      nacionalidade,
+      resultado.insertId,
+      indicacao,
+      preceptor,
+      instituicao
+    ];
+    let resultado2 = await insert_mdb(sqlPaci, valuesPaci);
+    if (resultado2.affectedRows > 0) {
+      let sqlRMola =
+        "insert into registro_mola (" +
+        "id_paciente, " +
+        "pessoa_ult," +
+        "data_ult," +       
+        ") values(?, ?, NOW())";
+      
+      let valuesRmola = [
+        resultado.insertId,
+        cadastrante
+      ];
+      let resultado3 = await insert_mdb(sqlRMola, valuesRmola);
+      if (resultado3.affectedRows > 0) {
+        res.status(200).json({ resultado: [values, valuesPaci] });
+        return;
+      }
+      else {
+        const status = 404;
+        const message = "Não foi possível incluir os dados do registro mola do paciente.";
+        res.status(status).json({ status, message });
+        return;
+      }
+    } else {
+      const status = 404;
+      const message = "Não foi possível incluir os dados do paciente.";
+      res.status(status).json({ status, message });
+      return;
+    }
+  } else {
+    const status = 404;
+    const message = "Não foi possível incluir o usuario do paciente.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
