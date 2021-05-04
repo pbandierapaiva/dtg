@@ -580,6 +580,36 @@ app.post("/alterar_med_coord", jsonParser, async (req, res) => {
     return;
   }
 });
+
+//webservice para resetar senha
+//este webservice tbm é chamado na tela de cadastro de pacientes
+app.post("/resetar_senha", jsonParser, async (req, res) => {
+  //esse webservice deixa a senha igual ao login do usuario
+  //receber id_usuario e o longin
+  let { id_usuario, login } = req.body;
+  //criptografa a senha
+  let senha = hash.reset().update(login).digest("hex");
+  //alterar senha do usuario
+
+  let sql =
+    "update usuario set senha = '" +
+    senha  +   
+    "' where id_usuario = " +
+    id_usuario +
+    " and login = '" + login +"'";
+  //console.log('values',values)
+  let resultado = await update_mdb(sql);
+  //console.log(resultado)  
+  if (resultado.affectedRows > 0) {
+      res.status(200).json({ resultado: "senha resetada com sucesso" });
+      return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível alterar a senha do usuario ";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
 //################################## tela de consulta MAC #########################
 //webservice de consultar MAC (Método anti Concepcional)
 app.post("/consultar_mac", jsonParser, async (req, res) => {
