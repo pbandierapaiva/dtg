@@ -619,7 +619,7 @@ app.post("/incluir_mac", jsonParser, async (req, res) => {
   let values = [descricao];
   let resultado = await insert_mdb(sql, values);
   if (resultado.affectedRows > 0) {
-    res.status(200).json({ resultado: [values, resultado,insertId] });
+    res.status(200).json({ resultado: [values, resultado.insertId] });
     return;
   } else {
     const status = 409;
@@ -720,7 +720,7 @@ app.post("/incluir_indicacao", jsonParser, async (req, res) => {
   let values = [descricao];
   let resultado = await insert_mdb(sql, values);
   if (resultado.affectedRows > 0) {
-    res.status(200).json({ resultado: [values, resultado,insertId] });
+    res.status(200).json({ resultado: [values, resultado.insertId] });
     return;
   } else {
     const status = 409;
@@ -745,12 +745,12 @@ app.get("/combo_inst", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
-//################################## tela de Anatomia Patológica #########################
-//webservice de consulta anatomia patológica
-app.post("/consultar_ap", jsonParser, async (req, res) => {
+//################################## tela de resultado da Anatomia Patológica #########################
+//webservice de consulta resultado da anatomia patológica
+app.post("/consultar_resultado_ap", jsonParser, async (req, res) => {
   //receber descrição da anatomia patológica
   let { descricao } = req.body;
-  let sql = " select id_resultado_ap id, descricao " + " from resultado_ap ";
+  let sql = " select id_resultado_ap id, descricao from resultado_ap ";
   let where = "";
   if (descricao != "") {
     where += " UPPER(descricao) like UPPER('%" + descricao + "%') ";
@@ -765,6 +765,27 @@ app.post("/consultar_ap", jsonParser, async (req, res) => {
   let resultado = await select_mdb(sql);
 
   res.status(200).json({ resultado });
+});
+
+//################################## tela de Cadastro de resultado da Anatomia Patológica #########################
+//webservice de resultado da Anatomia Patológica
+app.post("/incluir_resultado_ap", jsonParser, async (req, res) => {
+  //receber descricao
+  let { descricao } = req.body;
+  //definir o sql padrão
+  let sql =
+    "insert into resultado_ap (descricao) values(?)";
+  let values = [descricao];
+  let resultado = await insert_mdb(sql, values);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: [values, resultado.insertId] });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível incluir os dados de resultado da Anatomia Patologica.";
+    res.status(status).json({ status, message });
+    return;
+  }
 });
 
 //################################## tela de consulta de pacientes #########################
