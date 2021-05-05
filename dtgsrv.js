@@ -906,7 +906,7 @@ app.listen(port, () => {
 
 //################################## tela de cadastro de pacientes  #########################
 //webservice de incluir paciente
-app.post("/incluir_med_coord", jsonParser, async (req, res) => {
+app.post("/incluir_paciente", jsonParser, async (req, res) => {
   //receber nome,dataNasc, cpf, nomeMae, cep,logradouro, numero,complemento, uf, cidade, bairro, ufCrm,crm,  categoria,instituicao,tipoAcesso,login,  senha
   let {
     nome,    
