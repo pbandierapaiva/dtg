@@ -1045,7 +1045,7 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
 });
 
 //webservice tras os dados de um paciente 
-app.post("/dados_pacientes", jsonParser, async (req, res) => {
+app.post("/dados_paciente", jsonParser, async (req, res) => {
   //receber id_usuario
   let { id_usuario } = req.body;
   let sql =
