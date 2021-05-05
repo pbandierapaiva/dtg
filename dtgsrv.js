@@ -1099,7 +1099,7 @@ app.post("/dados_paciente", jsonParser, async (req, res) => {
 
 //webservice alterar os dados de um paciente
 app.post("/alterar_paciente", jsonParser, async (req, res) => {
-  //receber nome,dataNasc, cpf, nomeMae, cep,logradouro, numero,complemento, uf, cidade, bairro, ufCrm,crm,  categoria,instituicao,tipoAcesso,login,  senha
+  //receber dados para alteração do paciente
   let {
     id_usuario,
     nome,    
@@ -1131,8 +1131,7 @@ app.post("/alterar_paciente", jsonParser, async (req, res) => {
     rne,
     nacionalidade,
     login,
-    escolaridade,
-    cadastrante
+    escolaridade
   } = req.body;
 
   //alterar usuario
@@ -1176,22 +1175,52 @@ app.post("/alterar_paciente", jsonParser, async (req, res) => {
   //console.log('values',values)
   let resultado = await update_mdb(sql);
   //console.log(resultado)
-  //se deu certo tenta incluir em medCoord
+  //se deu certo tenta incluir em paciente
   if (resultado.affectedRows > 0) {
-    let sqlMed =
-      "update paciente set crm = '" +
-      crm +
-      "'," +
-      "uf_crm = '" +
-      ufCrm +
-      "'," +
-      "categoria = '" +
-      categoria +
-      "'," +
-      "id_inst = '" +
-      instituicao +
-      "'" +
-      " where id_med_coord = " +
+    
+    let sqlPaci =
+      "update paciente set " +
+      " sus ='" + sus
+      +"', " +
+      " rh='" + rh
+      +"', " +
+      " cor='" + cor
+      +"', " +
+      " tipo_sanguineo='" + tipo_sanguineo
+      +"', " +
+      " rh_tipo_sanguineo='" + fator_rh
+      +"', " +
+      " tel_proprio='" + tel_proprio
+      +"', " +
+      " tel_contato='" + tel_contato
+      +"', " +
+      " nome_contato='" + nome_contato
+      +"', " +
+      " reacoes_alergicas='" + reacoes_alergicas
+      +"', " +
+      " estado_civil='" + estado_civil
+      +"', " +
+      " nome_mae='" + nome_mae
+      +"', " +
+      " escolaridade='" + escolaridade
+      +"', " +
+      " email='" + email
+      +"', " +
+      " rne='" + rne
+      +"', "  +
+      " rg='" + rg
+      +"', " +
+      " nacionalidade='" + nacionalidade
+      +"', " +        
+      " id_paciente='" + id_usuario
+      +"', " +
+      " id_indicacao='" + indicacao
+      +"', " +
+      " preceptor='" + preceptor
+      +"', " +
+      " id_inst ='" + instituicao +
+      
+      " where id_paciente = " +
       id_usuario;
     //console.log(sqlMed)
     let resultado2 = await update_mdb(sqlMed);
@@ -1200,13 +1229,13 @@ app.post("/alterar_paciente", jsonParser, async (req, res) => {
       return;
     } else {
       const status = 409;
-      const message = "Não foi possível alterar os dados do médico.";
+      const message = "Não foi possível alterar os dados do paciente.";
       res.status(status).json({ status, message });
       return;
     }
   } else {
     const status = 409;
-    const message = "Não foi possível incluir o usuario do médico.";
+    const message = "Não foi possível incluir o usuario do paciente.";
     res.status(status).json({ status, message });
     return;
   }
