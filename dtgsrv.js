@@ -962,7 +962,7 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
   //se deu certo tenta incluir em medCoord
   if (resultado.affectedRows > 0) {
     let sqlPaci =
-      "insert into pacientes ( "+
+      "insert into paciente ( "+
       " sus, "+
       " rh, "+
       " cor, "+
@@ -983,7 +983,7 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
       " id_indicacao, "+
       " preceptor, "+
       " id_inst " +
-      " ) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      " ) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     let valuesPaci = [
       sus,
       rh,
@@ -1095,6 +1095,126 @@ app.post("/dados_paciente", jsonParser, async (req, res) => {
 
   res.status(200).json({ resultado });
 });
+
+
+//webservice alterar os dados de um paciente
+app.post("/alterar_paciente", jsonParser, async (req, res) => {
+  //receber nome,dataNasc, cpf, nomeMae, cep,logradouro, numero,complemento, uf, cidade, bairro, ufCrm,crm,  categoria,instituicao,tipoAcesso,login,  senha
+  let {
+    id_usuario,
+    nome,    
+    data_nasc,
+    cpf,
+    nome_mae,
+    cep,
+    logradouro,
+    numero,
+    complemento,
+    uf,
+    cidade,
+    bairro,
+    sus,
+    rh,
+    instituicao,
+    cor,
+    indicacao,
+    estado_civil,
+    tipo_sanguineo,
+    fator_rh,
+    tel_proprio,
+    tel_contato,
+    nome_contato,
+    email,
+    reacoes_alergicas,
+    preceptor,
+    rg,
+    rne,
+    nacionalidade,
+    login,
+    escolaridade,
+    cadastrante
+  } = req.body;
+
+  //alterar usuario
+
+  let sql =
+    "update usuario set nome = '" +
+    nome +
+    "'," +
+    "tipo = '" +
+    tipoAcesso +
+    "'," +
+    "cep = '" +
+    cep +
+    "'," +
+    "uf_resid = '" +
+    uf +
+    "'," +
+    "cidade = '" +
+    cidade +
+    "'," +
+    "num_resid = '" +
+    numero +
+    "'," +
+    "complemento = '" +
+    complemento +
+    "'," +
+    "logradouro = '" +
+    logradouro +
+    "'," +
+    "bairro = '" +
+    bairro +
+    "'," +
+    "cpf = '" +
+    cpf +
+    "'," +
+    "dt_nasc = '" +
+    dataNasc +
+    "'," +
+    "login = '" +
+    login +
+    "' where id_usuario = " +
+    id_usuario;
+
+  //console.log('values',values)
+  let resultado = await update_mdb(sql);
+  //console.log(resultado)
+  //se deu certo tenta incluir em medCoord
+  if (resultado.affectedRows > 0) {
+    let sqlMed =
+      "update med_coord set crm = '" +
+      crm +
+      "'," +
+      "uf_crm = '" +
+      ufCrm +
+      "'," +
+      "categoria = '" +
+      categoria +
+      "'," +
+      "id_inst = '" +
+      instituicao +
+      "'" +
+      " where id_med_coord = " +
+      id_usuario;
+    //console.log(sqlMed)
+    let resultado2 = await update_mdb(sqlMed);
+    if (resultado2.affectedRows > 0) {
+      res.status(200).json({ resultado: [req.body, resultado, resultado2] });
+      return;
+    } else {
+      const status = 409;
+      const message = "Não foi possível alterar os dados do médico.";
+      res.status(status).json({ status, message });
+      return;
+    }
+  } else {
+    const status = 409;
+    const message = "Não foi possível incluir o usuario do médico.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`DTG server em http://localhost:${port}`);
