@@ -319,24 +319,7 @@ app.post("/consultar_medicos", jsonParser, async (req, res) => {
 
 //webservice retorna todos os dados de um médico ou coordenador
 app.post("/dados_medico", jsonParser, async (req, res) => {
-  //receber nome, crm, uf_crm, tipo, situacao,categoria
-  /*
-  nome,
-    dataNasc,
-    cpf,
-    cep,
-    logradouro,
-    numero,
-    complemento,
-    uf,
-    cidade,
-    bairro,
-    ufCrm,
-    crm,
-    categoria,
-    instituicao,
-    tipoAcesso,
-    login, */
+  //receber nome, crm, uf_crm, tipo, situacao,categoria  
   let { id_usuario } = req.body;
   let sql =
     " select u.id_usuario id_usuario," +
@@ -900,9 +883,7 @@ app.post("/consultar_pacientes", jsonParser, async (req, res) => {
 
   res.status(200).json({ resultado });
 });
-app.listen(port, () => {
-  console.log(`DTG server em http://localhost:${port}`);
-});
+
 
 //################################## tela de cadastro de pacientes  #########################
 //webservice de incluir paciente
@@ -982,27 +963,27 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
   if (resultado.affectedRows > 0) {
     let sqlPaci =
       "insert into pacientes ("+
-      "sus, "+
-      "rh, "+
-      "cor, "+
-      "tipo_sanguineo, "+
-      "rh_tipo_sanguineo, "+
-      "tel_proprio, "+
-      "tel_contato, "+
-      "nome_contato, "+
-      "reacoes_alergicas, "+
-      "estado_civil, "+
-      "nome_mae, "+
-      "escolaridade, "+
-      "email, "+
-      "rne, " +
-      "rg, "+
-      "nacionalidade, "+        
-      "id_paciente, "+
-      "id_indicacao, "+
-      "preceptor, "+
-      "id_inst)" +
-      ") values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      " sus, "+
+      " rh, "+
+      " cor, "+
+      " tipo_sanguineo, "+
+      " rh_tipo_sanguineo, "+
+      " tel_proprio, "+
+      " tel_contato, "+
+      " nome_contato, "+
+      " reacoes_alergicas, "+
+      " estado_civil, "+
+      " nome_mae, "+
+      " escolaridade, "+
+      " email, "+
+      " rne, " +
+      " rg, "+
+      " nacionalidade, "+        
+      " id_paciente, "+
+      " id_indicacao, "+
+      " preceptor, "+
+      " id_inst " +
+      " ) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     let valuesPaci = [
       sus,
       rh,
@@ -1061,4 +1042,60 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
     res.status(status).json({ status, message });
     return;
   }
+});
+
+//webservice tras os dados de um paciente 
+app.post("/dados_pacientes", jsonParser, async (req, res) => {
+  //receber id_usuario
+  let { id_usuario } = req.body;
+  let sql =
+    " select " +
+    " u.id_usuario id_usuario, " +
+    " p.sus sus, " +
+    " p.rh rh, " +
+    " p.cor cor, " +
+    " p.tipo_sanguineo tipo_sanguineo, " +
+    " p.rh_tipo_sanguineo fator_rh, " +
+    " p.tel_proprio tel_proprio, " +
+    " p.tel_contato tel_contato, " +
+    " p.nome_contato nome_contato, " +
+    " p.reacoes_alergicas reacoes_alergicas, " +
+    " p.estado_civil estado_civil, " +
+    " p.nome_mae nome_mae, " +
+    " p.escolaridade escolaridade, " +
+    " p.email email, " +
+    " p.rne rne, " +
+    " p.rg rg, " +
+    " p.nacionalidade nacionalidade, " +
+    " p.id_indicacao indicacao, " +
+    " p.preceptor preceptor, " +
+    " u2.nome nome_preceptor, " +
+    " u.id_inst instituicao, " +
+    " u.nome nome, " +    
+    " u.cep cep, " +
+    " u.uf_resid uf, " +
+    " u.cidade cidade, " +
+    " u.num_resid numero, " +
+    " u.complemento complemento, " +
+    " u.logradouro logradouro, " +
+    " u.bairro bairro, " +
+    " u.cpf cpf, " +
+    " u.dt_nasc data_nasc, " +
+    " u.login login " +
+    " from usuario u,paciente p, usuario u2 " +
+    " where " +
+    " u.id_usuario=p.id_paciente  " +
+    " and p.id_paciente=rm.id_paciente  " +
+    " and p.preceptor=u2.id_usuario  " +
+    " and u.id_usuario = " + id_usuario +
+    " order by u.id_usuario ";
+  sql += ordem;
+  //console.log(sql);
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+
+app.listen(port, () => {
+  console.log(`DTG server em http://localhost:${port}`);
 });
