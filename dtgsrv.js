@@ -1012,7 +1012,7 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
         "insert into registro_mola ( " +
         " id_paciente, " +
         " pessoa_ult, " +
-        " data_ult, " +       
+        " data_ult " +       
         " ) values(?, ?, NOW())";
       
       let valuesRmola = [
@@ -1140,10 +1140,7 @@ app.post("/alterar_paciente", jsonParser, async (req, res) => {
   let sql =
     "update usuario set nome = '" +
     nome +
-    "'," +
-    "tipo = '" +
-    tipoAcesso +
-    "'," +
+    "'," +    
     "cep = '" +
     cep +
     "'," +
@@ -1169,7 +1166,7 @@ app.post("/alterar_paciente", jsonParser, async (req, res) => {
     cpf +
     "'," +
     "dt_nasc = '" +
-    dataNasc +
+    data_nasc +
     "'," +
     "login = '" +
     login +
@@ -1182,7 +1179,7 @@ app.post("/alterar_paciente", jsonParser, async (req, res) => {
   //se deu certo tenta incluir em medCoord
   if (resultado.affectedRows > 0) {
     let sqlMed =
-      "update med_coord set crm = '" +
+      "update paciente set crm = '" +
       crm +
       "'," +
       "uf_crm = '" +
