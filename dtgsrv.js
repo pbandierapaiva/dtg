@@ -928,19 +928,19 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
   //incluir usuario
 
   let sql =
-    "insert into usuario (nome," +
-    "tipo," +
-    "cep," +
-    "uf_resid," +
-    "cidade," +
-    "num_resid," +
-    "complemento," +
-    "logradouro," +
-    "bairro," +
-    "cpf," +
-    "dt_nasc," +
-    "login," +
-    "senha) values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    " insert into usuario (nome, " +
+    " tipo, " +
+    " cep, " +
+    " uf_resid, " +
+    " cidade, " +
+    " num_resid, " +
+    " complemento, " +
+    " logradouro, " +
+    " bairro, " +
+    " cpf, " +
+    " dt_nasc, " +
+    " login, " +
+    " senha) values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
   let values = [
     nome,
     1,
@@ -962,7 +962,7 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
   //se deu certo tenta incluir em medCoord
   if (resultado.affectedRows > 0) {
     let sqlPaci =
-      "insert into pacientes ("+
+      "insert into pacientes ( "+
       " sus, "+
       " rh, "+
       " cor, "+
@@ -1009,11 +1009,11 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
     let resultado2 = await insert_mdb(sqlPaci, valuesPaci);
     if (resultado2.affectedRows > 0) {
       let sqlRMola =
-        "insert into registro_mola (" +
-        "id_paciente, " +
-        "pessoa_ult," +
-        "data_ult," +       
-        ") values(?, ?, NOW())";
+        "insert into registro_mola ( " +
+        " id_paciente, " +
+        " pessoa_ult, " +
+        " data_ult, " +       
+        " ) values(?, ?, NOW())";
       
       let valuesRmola = [
         resultado.insertId,
@@ -1049,7 +1049,7 @@ app.post("/dados_paciente", jsonParser, async (req, res) => {
   //receber id_usuario
   let { id_usuario } = req.body;
   let sql =
-    " select " +
+    "select " +
     " u.id_usuario id_usuario, " +
     " p.sus sus, " +
     " p.rh rh, " +
