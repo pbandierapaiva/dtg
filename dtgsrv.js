@@ -779,6 +779,25 @@ app.post("/consultar_indicacao", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
+//webservice de exclusão de indicação
+app.post("/excluir_indicacao", jsonParser, async (req, res) => {
+  //receber id
+  let { id } = req.body;
+  //definir o sql padrão
+  let sql =
+    "delete from indicacao where id_indicacao = " + id;
+  let resultado = await delete_mdb(sql);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível excluir os dados da forma de Indicação.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
 //################################## tela de Cadastro de Indicações #########################
 //webservice de incluir Indicação
 app.post("/incluir_indicacao", jsonParser, async (req, res) => {
@@ -794,7 +813,7 @@ app.post("/incluir_indicacao", jsonParser, async (req, res) => {
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível incluir os dados da Indicação.";
+    const message = "Não foi possível incluir os dados da forma de Indicação.";
     res.status(status).json({ status, message });
     return;
   }
