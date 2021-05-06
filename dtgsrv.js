@@ -1129,7 +1129,7 @@ app.post("/dados_paciente", jsonParser, async (req, res) => {
     " p.id_indicacao indicacao, " +
     " p.preceptor preceptor, " +
     " u2.nome nome_preceptor, " +
-    " u.id_inst instituicao, " +
+    " p.id_inst instituicao, " +
     " u.nome nome, " +    
     " u.cep cep, " +
     " u.uf_resid uf, " +
@@ -1148,7 +1148,7 @@ app.post("/dados_paciente", jsonParser, async (req, res) => {
     " and p.preceptor=u2.id_usuario  " +
     " and u.id_usuario = " + id_usuario +
     " order by u.id_usuario ";
-  sql += ordem;
+  
   //console.log(sql);
   let resultado = await select_mdb(sql);
 
@@ -1282,7 +1282,7 @@ app.post("/alterar_paciente", jsonParser, async (req, res) => {
       " where id_paciente = " +
       id_usuario;
     //console.log(sqlMed)
-    let resultado2 = await update_mdb(sqlMed);
+    let resultado2 = await update_mdb(sqlPaci);
     if (resultado2.affectedRows > 0) {
       res.status(200).json({ resultado: [req.body, resultado, resultado2] });
       return;
