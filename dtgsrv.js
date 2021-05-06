@@ -57,11 +57,11 @@ async function select_mdb(sql) {
 }
 
 //faz update no banco no banco de dados
-async function update_mdb(sql) {
+async function update_mdb(sql, values) {
   let conn;
   try {
     conn = await pool.getConnection();
-    const rows = await conn.query(sql);
+    const rows = await conn.query(sql, values);
     //console.log(rows);
     return rows;
   } catch (err) {
@@ -240,8 +240,8 @@ app.post("/auth/aceite_med", jsonParser, async (req, res) => {
   const { id_usuario } = req.body;
   //console.log(id_usuario)
   //fazer o update do aceite no banco de dados
-  sql = "update med_coord set aceite=1 where id_med_coord=" + id_usuario;
-  let resultado = await update_mdb(sql);
+  sql = "update med_coord set aceite=1 where id_med_coord= ? " ;
+  let resultado = await update_mdb(sql,[id_usuario]);
   //console.log(resultado);
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado: 1 });
@@ -273,11 +273,8 @@ app.post("/auth/alterar_senha_med", jsonParser, async (req, res) => {
   nova_senha = hash.reset().update(nova_senha).digest("hex");
   //alterar a senha no banco de dados
   sql =
-    "update usuario set senha='" +
-    nova_senha +
-    "' where id_usuario=" +
-    id_usuario;
-  let resultado = await update_mdb(sql);
+    "update usuario set senha = ? where id_usuario= ?" ;
+  let resultado = await update_mdb(sql,[nova_senha,id_usuario]);
 
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado: 1 });
@@ -379,8 +376,8 @@ app.post("/ativaInativarUsuario", jsonParser, async (req, res) => {
 
   //alterar o campo ativo no banco de dados
   sql =
-    "update usuario set ativo='" + valor + "' where id_usuario=" + id_usuario;
-  let resultado = await update_mdb(sql);
+    "update usuario set ativo = ?  where id_usuario = ?";
+  let resultado = await update_mdb(sql,[valor,id_usuario]);
 
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado: 1 });
@@ -506,66 +503,33 @@ app.post("/alterar_med_coord", jsonParser, async (req, res) => {
   //alterar usuario
 
   let sql =
-    "update usuario set nome = '" +
-    nome +
-    "'," +
-    "tipo = '" +
-    tipoAcesso +
-    "'," +
-    "cep = '" +
-    cep +
-    "'," +
-    "uf_resid = '" +
-    uf +
-    "'," +
-    "cidade = '" +
-    cidade +
-    "'," +
-    "num_resid = '" +
-    numero +
-    "'," +
-    "complemento = '" +
-    complemento +
-    "'," +
-    "logradouro = '" +
-    logradouro +
-    "'," +
-    "bairro = '" +
-    bairro +
-    "'," +
-    "cpf = '" +
-    cpf +
-    "'," +
-    "dt_nasc = '" +
-    dataNasc +
-    "'," +
-    "login = '" +
-    login +
-    "' where id_usuario = " +
-    id_usuario;
+    "update usuario set nome = ? " +
+    " tipo = ?, " +
+    " cep = ?, " +
+    " uf_resid = ?, " +
+    " cidade = ?, " +
+    " num_resid = ?, " +
+    " complemento = ?, " +
+    " logradouro = ?, " +
+    " bairro = ?, " +
+    " cpf = ?, " +
+    " dt_nasc = ?, " +
+    " login = ?" +
+    " where id_usuario = ? ";
 
   //console.log('values',values)
-  let resultado = await update_mdb(sql);
+  let resultado = await update_mdb(sql,[nome,tipoAcesso,cep,uf,cidade,numero,complemento,logradouro,bairro,cpf,dataNasc,login,id_usuario]);
   //console.log(resultado)
   //se deu certo tenta incluir em medCoord
   if (resultado.affectedRows > 0) {
     let sqlMed =
-      "update med_coord set crm = '" +
-      crm +
-      "'," +
-      "uf_crm = '" +
-      ufCrm +
-      "'," +
-      "categoria = '" +
-      categoria +
-      "'," +
-      "id_inst = '" +
-      instituicao +
-      "'" +
-      " where id_med_coord = " +
-      id_usuario;
+      "update med_coord set crm = ?, " +
+      " uf_crm = ?, " +
+      " categoria = ?, " +
+      " id_inst = ? " +
+      " where id_med_coord = ? " 
     //console.log(sqlMed)
-    let resultado2 = await update_mdb(sqlMed);
+    let resultado2 = await update_mdb(sqlMed,[crm,ufCrm,categoria,instituicao,id_usuario]);
     if (resultado2.affectedRows > 0) {
       res.status(200).json({ resultado: [req.body, resultado, resultado2] });
       return;
@@ -594,13 +558,9 @@ app.post("/resetar_senha", jsonParser, async (req, res) => {
   //alterar senha do usuario
 
   let sql =
-    "update usuario set senha = '" +
-    senha  +   
-    "' where id_usuario = " +
-    id_usuario +
-    " and login = '" + login +"'";
+    "update usuario set senha = ? where id_usuario = ? and login = ? ";
   //console.log('values',values)
-  let resultado = await update_mdb(sql);
+  let resultado = await update_mdb(sql, [senha, id_usuario, login]);
   //console.log(resultado)  
   if (resultado.affectedRows > 0) {
       res.status(200).json({ resultado: "senha resetada com sucesso" });
@@ -612,13 +572,30 @@ app.post("/resetar_senha", jsonParser, async (req, res) => {
     return;
   }
 });
+
+//webservice para verificar se o login escolhido está disponível
+app.post("/login_disponivel", jsonParser, async (req, res) => {
+  //receber login
+  let { login } = req.body;
+  //definir o sql padrão
+  let sql = " select id_usuario  from usuario where login='"+login+"'";  
+  let resultado = await select_mdb(sql);
+  console(resultado)
+  if (resultado.length == 0) {
+    res.status(200).json({ disponivel: true });
+  } else {
+    res.status(200).json({ disponivel: false });
+  }
+
+});
+
 //################################## tela de consulta MAC #########################
 //webservice de consultar MAC (Método anti Concepcional)
 app.post("/consultar_mac", jsonParser, async (req, res) => {
   //receber descricao
   let { descricao } = req.body;
   //definir o sql padrão
-  let sql = " select id_mac id, descricao " + " from mac ";
+  let sql = " select id_mac id, descricao  from mac ";
   //variável que receberá o where
   let where = "";
   //se descrição foi enviado define um like no sql
@@ -1196,93 +1173,48 @@ app.post("/alterar_paciente", jsonParser, async (req, res) => {
   //alterar usuario
 
   let sql =
-    "update usuario set nome = '" +
-    nome +
-    "'," +    
-    "cep = '" +
-    cep +
-    "'," +
-    "uf_resid = '" +
-    uf +
-    "'," +
-    "cidade = '" +
-    cidade +
-    "'," +
-    "num_resid = '" +
-    numero +
-    "'," +
-    "complemento = '" +
-    complemento +
-    "'," +
-    "logradouro = '" +
-    logradouro +
-    "'," +
-    "bairro = '" +
-    bairro +
-    "'," +
-    "cpf = '" +
-    cpf +
-    "'," +
-    "dt_nasc = '" +
-    data_nasc +
-    "'," +
-    "login = '" +
-    login +
-    "' where id_usuario = " +
-    id_usuario;
+    "update usuario set nome = ?, " +    
+    " cep = ? , " +
+    " uf_resid = ? ," +
+    " cidade = ? , " +
+    " num_resid = ?, " +
+    " complemento = ?, " +
+    " logradouro = ? " +
+    " bairro = ?, " +
+    " cpf = ?, " +
+    " dt_nasc = ?, " +
+    " login = ? where id_usuario = ? " ;
 
   //console.log('values',values)
-  let resultado = await update_mdb(sql);
+  let resultado = await update_mdb(sql, [nome, cep, uf, cidade, numero, complemento, logradouro, bairro, cpf, data_nasc, login, id_usuario]);
   //console.log(resultado)
   //se deu certo tenta incluir em paciente
   if (resultado.affectedRows > 0) {
     
     let sqlPaci =
       "update paciente set " +
-      " sus ='" + sus
-      +"', " +
-      " rh='" + rh
-      +"', " +
-      " cor='" + cor
-      +"', " +
-      " tipo_sanguineo='" + tipo_sanguineo
-      +"', " +
-      " rh_tipo_sanguineo='" + fator_rh
-      +"', " +
-      " tel_proprio='" + tel_proprio
-      +"', " +
-      " tel_contato='" + tel_contato
-      +"', " +
-      " nome_contato='" + nome_contato
-      +"', " +
-      " reacoes_alergicas='" + reacoes_alergicas
-      +"', " +
-      " estado_civil='" + estado_civil
-      +"', " +
-      " nome_mae='" + nome_mae
-      +"', " +
-      " escolaridade='" + escolaridade
-      +"', " +
-      " email='" + email
-      +"', " +
-      " rne='" + rne
-      +"', "  +
-      " rg='" + rg
-      +"', " +
-      " nacionalidade='" + nacionalidade
-      +"', " +        
-      " id_paciente='" + id_usuario
-      +"', " +
-      " id_indicacao='" + indicacao
-      +"', " +
-      " preceptor='" + preceptor
-      +"', " +
-      " id_inst ='" + instituicao +
-      
-      " where id_paciente = " +
-      id_usuario;
+      " sus = ?, " +
+      " rh = ?, " +
+      " cor = ?, " +
+      " tipo_sanguineo = ?, " +
+      " rh_tipo_sanguineo = ?, " +
+      " tel_proprio = ?, " +
+      " tel_contato = ?, " +
+      " nome_contato = ?, " +
+      " reacoes_alergicas = ?, " +
+      " estado_civil = ?, " +
+      " nome_mae = ?, " +
+      " escolaridade = ?, " +
+      " email = ?, " +
+      " rne = ?, "  +
+      " rg = ?, " +
+      " nacionalidade = ?, " +
+      " id_indicacao = ?, " +
+      " preceptor = ?, " +
+      " id_inst = ? " +      
+      " where id_paciente = ?";
     //console.log(sqlMed)
-    let resultado2 = await update_mdb(sqlPaci);
+    let resultado2 = await update_mdb(sqlPaci, [sus, rh, cor, tipo_sanguineo, fator_rh, tel_proprio, tel_contato, nome_contato, reacoes_alergicas, estado_civil, nome_mae, escolaridade, email, rne, rg, nacionalidade, indicacao, preceptor, instituicao, id_usuario]);
     if (resultado2.affectedRows > 0) {
       res.status(200).json({ resultado: [req.body, resultado, resultado2] });
       return;
