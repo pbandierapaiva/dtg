@@ -240,8 +240,8 @@ app.post("/auth/aceite_med", jsonParser, async (req, res) => {
   const { id_usuario } = req.body;
   //console.log(id_usuario)
   //fazer o update do aceite no banco de dados
-  sql = "update med_coord set aceite=1 where id_med_coord= ? " ;
-  let resultado = await update_mdb(sql,[id_usuario]);
+  sql = "update med_coord set aceite=1 where id_med_coord= ? ";
+  let resultado = await update_mdb(sql, [id_usuario]);
   //console.log(resultado);
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado: 1 });
@@ -272,9 +272,8 @@ app.post("/auth/alterar_senha_med", jsonParser, async (req, res) => {
   //criptografa a senha
   nova_senha = hash.reset().update(nova_senha).digest("hex");
   //alterar a senha no banco de dados
-  sql =
-    "update usuario set senha = ? where id_usuario= ?" ;
-  let resultado = await update_mdb(sql,[nova_senha,id_usuario]);
+  sql = "update usuario set senha = ? where id_usuario= ?";
+  let resultado = await update_mdb(sql, [nova_senha, id_usuario]);
 
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado: 1 });
@@ -335,7 +334,7 @@ app.post("/consultar_medicos", jsonParser, async (req, res) => {
 
 //webservice retorna todos os dados de um médico ou coordenador
 app.post("/dados_medico", jsonParser, async (req, res) => {
-  //receber nome, crm, uf_crm, tipo, situacao,categoria  
+  //receber nome, crm, uf_crm, tipo, situacao,categoria
   let { id_usuario } = req.body;
   let sql =
     " select u.id_usuario id_usuario," +
@@ -375,9 +374,8 @@ app.post("/ativaInativarUsuario", jsonParser, async (req, res) => {
   let { id_usuario, valor } = req.body;
 
   //alterar o campo ativo no banco de dados
-  sql =
-    "update usuario set ativo = ?  where id_usuario = ?";
-  let resultado = await update_mdb(sql,[valor,id_usuario]);
+  sql = "update usuario set ativo = ?  where id_usuario = ?";
+  let resultado = await update_mdb(sql, [valor, id_usuario]);
 
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado: 1 });
@@ -518,7 +516,21 @@ app.post("/alterar_med_coord", jsonParser, async (req, res) => {
     " where id_usuario = ? ";
 
   //console.log('values',values)
-  let resultado = await update_mdb(sql,[nome,tipoAcesso,cep,uf,cidade,numero,complemento,logradouro,bairro,cpf,dataNasc,login,id_usuario]);
+  let resultado = await update_mdb(sql, [
+    nome,
+    tipoAcesso,
+    cep,
+    uf,
+    cidade,
+    numero,
+    complemento,
+    logradouro,
+    bairro,
+    cpf,
+    dataNasc,
+    login,
+    id_usuario,
+  ]);
   //console.log(resultado)
   //se deu certo tenta incluir em medCoord
   if (resultado.affectedRows > 0) {
@@ -527,9 +539,15 @@ app.post("/alterar_med_coord", jsonParser, async (req, res) => {
       " uf_crm = ?, " +
       " categoria = ?, " +
       " id_inst = ? " +
-      " where id_med_coord = ? " 
+      " where id_med_coord = ? ";
     //console.log(sqlMed)
-    let resultado2 = await update_mdb(sqlMed,[crm,ufCrm,categoria,instituicao,id_usuario]);
+    let resultado2 = await update_mdb(sqlMed, [
+      crm,
+      ufCrm,
+      categoria,
+      instituicao,
+      id_usuario,
+    ]);
     if (resultado2.affectedRows > 0) {
       res.status(200).json({ resultado: [req.body, resultado, resultado2] });
       return;
@@ -557,14 +575,13 @@ app.post("/resetar_senha", jsonParser, async (req, res) => {
   let senha = hash.reset().update(login).digest("hex");
   //alterar senha do usuario
 
-  let sql =
-    "update usuario set senha = ? where id_usuario = ? and login = ? ";
+  let sql = "update usuario set senha = ? where id_usuario = ? and login = ? ";
   //console.log('values',values)
   let resultado = await update_mdb(sql, [senha, id_usuario, login]);
-  //console.log(resultado)  
+  //console.log(resultado)
   if (resultado.affectedRows > 0) {
-      res.status(200).json({ resultado: "senha resetada com sucesso" });
-      return;
+    res.status(200).json({ resultado: "senha resetada com sucesso" });
+    return;
   } else {
     const status = 409;
     const message = "Não foi possível alterar a senha do usuario ";
@@ -578,15 +595,14 @@ app.post("/login_disponivel", jsonParser, async (req, res) => {
   //receber login
   let { login } = req.body;
   //definir o sql padrão
-  let sql = " select id_usuario  from usuario where login='"+login+"'";  
+  let sql = " select id_usuario  from usuario where login='" + login + "'";
   let resultado = await select_mdb(sql);
-  console(resultado)
+  console(resultado);
   if (resultado.length == 0) {
     res.status(200).json({ disponivel: true });
   } else {
     res.status(200).json({ disponivel: false });
   }
-
 });
 
 //################################## tela de consulta MAC #########################
@@ -623,8 +639,7 @@ app.post("/incluir_mac", jsonParser, async (req, res) => {
   //receber descricao
   let { descricao } = req.body;
   //definir o sql padrão
-  let sql =
-    "insert into mac (descricao) values(?)";
+  let sql = "insert into mac (descricao) values(?)";
   let values = [descricao];
   let resultado = await insert_mdb(sql, values);
   if (resultado.affectedRows > 0) {
@@ -693,14 +708,15 @@ app.post("/consultar_instituicao", jsonParser, async (req, res) => {
 //webservice de incluir Instituição
 app.post("/incluir_instituicao", jsonParser, async (req, res) => {
   //receber dados para inclusão
-  let { nome,
+  let {
+    nome,
     cep,
     logradouro,
     numero,
     complemento,
     uf,
     cidade,
-    bairro
+    bairro,
   } = req.body;
   //definir o sql padrão
   let sql =
@@ -726,7 +742,6 @@ app.post("/incluir_instituicao", jsonParser, async (req, res) => {
     return;
   }
 });
-
 
 //################################## tela de Indicação #########################
 //webservice de consultar Indicação
@@ -761,8 +776,7 @@ app.post("/excluir_indicacao", jsonParser, async (req, res) => {
   //receber id
   let { id } = req.body;
   //definir o sql padrão
-  let sql =
-    "delete from indicacao where id_indicacao = " + id;
+  let sql = "delete from indicacao where id_indicacao = " + id;
   let resultado = await delete_mdb(sql);
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado });
@@ -781,8 +795,7 @@ app.post("/incluir_indicacao", jsonParser, async (req, res) => {
   //receber descricao
   let { descricao } = req.body;
   //definir o sql padrão
-  let sql =
-    "insert into indicacao (descricao) values(?)";
+  let sql = "insert into indicacao (descricao) values(?)";
   let values = [descricao];
   let resultado = await insert_mdb(sql, values);
   if (resultado.affectedRows > 0) {
@@ -838,15 +851,15 @@ app.post("/excluir_resultado_ap", jsonParser, async (req, res) => {
   //receber id
   let { id } = req.body;
   //definir o sql padrão
-  let sql =
-    "delete from resultado_ap where id_resultado_ap = " + id;
+  let sql = "delete from resultado_ap where id_resultado_ap = " + id;
   let resultado = await delete_mdb(sql);
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado });
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível excluir os dados de resultado da Anatomia Patologica.";
+    const message =
+      "Não foi possível excluir os dados de resultado da Anatomia Patologica.";
     res.status(status).json({ status, message });
     return;
   }
@@ -858,8 +871,7 @@ app.post("/incluir_resultado_ap", jsonParser, async (req, res) => {
   //receber descricao
   let { descricao } = req.body;
   //definir o sql padrão
-  let sql =
-    "insert into resultado_ap (descricao) values(?)";
+  let sql = "insert into resultado_ap (descricao) values(?)";
   let values = [descricao];
   let resultado = await insert_mdb(sql, values);
   if (resultado.affectedRows > 0) {
@@ -867,13 +879,12 @@ app.post("/incluir_resultado_ap", jsonParser, async (req, res) => {
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível incluir os dados de resultado da Anatomia Patologica.";
+    const message =
+      "Não foi possível incluir os dados de resultado da Anatomia Patologica.";
     res.status(status).json({ status, message });
     return;
   }
 });
-
-
 
 //################################## tela de consulta de pacientes #########################
 //webservice de consultar pacientes
@@ -920,13 +931,12 @@ app.post("/consultar_pacientes", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
-
 //################################## tela de cadastro de pacientes  #########################
 //webservice de incluir paciente
 app.post("/incluir_paciente", jsonParser, async (req, res) => {
   //receber nome,dataNasc, cpf, nomeMae, cep,logradouro, numero,complemento, uf, cidade, bairro, ufCrm,crm,  categoria,instituicao,tipoAcesso,login,  senha
   let {
-    nome,    
+    nome,
     data_nasc,
     cpf,
     nome_mae,
@@ -956,9 +966,9 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
     nacionalidade,
     login,
     escolaridade,
-    cadastrante
+    cadastrante,
   } = req.body;
-  
+
   //criptografa a senha
   let senha = hash.reset().update(login).digest("hex");
   //incluir usuario
@@ -990,7 +1000,7 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
     cpf,
     data_nasc,
     login,
-    senha
+    senha,
   ];
   //console.log('values',values)
   let resultado = await insert_mdb(sql, values);
@@ -998,26 +1008,26 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
   //se deu certo tenta incluir em medCoord
   if (resultado.affectedRows > 0) {
     let sqlPaci =
-      "insert into paciente ( "+
-      " sus, "+
-      " rh, "+
-      " cor, "+
-      " tipo_sanguineo, "+
-      " rh_tipo_sanguineo, "+
-      " tel_proprio, "+
-      " tel_contato, "+
-      " nome_contato, "+
-      " reacoes_alergicas, "+
-      " estado_civil, "+
-      " nome_mae, "+
-      " escolaridade, "+
-      " email, "+
+      "insert into paciente ( " +
+      " sus, " +
+      " rh, " +
+      " cor, " +
+      " tipo_sanguineo, " +
+      " rh_tipo_sanguineo, " +
+      " tel_proprio, " +
+      " tel_contato, " +
+      " nome_contato, " +
+      " reacoes_alergicas, " +
+      " estado_civil, " +
+      " nome_mae, " +
+      " escolaridade, " +
+      " email, " +
       " rne, " +
-      " rg, "+
-      " nacionalidade, "+        
-      " id_paciente, "+
-      " id_indicacao, "+
-      " preceptor, "+
+      " rg, " +
+      " nacionalidade, " +
+      " id_paciente, " +
+      " id_indicacao, " +
+      " preceptor, " +
       " id_inst " +
       " ) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     let valuesPaci = [
@@ -1040,7 +1050,7 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
       resultado.insertId,
       indicacao,
       preceptor,
-      instituicao
+      instituicao,
     ];
     let resultado2 = await insert_mdb(sqlPaci, valuesPaci);
     if (resultado2.affectedRows > 0) {
@@ -1048,21 +1058,18 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
         "insert into registro_mola ( " +
         " id_paciente, " +
         " pessoa_ult, " +
-        " data_ult " +       
+        " data_ult " +
         " ) values(?, ?, NOW())";
-      
-      let valuesRmola = [
-        resultado.insertId,
-        cadastrante
-      ];
+
+      let valuesRmola = [resultado.insertId, cadastrante];
       let resultado3 = await insert_mdb(sqlRMola, valuesRmola);
       if (resultado3.affectedRows > 0) {
         res.status(200).json({ resultado: [values, valuesPaci] });
         return;
-      }
-      else {
+      } else {
         const status = 409;
-        const message = "Não foi possível incluir os dados do registro mola do paciente.";
+        const message =
+          "Não foi possível incluir os dados do registro mola do paciente.";
         res.status(status).json({ status, message });
         return;
       }
@@ -1080,7 +1087,7 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
   }
 });
 
-//webservice tras os dados de um paciente 
+//webservice tras os dados de um paciente
 app.post("/dados_paciente", jsonParser, async (req, res) => {
   //receber id_usuario
   let { id_usuario } = req.body;
@@ -1107,7 +1114,7 @@ app.post("/dados_paciente", jsonParser, async (req, res) => {
     " p.preceptor preceptor, " +
     " u2.nome nome_preceptor, " +
     " p.id_inst instituicao, " +
-    " u.nome nome, " +    
+    " u.nome nome, " +
     " u.cep cep, " +
     " u.uf_resid uf, " +
     " u.cidade cidade, " +
@@ -1118,27 +1125,27 @@ app.post("/dados_paciente", jsonParser, async (req, res) => {
     " u.cpf cpf, " +
     " u.dt_nasc data_nasc, " +
     " u.login login " +
-    " from usuario u,paciente p, usuario u2 " +
+    " from usuario u,paciente p, usuario u2, registro_mola rm " +
     " where " +
     " u.id_usuario=p.id_paciente  " +
     " and p.id_paciente=rm.id_paciente  " +
     " and p.preceptor=u2.id_usuario  " +
-    " and u.id_usuario = " + id_usuario +
+    " and u.id_usuario = " +
+    id_usuario +
     " order by u.id_usuario ";
-  
+
   //console.log(sql);
   let resultado = await select_mdb(sql);
 
   res.status(200).json({ resultado });
 });
 
-
 //webservice alterar os dados de um paciente
 app.post("/alterar_paciente", jsonParser, async (req, res) => {
   //receber dados para alteração do paciente
   let {
     id_usuario,
-    nome,    
+    nome,
     data_nasc,
     cpf,
     nome_mae,
@@ -1167,30 +1174,45 @@ app.post("/alterar_paciente", jsonParser, async (req, res) => {
     rne,
     nacionalidade,
     login,
-    escolaridade
+    escolaridade,
   } = req.body;
+
+  console.log("body", req.body);
 
   //alterar usuario
 
   let sql =
-    "update usuario set nome = ?, " +    
+    "update usuario set nome = ?, " +
     " cep = ? , " +
     " uf_resid = ? ," +
     " cidade = ? , " +
     " num_resid = ?, " +
     " complemento = ?, " +
-    " logradouro = ? " +
+    " logradouro = ?, " +
     " bairro = ?, " +
     " cpf = ?, " +
     " dt_nasc = ?, " +
-    " login = ? where id_usuario = ? " ;
+    " login = ? where id_usuario = ? ";
 
-  //console.log('values',values)
-  let resultado = await update_mdb(sql, [nome, cep, uf, cidade, numero, complemento, logradouro, bairro, cpf, data_nasc, login, id_usuario]);
+  //console.log('values',values);
+  console.log("sql", sql);
+  let resultado = await update_mdb(sql, [
+    nome,
+    cep,
+    uf,
+    cidade,
+    numero,
+    complemento,
+    logradouro,
+    bairro,
+    cpf,
+    data_nasc,
+    login,
+    id_usuario,
+  ]);
   //console.log(resultado)
   //se deu certo tenta incluir em paciente
   if (resultado.affectedRows > 0) {
-    
     let sqlPaci =
       "update paciente set " +
       " sus = ?, " +
@@ -1206,15 +1228,36 @@ app.post("/alterar_paciente", jsonParser, async (req, res) => {
       " nome_mae = ?, " +
       " escolaridade = ?, " +
       " email = ?, " +
-      " rne = ?, "  +
+      " rne = ?, " +
       " rg = ?, " +
       " nacionalidade = ?, " +
       " id_indicacao = ?, " +
       " preceptor = ?, " +
-      " id_inst = ? " +      
+      " id_inst = ? " +
       " where id_paciente = ?";
     //console.log(sqlMed)
-    let resultado2 = await update_mdb(sqlPaci, [sus, rh, cor, tipo_sanguineo, fator_rh, tel_proprio, tel_contato, nome_contato, reacoes_alergicas, estado_civil, nome_mae, escolaridade, email, rne, rg, nacionalidade, indicacao, preceptor, instituicao, id_usuario]);
+    let resultado2 = await update_mdb(sqlPaci, [
+      sus,
+      rh,
+      cor,
+      tipo_sanguineo,
+      fator_rh,
+      tel_proprio,
+      tel_contato,
+      nome_contato,
+      reacoes_alergicas,
+      estado_civil,
+      nome_mae,
+      escolaridade,
+      email,
+      rne,
+      rg,
+      nacionalidade,
+      indicacao,
+      preceptor,
+      instituicao,
+      id_usuario,
+    ]);
     if (resultado2.affectedRows > 0) {
       res.status(200).json({ resultado: [req.body, resultado, resultado2] });
       return;
