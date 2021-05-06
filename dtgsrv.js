@@ -92,10 +92,29 @@ async function insert_mdb(sql, values) {
   }
 }
 
+//faz deleta no banco no banco de dados
+async function delete_mdb(sql) {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const rows = await conn.query(sql);
+    //console.log(rows);
+    return rows;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  } finally {
+    if (conn) {
+      conn.end();
+    }
+  }
+}
+
 //cria token de acesso
 function criarToken(payload) {
   return jwt.sign(payload, SECRET_KEY, { expiresIn });
 }
+
 //verifica token de acesso
 function verificaToken(token) {
   return jwt.verify(token, SECRET_KEY, (err, decode) =>
@@ -796,7 +815,7 @@ app.get("/combo_inst", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
-//################################## tela de resultado da Anatomia Patológica #########################
+//################################## tela de consulta de resultado da Anatomia Patológica #########################
 //webservice de consulta resultado da anatomia patológica
 app.post("/consultar_resultado_ap", jsonParser, async (req, res) => {
   //receber descrição da anatomia patológica
@@ -816,6 +835,25 @@ app.post("/consultar_resultado_ap", jsonParser, async (req, res) => {
   let resultado = await select_mdb(sql);
 
   res.status(200).json({ resultado });
+});
+
+//webservice de exclusão da Anatomia Patológica
+app.post("/excluir_resultado_ap", jsonParser, async (req, res) => {
+  //receber id
+  let { id } = req.body;
+  //definir o sql padrão
+  let sql =
+    "delete from resultado_ap where id_resultado_ap = " + id;
+  let resultado = await delete_mdb(sql);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível excluir os dados de resultado da Anatomia Patologica.";
+    res.status(status).json({ status, message });
+    return;
+  }
 });
 
 //################################## tela de Cadastro de resultado da Anatomia Patológica #########################
@@ -838,6 +876,8 @@ app.post("/incluir_resultado_ap", jsonParser, async (req, res) => {
     return;
   }
 });
+
+
 
 //################################## tela de consulta de pacientes #########################
 //webservice de consultar pacientes
@@ -1240,7 +1280,6 @@ app.post("/alterar_paciente", jsonParser, async (req, res) => {
     return;
   }
 });
-
 
 app.listen(port, () => {
   console.log(`DTG server em http://localhost:${port}`);
