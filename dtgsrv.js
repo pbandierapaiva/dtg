@@ -593,11 +593,16 @@ app.post("/resetar_senha", jsonParser, async (req, res) => {
 //webservice para verificar se o login escolhido está disponível
 app.post("/login_disponivel", jsonParser, async (req, res) => {
   //receber login
-  let { login } = req.body;
+  let { login, id_usuario } = req.body;
   //definir o sql padrão
   let sql = " select id_usuario  from usuario where login='" + login + "'";
+  let where = "";
+  if (id_usuario != "" && id_usuario !=undefined) {
+    where += " and id_usuario != " + id_usuario ;
+  }
+  sql += where;
   let resultado = await select_mdb(sql);
-  console(resultado);
+  //console.log(resultado);
   if (resultado.length == 0) {
     res.status(200).json({ disponivel: true });
   } else {
