@@ -92,6 +92,8 @@ async function insert_mdb(sql, values) {
   }
 }
 
+
+
 //faz deleta no banco no banco de dados
 async function delete_mdb(sql) {
   let conn;
@@ -976,9 +978,12 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
 
   //criptografa a senha
   let senha = hash.reset().update(login).digest("hex");
-  //incluir usuario
-
-  let sql =
+  let conn = await pool.getConnection();
+  try {
+    conn = await pool.getConnection();
+    await conn.beginTransaction();
+    
+    let sql =
     " insert into usuario (nome, " +
     " tipo, " +
     " cep, " +
@@ -992,26 +997,24 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
     " dt_nasc, " +
     " login, " +
     " senha) values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
-  let values = [
-    nome,
-    1,
-    cep,
-    uf,
-    cidade,
-    numero,
-    complemento,
-    logradouro,
-    bairro,
-    cpf,
-    data_nasc,
-    login,
-    senha,
-  ];
-  //console.log('values',values)
-  let resultado = await insert_mdb(sql, values);
-  //console.log(resultado)
-  //se deu certo tenta incluir em medCoord
-  if (resultado.affectedRows > 0) {
+    let values = [
+      nome,
+      1,
+      cep,
+      uf,
+      cidade,
+      numero,
+      complemento,
+      logradouro,
+      bairro,
+      cpf,
+      data_nasc,
+      login,
+      senha,
+    ];
+
+    let resultado  = await conn.query(sql, values);
+    if (resultado.affectedRows > 0) {
     let sqlPaci =
       "insert into paciente ( " +
       " sus, " +
@@ -1057,7 +1060,9 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
       preceptor,
       instituicao,
     ];
-    let resultado2 = await insert_mdb(sqlPaci, valuesPaci);
+
+    console.log(valuesPaci);
+    let resultado2 = await conn.query(sqlPaci, valuesPaci);
     if (resultado2.affectedRows > 0) {
       let sqlRMola =
         "insert into registro_mola ( " +
@@ -1067,30 +1072,45 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
         " ) values(?, ?, NOW())";
 
       let valuesRmola = [resultado.insertId, cadastrante];
-      let resultado3 = await insert_mdb(sqlRMola, valuesRmola);
+      let resultado3 = await conn.query(sqlRMola, valuesRmola);
       if (resultado3.affectedRows > 0) {
+        await connection.commit();
         res.status(200).json({ resultado: [values, valuesPaci] });
         return;
       } else {
         const status = 409;
         const message =
           "Não foi possível incluir os dados do registro mola do paciente.";
+        await connection.rollback();
         res.status(status).json({ status, message });
         return;
       }
     } else {
       const status = 409;
       const message = "Não foi possível incluir os dados do paciente.";
+      await connection.rollback();
       res.status(status).json({ status, message });
       return;
     }
-  } else {
-    const status = 409;
-    const message = "Não foi possível incluir o usuario do paciente.";
+  } else {    
+      const status = 409;      
+      const message = "Não foi possível incluir o usuario do paciente.";
+      await connection.rollback();
     res.status(status).json({ status, message });
     return;
   }
+    
+  } catch (err) {
+    console.log(err);
+    throw err;
+  } finally {
+    if (conn) {
+      conn.end();
+    }
+  }
+  
 });
+
 
 //webservice tras os dados de um paciente
 app.post("/dados_paciente", jsonParser, async (req, res) => {
