@@ -414,9 +414,12 @@ app.post("/incluir_med_coord", jsonParser, async (req, res) => {
   } = req.body;
   //criptografa a senha
   let senha = hash.reset().update(login).digest("hex");
+  let conn = await pool.getConnection();
   //incluir usuario
-
-  let sql =
+  try {
+    
+    await conn.beginTransaction();
+    let sql =
     "insert into usuario (nome," +
     "tipo," +
     "cep," +
@@ -446,35 +449,46 @@ app.post("/incluir_med_coord", jsonParser, async (req, res) => {
     senha,
   ];
   //console.log('values',values)
-  let resultado = await insert_mdb(sql, values);
+  let resultado = await conn.query(sql, values);
   //console.log(resultado)
   //se deu certo tenta incluir em medCoord
-  if (resultado.affectedRows > 0) {
-    let sqlMed =
-      "insert into med_coord (crm," +
-      "uf_crm," +
-      "categoria," +
-      "aceite," +
-      "id_med_coord," +
-      "id_inst" +
-      ") values(?,?,?,?,?,?)";
-    let valuesMed = [crm, ufCrm, categoria, 0, resultado.insertId, instituicao];
-    let resultado2 = await insert_mdb(sqlMed, valuesMed);
-    if (resultado2.affectedRows > 0) {
-      res.status(200).json({ resultado: [values, valuesMed] });
-      return;
+    if (resultado.affectedRows > 0) {
+      let sqlMed =
+        "insert into med_coord (crm," +
+        "uf_crm," +
+        "categoria," +
+        "aceite," +
+        "id_med_coord," +
+        "id_inst" +
+        ") values(?,?,?,?,?,?)";
+      let valuesMed = [crm, ufCrm, categoria, 0, resultado.insertId, instituicao];
+      let resultado2 = await conn.query(sqlMed, valuesMed);
+      if (resultado2.affectedRows > 0) {
+        await conn.commit();
+        res.status(200).json({ resultado: [values, valuesMed] });
+        return;
+      } else {
+        const status = 409;
+        const message = "Não foi possível incluir os dados do médico.";
+        await conn.rollback();
+        res.status(status).json({ status, message });
+        return;
+      }
     } else {
       const status = 409;
-      const message = "Não foi possível incluir os dados do médico.";
+      const message = "Não foi possível incluir o usuario do médico.";
+      await conn.rollback();
       res.status(status).json({ status, message });
       return;
     }
-  } else {
-    const status = 409;
-    const message = "Não foi possível incluir o usuario do médico.";
-    res.status(status).json({ status, message });
-    return;
-  }
+  } catch (err) {
+    console.log(err);
+    throw err;
+  } finally {
+    if (conn) {
+      conn.end();
+    }
+  }  
 });
 
 //webservice alterar os dados de um médico ou coordenador
@@ -980,7 +994,7 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
   let senha = hash.reset().update(login).digest("hex");
   let conn = await pool.getConnection();
   try {
-    conn = await pool.getConnection();
+    
     await conn.beginTransaction();
     
     let sql =
@@ -1074,28 +1088,28 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
       let valuesRmola = [resultado.insertId, cadastrante];
       let resultado3 = await conn.query(sqlRMola, valuesRmola);
       if (resultado3.affectedRows > 0) {
-        await connection.commit();
+        await conn.commit();
         res.status(200).json({ resultado: [values, valuesPaci] });
         return;
       } else {
         const status = 409;
         const message =
           "Não foi possível incluir os dados do registro mola do paciente.";
-        await connection.rollback();
+        await conn.rollback();
         res.status(status).json({ status, message });
         return;
       }
     } else {
       const status = 409;
       const message = "Não foi possível incluir os dados do paciente.";
-      await connection.rollback();
+      await conn.rollback();
       res.status(status).json({ status, message });
       return;
     }
   } else {    
       const status = 409;      
       const message = "Não foi possível incluir o usuario do paciente.";
-      await connection.rollback();
+      await conn.rollback();
     res.status(status).json({ status, message });
     return;
   }
