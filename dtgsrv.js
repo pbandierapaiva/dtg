@@ -213,13 +213,41 @@ app.get("/", function (req, res) {
 });
 
 //################################## webservices #########################
+//################################## MainLayout #########################
+//webservice verifica se login e senha são iguais
+app.post("/auth/loginSenhaIguais", jsonParser, async (req, res) => {
+  //receber login e senha
+  //console.log(req.body)
+  const { login } = req.body;
+  criptLogin = hash.reset().update(login).digest("hex");
+  //fazer select no banco de dados
+  
+  sql =
+    " select u.senha senha" +
+    " from usuario u " +
+    " where " +    
+    " u.login = '" +
+    login +
+    "' ";
+  var resultado = await select_mdb(sql);
+
+  if (resultado.length > 0) {
+    let e_igual = (resultado[0].senha==criptLogin)
+    
+    res.status(200).json({ e_igual });
+    return;
+  }
+  
+  
+});
+
 //################################## tela de Login #########################
 //webservice de login
 app.post("/auth/login", jsonParser, async (req, res) => {
   //receber login e senha
   //console.log(req.body)
   const { login, senha } = req.body;
-
+  
   //fazer select no banco de dados
   var credenciais_corretas = await medEstaAutenticado({ login, senha });
   if (credenciais_corretas === false) {
@@ -483,6 +511,9 @@ app.post("/incluir_med_coord", jsonParser, async (req, res) => {
     }
   } catch (err) {
     console.log(err);
+    const status = 409;      
+    const message = "Não foi possível incluir os dados do médico.";      
+    res.status(status).json({ status, message });
     throw err;
   } finally {
     if (conn) {
@@ -575,7 +606,7 @@ app.post("/alterar_med_coord", jsonParser, async (req, res) => {
     }
   } else {
     const status = 409;
-    const message = "Não foi possível incluir o usuario do médico.";
+    const message = "Não foi possível alterar o usuario do médico.";
     res.status(status).json({ status, message });
     return;
   }
@@ -1075,7 +1106,7 @@ app.post("/incluir_paciente", jsonParser, async (req, res) => {
       instituicao,
     ];
 
-    console.log(valuesPaci);
+    //console.log(valuesPaci);
     let resultado2 = await conn.query(sqlPaci, valuesPaci);
     if (resultado2.affectedRows > 0) {
       let sqlRMola =
