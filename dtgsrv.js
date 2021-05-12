@@ -685,6 +685,24 @@ app.post("/consultar_mac", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
+//webservice de exclusão de MAC
+app.post("/excluir_mac", jsonParser, async (req, res) => {
+  //receber id
+  let { id } = req.body;
+  //definir o sql padrão
+  let sql = "delete from mac where id_mac = " + id;
+  let resultado = await delete_mdb(sql);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível excluir os dados de método anti concepcinal.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
 //################################## tela de Cadastro de MAC #########################
 //webservice de incluir de  MAC (Método anti Concepcional)
 app.post("/incluir_mac", jsonParser, async (req, res) => {
