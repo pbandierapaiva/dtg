@@ -774,6 +774,25 @@ app.post("/consultar_instituicao", jsonParser, async (req, res) => {
 
   res.status(200).json({ resultado });
 });
+
+//webservice de exclusão de Intituição
+app.post("/excluir_instituicao", jsonParser, async (req, res) => {
+  //receber id
+  let { id } = req.body;
+  //definir o sql padrão
+  let sql = "delete from instituicao where id_inst = " + id;
+  let resultado = await delete_mdb(sql);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível excluir os dados da instituição.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
 //################################## tela de Cadastro de Instituição #########################
 //webservice de incluir Instituição
 app.post("/incluir_instituicao", jsonParser, async (req, res) => {
