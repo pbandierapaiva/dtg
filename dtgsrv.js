@@ -658,7 +658,7 @@ app.post("/login_disponivel", jsonParser, async (req, res) => {
 });
 
 //################################## tela de consulta MAC #########################
-//webservice de consultar MAC (Método anti Concepcional)
+//webservice de consultar MAC (Método anticoncepcional)
 app.post("/consultar_mac", jsonParser, async (req, res) => {
   //receber descricao
   let { descricao } = req.body;
@@ -697,14 +697,14 @@ app.post("/excluir_mac", jsonParser, async (req, res) => {
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível excluir os dados de método anti concepcinal.";
+    const message = "Não foi possível excluir os dados de método anticoncepcinal.";
     res.status(status).json({ status, message });
     return;
   }
 });
 
 //################################## tela de Cadastro de MAC #########################
-//webservice de incluir de  MAC (Método anti Concepcional)
+//webservice de incluir de  MAC (Método anticoncepcional)
 app.post("/incluir_mac", jsonParser, async (req, res) => {
   //receber descricao
   let { descricao } = req.body;
@@ -899,7 +899,7 @@ app.post("/incluir_indicacao", jsonParser, async (req, res) => {
 });
 
 //################################## tela de consulta de Instituições #########################
-//webservice de consultar MAC (Método anti Concepcional)
+//webservice de consultar MAC (Método anticoncepcional)
 app.get("/combo_inst", jsonParser, async (req, res) => {
   //definir o sql padrão
   let sql =
@@ -1380,6 +1380,32 @@ app.post("/alterar_paciente", jsonParser, async (req, res) => {
     res.status(status).json({ status, message });
     return;
   }
+});
+
+//################################## tela de consulta de delegados #########################
+//webservice de consulta delegados
+app.post("/consultar_delegados", jsonParser, async (req, res) => {
+  
+  //receber id_paciente
+  let { id_paciente } = req.body;
+  //select  de delegados
+ 
+  let sql =
+    " select  d.id_deleg id,  u.nome nome, md.uf_crm ufCrm, md.crm crm, md.categoria categoria, d.ativo ativo" +
+    " from delegacao d, usuario u, med_coord md " +
+    " where " +
+    " d.id_med_coord=u.id_usuario  " +
+    " and d.id_med_coord=md.id_med_coord  " +
+    " and d.id_paciente= " + id_paciente
+    ;
+  
+
+  ordem = " order by nome ";
+  sql += ordem;
+  //console.log(sql);
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
 });
 
 app.listen(port, () => {
