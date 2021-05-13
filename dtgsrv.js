@@ -1408,6 +1408,33 @@ app.post("/consultar_delegados", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
+//webservice de consulta médicos que não foram delegados
+app.post("/consultar_medicos_delegacao", jsonParser, async (req, res) => {
+  
+  //receber id_paciente
+  let { id_paciente } = req.body;
+  //select  de delegados
+ 
+  let sql =
+    " select  md.id_med_coord id_med_coord,  u.nome nome, md.uf_crm ufCrm, md.crm crm, md.categoria categoria" +
+    " from  usuario u, med_coord md " +
+    " where " +
+    " md.id_med_coord=u.id_usuario  " +
+    " and u.tipo != 'coordenador'  " +
+    " and u.ativo=1  " +
+    " and md.id_med_coord not in (select d.id_med_coord from delegacao d where d.id_paciente= " + id_paciente + " )  " +
+    " and md.id_med_coord not in (select p.preceptor from paciente p where p.id_paciente= " + id_paciente + " )  " 
+    ;
+  
+
+  ordem = " order by nome ";
+  sql += ordem;
+  //console.log(sql);
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+
 app.listen(port, () => {
   console.log(`DTG server em http://localhost:${port}`);
 });
