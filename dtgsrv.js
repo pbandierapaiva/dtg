@@ -1435,6 +1435,26 @@ app.post("/consultar_medicos_delegacao", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
+//webservice de médico delegado
+app.post("/incluir_delegacao", jsonParser, async (req, res) => {
+  //receber id_med_coord, id_paciente
+  let { id_paciente,id_med_coord  } = req.body;
+  //definir o sql de inserção
+  let sql = "insert into delegacao (id_paciente,id_med_coord) values(?,?)";
+  let values = [id_paciente,id_med_coord];
+  let resultado = await insert_mdb(sql, values);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: [values, resultado.insertId] });
+    return;
+  } else {
+    const status = 409;
+    const message =
+      "Não foi possível delegar reponsabilidade.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
 app.listen(port, () => {
   console.log(`DTG server em http://localhost:${port}`);
 });
