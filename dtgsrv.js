@@ -1455,6 +1455,25 @@ app.post("/incluir_delegacao", jsonParser, async (req, res) => {
   }
 });
 
+//webservice de exclusão da delegação de acesso
+app.post("/excluir_delegacao", jsonParser, async (req, res) => {
+  //receber id_delegacao
+  let { id_delegacao } = req.body;
+  //definir o sql padrão
+  let sql = "delete from delegacao where id_deleg = " + id_delegacao;
+  let resultado = await delete_mdb(sql);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado });
+    return;
+  } else {
+    const status = 409;
+    const message =
+      "Não foi possível excluir o acesso delegado.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
 app.listen(port, () => {
   console.log(`DTG server em http://localhost:${port}`);
 });
