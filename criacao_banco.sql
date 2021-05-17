@@ -345,21 +345,26 @@ VALUES('Nenhum'),
 create or replace
 view responsaveis as
 select
-    p.id_paciente as id_paciente,
-    p.preceptor as id_med_coord
+  p.id_paciente as id_paciente,
+  p.preceptor as id_med_coord
 from
-    dtg.paciente p
+  dtg.paciente p
 union
 select
-    d.id_paciente as id_paciente,
-    d.id_med_coord as id_med_coord
+  d.id_paciente as id_paciente,
+  d.id_med_coord as id_med_coord
 from
-    dtg.delegacao d
+  dtg.delegacao d
 union
-select
-    p2.id_paciente as id_paciente,
-    u.id_usuario as id_med_coord
-from
-    dtg.paciente p2, dtg.usuario u
-where
-    u.tipo = 'coordenador';
+
+select 
+  p2.id_paciente id_paciente, 
+  u.id_usuario id_med_coord
+from 
+  paciente p2 , 
+  usuario u, 
+  med_coord mc  
+where 
+  u.tipo='coordenador'
+  and u.id_usuario = mc.id_med_coord
+  and p2.id_inst = mc.id_inst  
