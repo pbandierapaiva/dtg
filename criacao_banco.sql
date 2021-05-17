@@ -340,3 +340,26 @@ VALUES('Nenhum'),
 ('Injetável trimestral'),
 ('Injetável mensal'),
 ('Condom');
+
+
+create or replace
+view responsaveis as
+select
+    p.id_paciente as id_paciente,
+    p.preceptor as id_med_coord
+from
+    dtg.paciente p
+union
+select
+    d.id_paciente as id_paciente,
+    d.id_med_coord as id_med_coord
+from
+    dtg.delegacao d
+union
+select
+    p2.id_paciente as id_paciente,
+    u.id_usuario as id_med_coord
+from
+    dtg.paciente p2, dtg.usuario u
+where
+    u.tipo = 'coordenador';
