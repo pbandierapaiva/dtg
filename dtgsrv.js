@@ -832,6 +832,48 @@ app.post("/incluir_instituicao", jsonParser, async (req, res) => {
   }
 });
 
+//webservice de alterar Instituição
+app.post("/alterar_instituicao", jsonParser, async (req, res) => {
+  //receber dados para alterar
+  let {
+    nome,
+    cep,
+    logradouro,
+    numero,
+    complemento,
+    uf,
+    cidade,
+    bairro,
+    id_inst
+  } = req.body;
+
+  //alterar senha do usuario
+  let sql =
+    "update instituicao set " +
+    " nome_inst  = ?, " +
+    " logradouro_inst = ?, " +
+    " num_inst = ?, " +
+    " cep_inst = ?, " +
+    " bairro_inst = ?, " +
+    " cidade_inst = ?, " +
+    " uf_inst = ?, " +
+    " complemento_inst = ? " +
+    " where id_inst = ? ";
+  let values = [nome, logradouro, numero, cep, bairro, cidade, uf, complemento, id_inst];
+  //console.log('values',values)
+  let resultado = await update_mdb(sql, [values]);
+  //console.log(resultado)
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: "insituição alterada com sucesso" });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível alterar a instituição ";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
 //################################## tela de Indicação #########################
 //webservice de consultar Indicação
 app.post("/consultar_indicacao", jsonParser, async (req, res) => {
