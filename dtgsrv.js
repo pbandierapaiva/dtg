@@ -548,7 +548,7 @@ app.post("/alterar_med_coord", jsonParser, async (req, res) => {
   //alterar usuario
 
   let sql =
-    "update usuario set nome = ? " +
+    "update usuario set nome = ?, " +
     " tipo = ?, " +
     " cep = ?, " +
     " uf_resid = ?, " +
@@ -559,11 +559,9 @@ app.post("/alterar_med_coord", jsonParser, async (req, res) => {
     " bairro = ?, " +
     " cpf = ?, " +
     " dt_nasc = ?, " +
-    " login = ?" +
+    " login = ? " +
     " where id_usuario = ? ";
-
-  //console.log('values',values)
-  let resultado = await update_mdb(sql, [
+  values = [
     nome,
     tipoAcesso,
     cep,
@@ -577,7 +575,9 @@ app.post("/alterar_med_coord", jsonParser, async (req, res) => {
     dataNasc,
     login,
     id_usuario,
-  ]);
+  ]
+  //console.log('values',values)
+  let resultado = await update_mdb(sql, values);
   //console.log(resultado)
   //se deu certo tenta incluir em medCoord
   if (resultado.affectedRows > 0) {
@@ -793,6 +793,27 @@ app.post("/excluir_instituicao", jsonParser, async (req, res) => {
   }
 });
 
+//webservice ativar ou inativar instituição
+app.post("/ativa_inativar_instituicao", jsonParser, async (req, res) => {
+  //receber id_inst
+
+  let { id_inst, valor } = req.body;
+
+  //alterar o campo ativo no banco de dados
+  sql = "update usuario set ativo = ?  where id_usuario = ?";
+  let resultado = await update_mdb(sql, [valor, id_inst]);
+
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: 1 });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possivel ativar/inativar a instituição!";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
 //################################## tela de Cadastro de Instituição #########################
 //webservice de incluir Instituição
 app.post("/incluir_instituicao", jsonParser, async (req, res) => {
@@ -830,6 +851,34 @@ app.post("/incluir_instituicao", jsonParser, async (req, res) => {
     res.status(status).json({ status, message });
     return;
   }
+});
+
+//webservice de carrega dados de um instituição
+app.post("/dados_instituicao", jsonParser, async (req, res) => {
+  //receber descricao
+
+  let { id_inst } = req.body;
+  //definir o sql padrão
+
+  let sql =
+    " select " +
+    " id_inst id, " +
+    " nome_inst nome, " +
+    " logradouro_inst logradouro," +
+    " num_inst numero," +
+    " cep_inst cep, " +
+    " bairro_inst bairro, " +
+    " cidade_inst cidade, " +
+    " uf_inst uf, " +
+    " complemento_inst complemento " +
+    " ativo ativo " +
+    " from instituicao " +
+    " where " +
+    " id_inst = " + id_inst;
+  
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
 });
 
 //webservice de alterar Instituição
@@ -880,7 +929,7 @@ app.post("/consultar_indicacao", jsonParser, async (req, res) => {
   //receber descricao
   let { descricao } = req.body;
   //definir o sql padrão
-  let sql = " select id_indicacao id, descricao " + " from indicacao ";
+  let sql = " select id_indicacao id, descricao from indicacao ";
   //variável que receberá o where
   let where = "";
   //se descrição foi enviado define um like no sql
