@@ -1584,6 +1584,31 @@ app.post("/dados_r_mola", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
+//################################## tela de cadastro do registro mola - componente de dados gerais  #########################
+//webservice de carrega dados gerais do registro mola da paciente
+app.post("/dados_r_mola_gerais", jsonParser, async (req, res) => {
+  //receber id_r_mola
+
+  let { id_r_mola } = req.body;
+  //definir o sql padrão
+
+  let sql =
+    " select " +
+    " idade, " +
+    " peso, " +
+    " altura, " +
+    " imc, " +
+    " term_caso, " +
+    " dum_consulta " +
+    " from registro_mola " +
+    " where " +
+    " id_r_mola = " + id_r_mola;
+  
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+
 app.listen(port, () => {
   console.log(`DTG server em http://localhost:${port}`);
 });
