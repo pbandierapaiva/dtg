@@ -1072,7 +1072,7 @@ app.post("/consultar_pacientes", jsonParser, async (req, res) => {
   //receber nome, cpf, preceptor, termino_caso, situacao,categoria, id_inst, usuario_logado
   let { nome, cpf, preceptor, term_caso, id_inst, usuario_logado } = req.body;
   let sql =
-    " select u.id_usuario id_usuario, u.nome nome_paciente, u2.nome nome_preceptor, u.ativo ativo, u.cpf cpf, rm.term_caso term_caso, cast(rm.term_caso as int) id_term_caso  " +
+    " select distinct u.id_usuario id_usuario, u.nome nome_paciente, u2.nome nome_preceptor, u.ativo ativo, u.cpf cpf, rm.term_caso term_caso, cast(rm.term_caso as int) id_term_caso  " +
     " from usuario u,paciente p, usuario u2, registro_mola rm " +
     " where " +
     " u.id_usuario=p.id_paciente  " +
