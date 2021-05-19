@@ -1566,6 +1566,24 @@ app.post("/excluir_delegacao", jsonParser, async (req, res) => {
   }
 });
 
+//################################## tela de cadastro do registro mola  #########################
+//webservice de carrega ids dos registros mola da paciente
+app.post("/dados_r_mola", jsonParser, async (req, res) => {
+  //receber id_paciente
+
+  let { id_paciente } = req.body;
+  //definir o sql padrão
+
+  let sql =
+    " select id_r_mola from registro_mola " +
+    " where " +
+    " id_paciente = " + id_paciente;
+  
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+
 app.listen(port, () => {
   console.log(`DTG server em http://localhost:${port}`);
 });
