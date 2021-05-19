@@ -1577,11 +1577,54 @@ app.post("/dados_r_mola", jsonParser, async (req, res) => {
   let sql =
     " select id_r_mola from registro_mola " +
     " where " +
-    " id_paciente = " + id_paciente;
+    " id_paciente = " + id_paciente + 
+    " order by id_r_mola ";
   
   let resultado = await select_mdb(sql);
 
   res.status(200).json({ resultado });
+});
+
+//webservice de incluir registro mola 
+app.post("/incluir_r_mola", jsonParser, async (req, res) => {
+  //receber id_paciente, cadastrante (id do médico que está cadastrando o novo registro mola)
+  let {
+    id_paciente,
+    cadastrante
+  } = req.body;
+
+  //criptografa a senha
+    
+  try {
+      let sqlRMola =
+        "insert into registro_mola ( " +
+        " id_paciente, " +
+        " pessoa_ult, " +
+        " data_ult " +
+        " ) values(?, ?, NOW())";
+
+      let valuesRmola = [id_paciente, cadastrante];
+      let resultado = await insert_mdb(sqlRMola, valuesRmola);
+      if (resultado.affectedRows > 0) {
+        await conn.commit();
+        res.status(200).json({ resultado: [resultado.insertId, valuesRmola] });
+        return;
+      } else {
+        const status = 409;
+        const message =
+          "Não foi possível incluir os dados do registro mola.";
+        await conn.rollback();
+        res.status(status).json({ status, message });
+        return;
+      }    
+  } catch (err) {
+    console.log(err);
+    throw err;
+  } finally {
+    if (conn) {
+      conn.end();
+    }
+  }
 });
 
 //################################## tela de cadastro do registro mola - componente de dados gerais  #########################
