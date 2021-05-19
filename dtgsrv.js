@@ -1609,6 +1609,29 @@ app.post("/dados_r_mola_gerais", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
+//################################## tela de cadastro do registro mola - componente partos  #########################
+//webservice de carrega dos partos previos do registro mola da paciente
+app.post("/dados_r_mola_partos", jsonParser, async (req, res) => {
+  //receber id_r_mola
+
+  let { id_r_mola } = req.body;
+  //definir o sql padrão
+
+  let sql =
+    " select " +
+    " n_partos, " +
+    " mola_prev, " +
+    " abortos, " +
+    " ecto " +
+    " from registro_mola " +
+    " where " +
+    " id_r_mola = " + id_r_mola;
+  
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+
 app.listen(port, () => {
   console.log(`DTG server em http://localhost:${port}`);
 });
