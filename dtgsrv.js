@@ -1514,7 +1514,8 @@ app.post("/consultar_medicos_delegacao", jsonParser, async (req, res) => {
     " and u.tipo != 'coordenador'  " +
     " and u.ativo=1  " +
     " and md.id_med_coord not in (select d.id_med_coord from delegacao d where d.id_paciente= " + id_paciente + " )  " +
-    " and md.id_med_coord not in (select p.preceptor from paciente p where p.id_paciente= " + id_paciente + " )  " 
+    " and md.id_med_coord not in (select p.preceptor from paciente p where p.id_paciente= " + id_paciente + " )  " +
+    " and md.id_inst = (select p2.id_inst from paciente p2 where p2.id_paciente= " + id_paciente + " )  " 
     ;
   
 
