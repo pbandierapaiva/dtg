@@ -1662,6 +1662,40 @@ app.post("/dados_r_mola_esvaz", jsonParser, async (req, res) => {
 
   res.status(200).json({ resultado });
 });
+
+
+//################################## tela de cadastro do registro mola - componente dados clinicos  #########################
+//webservice de carrega dados clinicos do registro mola da paciente
+app.post("/dados_r_mola_clinicos", jsonParser, async (req, res) => {
+  //receber id_r_mola
+
+  let { id_r_mola } = req.body;
+  //definir o sql padrão
+
+  let sql =
+    " select " +
+    " sangramento, " +
+    " hb, " +
+    " pressao_alta, " +
+    " tsh_disp, " +
+    " tsh_valor, " +
+    " beta, " +
+    " cistos, " +
+    " utero_ig, " +
+    " ntg, " +
+    " id_mac_antes, " +
+    " id_mac_apos, " +
+    " us, " +
+    " entrada_servico " + 
+    " from registro_mola " +
+    " where " +
+    " id_r_mola = " + id_r_mola;
+  
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+
 app.listen(port, () => {
   console.log(`DTG server em http://localhost:${port}`);
 });
