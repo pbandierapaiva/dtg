@@ -1632,6 +1632,36 @@ app.post("/dados_r_mola_partos", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
+
+//################################## tela de cadastro do registro mola - componente esvaziamentos  #########################
+//webservice de carrega dados dos esvaziamentos do registro mola da paciente
+app.post("/dados_r_mola_esvaz", jsonParser, async (req, res) => {
+  //receber id_r_mola
+
+  let { id_r_mola } = req.body;
+  //definir o sql padrão
+
+  let sql =
+    " select " +
+    " dum_data, " +
+    " data_esvaz1, " +
+    " ig_esvaz1, " +
+    " tipo_esvaz1, " +
+    " local_esvaz1, " +
+    " hosp_esvaz1, " +
+    " nat_hosp_esvaz1, " +
+    " data_esvaz2, " +
+    " interv_esvaz, " +
+    " id_mac_antes, " +
+    " id_mac_apos " +    
+    " from registro_mola " +
+    " where " +
+    " id_r_mola = " + id_r_mola;
+  
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
 app.listen(port, () => {
   console.log(`DTG server em http://localhost:${port}`);
 });
