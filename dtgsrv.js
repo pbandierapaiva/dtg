@@ -909,11 +909,12 @@ app.post("/alterar_instituicao", jsonParser, async (req, res) => {
     " complemento_inst = ? " +
     " where id_inst = ? ";
   let values = [nome, logradouro, numero, cep, bairro, cidade, uf, complemento, id_inst];
-  //console.log('values',values)
-  let resultado = await update_mdb(sql, [values]);
+  //console.log('sql',sql)
+  //console.log('values', values)
+  let resultado = await update_mdb(sql, values);
   //console.log(resultado)
   if (resultado.affectedRows > 0) {
-    res.status(200).json({ resultado: "insituição alterada com sucesso" });
+    res.status(200).json({ resultado: "instituição alterada com sucesso" });
     return;
   } else {
     const status = 409;
@@ -1677,7 +1678,7 @@ app.post("/gravar_r_mola_gerais", jsonParser, async (req, res) => {
     " where id_r_mola = ? ";
   let values = [idade, peso, altura, imc, term_caso, dum_consulta, id_r_mola];
   //console.log('values',values)
-  let resultado = await update_mdb(sql, [values]);
+  let resultado = await update_mdb(sql, values);
   //console.log(resultado)
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado: "dados gerais gravados com sucesso" });
@@ -1734,7 +1735,7 @@ app.post("/gravar_r_mola_partos", jsonParser, async (req, res) => {
     " where id_r_mola = ? ";
   let values = [n_partos, mola_prev, abortos, ecto, id_r_mola];
   //console.log('values',values)
-  let resultado = await update_mdb(sql, [values]);
+  let resultado = await update_mdb(sql, values);
   //console.log(resultado)
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado: "dados dos partos prévios gravados com sucesso" });
@@ -1812,7 +1813,7 @@ app.post("/gravar_r_mola_esvaz", jsonParser, async (req, res) => {
     " where id_r_mola = ? ";
   let values = [dum_data, data_esvaz1, ig_esvaz1, tipo_esvaz1, local_esvaz1, hosp_esvaz1, nat_hosp_esvaz1, data_esvaz2, interv_esvaz, id_mac_antes, id_mac_apos, id_r_mola];
   //console.log('values',values)
-  let resultado = await update_mdb(sql, [values]);
+  let resultado = await update_mdb(sql, values);
   //console.log(resultado)
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado: "dados dos esvaziamentos gravados com sucesso" });
@@ -1890,7 +1891,7 @@ app.post("/gravar_r_mola_clinicos", jsonParser, async (req, res) => {
     " where id_r_mola = ? ";
   let values = [sangramento, hb, pressao_alta, tsh_disp, tsh_valor, beta, cistos, utero_ig, ntg, us, entrada_servico, id_r_mola];
   //console.log('values',values)
-  let resultado = await update_mdb(sql, [values]);
+  let resultado = await update_mdb(sql, values);
   //console.log(resultado)
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado: "os dados clínicos foram gravados com sucesso" });
