@@ -1843,9 +1843,7 @@ app.post("/dados_r_mola_clinicos", jsonParser, async (req, res) => {
     " beta, " +
     " cistos, " +
     " utero_ig, " +
-    " ntg, " +
-    " id_mac_antes, " +
-    " id_mac_apos, " +
+    " ntg, " +    
     " us, " +
     " entrada_servico " + 
     " from registro_mola " +
@@ -1855,6 +1853,54 @@ app.post("/dados_r_mola_clinicos", jsonParser, async (req, res) => {
   let resultado = await select_mdb(sql);
 
   res.status(200).json({ resultado });
+});
+
+//webservice de alterar dados clinicos do registro mola da paciente
+app.post("/gravar_r_mola_clinicos", jsonParser, async (req, res) => {
+  //receber dados para alterar
+  let {
+    sangramento,
+    hb,
+    pressao_alta,
+    tsh_disp,
+    tsh_valor,
+    beta,
+    cistos,
+    utero_ig,
+    ntg,
+    us,
+    entrada_servico,
+    id_r_mola
+  } = req.body;
+
+  //alterar resgitro mola
+  let sql =
+    "update registro_mola set " +
+    " sangramento  = ?, " +
+    " hb = ?, " +
+    " pressao_alta = ?, " +
+    " tsh_disp = ? " +
+    " tsh_valor = ? " +
+    " beta = ? " +
+    " cistos = ? " +
+    " utero_ig = ? " +
+    " ntg = ? " +
+    " us = ? " +
+    " entrada_servico = ? " +
+    " where id_r_mola = ? ";
+  let values = [sangramento, hb, pressao_alta, tsh_disp, tsh_valor, beta, cistos, utero_ig, ntg, us, entrada_servico, id_r_mola];
+  //console.log('values',values)
+  let resultado = await update_mdb(sql, [values]);
+  //console.log(resultado)
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: "os dados clínicos foram gravados com sucesso" });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível gravar os dados clínicos ";
+    res.status(status).json({ status, message });
+    return;
+  }
 });
 
 app.listen(port, () => {
