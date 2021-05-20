@@ -1691,7 +1691,7 @@ app.post("/gravar_r_mola_gerais", jsonParser, async (req, res) => {
 });
 
 //################################## tela de cadastro do registro mola - componente partos  #########################
-//webservice de carrega dos partos previos do registro mola da paciente
+//webservice de carrega dados dos partos previos do registro mola da paciente
 app.post("/dados_r_mola_partos", jsonParser, async (req, res) => {
   //receber id_r_mola
 
@@ -1713,6 +1713,39 @@ app.post("/dados_r_mola_partos", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
+//webservice de alterar dados dos partos previos do registro mola da paciente
+app.post("/gravar_r_mola_partos", jsonParser, async (req, res) => {
+  //receber dados para alterar
+  let {
+    n_partos,
+    mola_prev,
+    abortos,
+    ecto,
+    id_r_mola
+  } = req.body;
+
+  //alterar resgitro mola
+  let sql =
+    "update registro_mola set " +
+    " n_partos  = ?, " +
+    " mola_prev = ?, " +
+    " abortos = ?, " +
+    " ecto = ? " +    
+    " where id_r_mola = ? ";
+  let values = [n_partos, mola_prev, abortos, ecto, id_r_mola];
+  //console.log('values',values)
+  let resultado = await update_mdb(sql, [values]);
+  //console.log(resultado)
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: "dados dos partos prévios gravados com sucesso" });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível gravar os dados dos partos prévios ";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
 
 //################################## tela de cadastro do registro mola - componente esvaziamentos  #########################
 //webservice de carrega dados dos esvaziamentos do registro mola da paciente
