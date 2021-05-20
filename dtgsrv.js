@@ -1777,6 +1777,53 @@ app.post("/dados_r_mola_esvaz", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
+//webservice de alterar dados dos esvaziamentos do registro mola da paciente
+app.post("/gravar_r_mola_esvaz", jsonParser, async (req, res) => {
+  //receber dados para alterar
+  let {
+    dum_data,
+    data_esvaz1,
+    ig_esvaz1,
+    tipo_esvaz1,
+    local_esvaz1,
+    hosp_esvaz1,
+    nat_hosp_esvaz1,
+    data_esvaz2,
+    interv_esvaz,
+    id_mac_antes,
+    id_mac_apos,
+    id_r_mola
+  } = req.body;
+
+  //alterar resgitro mola
+  let sql =
+    "update registro_mola set " +
+    " dum_data  = ?, " +
+    " data_esvaz1 = ?, " +
+    " ig_esvaz1 = ?, " +
+    " tipo_esvaz1 = ? " +
+    " local_esvaz1 = ? " +
+    " hosp_esvaz1 = ? " +
+    " nat_hosp_esvaz1 = ? " +
+    " data_esvaz2 = ? " +
+    " interv_esvaz = ? " +
+    " id_mac_antes = ? " +
+    " id_mac_apos = ? " +
+    " where id_r_mola = ? ";
+  let values = [dum_data, data_esvaz1, ig_esvaz1, tipo_esvaz1, local_esvaz1, hosp_esvaz1, nat_hosp_esvaz1, data_esvaz2, interv_esvaz, id_mac_antes, id_mac_apos, id_r_mola];
+  //console.log('values',values)
+  let resultado = await update_mdb(sql, [values]);
+  //console.log(resultado)
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: "dados dos esvaziamentos gravados com sucesso" });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível gravar os dados dos esvaziamentos ";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
 
 //################################## tela de cadastro do registro mola - componente dados clinicos  #########################
 //webservice de carrega dados clinicos do registro mola da paciente
