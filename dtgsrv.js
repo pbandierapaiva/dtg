@@ -1643,7 +1643,7 @@ app.post("/dados_r_mola_gerais", jsonParser, async (req, res) => {
     " altura, " +
     " imc, " +
     " term_caso, " +
-    " dum_consulta " +
+    " date_format(dum_consulta,'%Y-%m-%d') dum_consulta" +
     " from registro_mola " +
     " where " +
     " id_r_mola = " + id_r_mola;
@@ -1758,14 +1758,14 @@ app.post("/dados_r_mola_esvaz", jsonParser, async (req, res) => {
 
   let sql =
     " select " +
-    " dum_data, " +
-    " data_esvaz1, " +
+    " date_format(dum_data,'%Y-%m-%d') dum_data, " +
+    " date_format(data_esvaz1,'%Y-%m-%d') data_esvaz1, " +
     " ig_esvaz1, " +
     " tipo_esvaz1, " +
     " local_esvaz1, " +
     " hosp_esvaz1, " +
     " nat_hosp_esvaz1, " +
-    " data_esvaz2, " +
+    " date_format(data_esvaz2,'%Y-%m-%d') data_esvaz2, " +
     " interv_esvaz, " +
     " id_mac_antes, " +
     " id_mac_apos " +    
@@ -1802,13 +1802,13 @@ app.post("/gravar_r_mola_esvaz", jsonParser, async (req, res) => {
     " dum_data  = ?, " +
     " data_esvaz1 = ?, " +
     " ig_esvaz1 = ?, " +
-    " tipo_esvaz1 = ? " +
-    " local_esvaz1 = ? " +
-    " hosp_esvaz1 = ? " +
-    " nat_hosp_esvaz1 = ? " +
-    " data_esvaz2 = ? " +
-    " interv_esvaz = ? " +
-    " id_mac_antes = ? " +
+    " tipo_esvaz1 = ?, " +
+    " local_esvaz1 = ?, " +
+    " hosp_esvaz1 = ?, " +
+    " nat_hosp_esvaz1 = ?, " +
+    " data_esvaz2 = ?, " +
+    " interv_esvaz = ?, " +
+    " id_mac_antes = ?, " +
     " id_mac_apos = ? " +
     " where id_r_mola = ? ";
   let values = [dum_data, data_esvaz1, ig_esvaz1, tipo_esvaz1, local_esvaz1, hosp_esvaz1, nat_hosp_esvaz1, data_esvaz2, interv_esvaz, id_mac_antes, id_mac_apos, id_r_mola];
