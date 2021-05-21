@@ -801,7 +801,7 @@ app.post("/ativa_inativar_instituicao", jsonParser, async (req, res) => {
   let { id_inst, valor } = req.body;
 
   //alterar o campo ativo no banco de dados
-  sql = "update usuario set ativo = ?  where id_usuario = ?";
+  sql = "update instituicao set ativo = ?  where id_inst = ?";
   let resultado = await update_mdb(sql, [valor, id_inst]);
 
   if (resultado.affectedRows > 0) {
