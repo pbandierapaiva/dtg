@@ -741,7 +741,8 @@ app.post("/consultar_instituicao", jsonParser, async (req, res) => {
     " bairro_inst bairro, " +
     " cidade_inst cidade, " +
     " uf_inst uf, " +
-    " complemento_inst complemento " +
+    " complemento_inst complemento, " +
+    " ativo ativo " +
     " from instituicao ";
   //variável que receberá o where
   let where = "";
