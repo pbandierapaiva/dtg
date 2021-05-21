@@ -1579,7 +1579,7 @@ app.post("/dados_r_mola", jsonParser, async (req, res) => {
     " select id_r_mola from registro_mola " +
     " where " +
     " id_paciente = " + id_paciente + 
-    " order by id_r_mola ";
+    " order by id_r_mola desc";
   
   let resultado = await select_mdb(sql);
 
