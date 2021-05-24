@@ -1841,10 +1841,11 @@ app.post("/dados_r_mola_clinicos", jsonParser, async (req, res) => {
     " hb, " +
     " pressao_alta, " +
     " tsh_disp, " +
-    " tsh_valor, " +
+    " format(tsh_valor,1) tsh_valor," +
     " beta, " +
     " cistos, " +
     " utero_ig, " +
+    " raiox, " +
     " ntg, " +    
     " us, " +
     " entrada_servico " + 
@@ -1869,6 +1870,7 @@ app.post("/gravar_r_mola_clinicos", jsonParser, async (req, res) => {
     beta,
     cistos,
     utero_ig,
+    raiox,
     ntg,
     us,
     entrada_servico,
@@ -1881,16 +1883,17 @@ app.post("/gravar_r_mola_clinicos", jsonParser, async (req, res) => {
     " sangramento  = ?, " +
     " hb = ?, " +
     " pressao_alta = ?, " +
-    " tsh_disp = ? " +
-    " tsh_valor = ? " +
-    " beta = ? " +
-    " cistos = ? " +
-    " utero_ig = ? " +
-    " ntg = ? " +
-    " us = ? " +
+    " tsh_disp = ?, " +
+    " tsh_valor = ?, " +
+    " beta = ?, " +
+    " cistos = ?, " +
+    " utero_ig = ?, " +
+    " raiox = ?, " +
+    " ntg = ?, " +
+    " us = ?, " +
     " entrada_servico = ? " +
     " where id_r_mola = ? ";
-  let values = [sangramento, hb, pressao_alta, tsh_disp, tsh_valor, beta, cistos, utero_ig, ntg, us, entrada_servico, id_r_mola];
+  let values = [sangramento, hb, pressao_alta, tsh_disp, tsh_valor, beta, cistos, utero_ig, raiox, ntg, us, entrada_servico, id_r_mola];
   //console.log('values',values)
   let resultado = await update_mdb(sql, values);
   //console.log(resultado)

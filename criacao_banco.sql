@@ -145,7 +145,7 @@ CREATE TABLE registro_mola
   cistos INT  DEFAULT 0,
   utero_ig INT  DEFAULT 0,
   raiox INT  DEFAULT 0,
-  entada_servico ENUM('esvaziamento no HSP', 'para acompanhamento pós-esvaziamento', 'com suspeita ou diagnóstico de NTG', 'após tratamento de NTG'),
+  entrada_servico ENUM('esvaziamento no HSP', 'para acompanhamento pós-esvaziamento', 'com suspeita ou diagnóstico de NTG', 'após tratamento de NTG'),
   data_ult DATE ,
   term_caso ENUM('evasão (abandono do serviço com hCG positivo)', 'molar completo', 'molar incompleto', 'NTG completo', 'NTG incompleto'),
   dum_esvaz1 DATE ,
