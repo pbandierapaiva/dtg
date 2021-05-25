@@ -1074,7 +1074,7 @@ app.post("/consultar_pacientes", jsonParser, async (req, res) => {
   //receber nome, cpf, preceptor, termino_caso, situacao,categoria, id_inst, usuario_logado
   let { nome, cpf, preceptor, term_caso, id_inst, usuario_logado } = req.body;
   let sql =
-    " select distinct u.id_usuario id_usuario, u.nome nome_paciente, u2.nome nome_preceptor, u.ativo ativo, u.cpf cpf, rm.term_caso term_caso, cast(rm.term_caso as int) id_term_caso  " +
+    " select u.id_usuario id_usuario, u.nome nome_paciente, u2.nome nome_preceptor, u.ativo ativo, u.cpf cpf, rm.term_caso term_caso, cast(rm.term_caso as int) id_term_caso  " +
     " from usuario u,paciente p, usuario u2, registro_mola rm " +
     " where " +
     " u.id_usuario=p.id_paciente  " +
@@ -1608,14 +1608,14 @@ app.post("/incluir_r_mola", jsonParser, async (req, res) => {
       let valuesRmola = [id_paciente, cadastrante];
       let resultado = await insert_mdb(sqlRMola, valuesRmola);
       if (resultado.affectedRows > 0) {
-        await conn.commit();
+        
         res.status(200).json({ resultado: [resultado.insertId, valuesRmola] });
         return;
       } else {
         const status = 409;
         const message =
           "Não foi possível incluir os dados do registro mola.";
-        await conn.rollback();
+        
         res.status(status).json({ status, message });
         return;
       }    
