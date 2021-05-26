@@ -178,15 +178,16 @@ app.use(cors());
 //verifica token de acesso se a página precisar de autenticação
 app.use(/^(?!\/auth).*$/, (req, res, next) => {
   //console.log('headers: ',req.headers);
-  if (req.url == "/") {
-    next();
-    return;
-  }
-
+  
   if (
     req.headers.authorization === undefined ||
     req.headers.authorization.split(" ")[0] !== "Bearer"
   ) {
+    if (req.url == "/") {
+      next();
+      return;
+    }
+
     const status = 401;
     const message = "Token inválido";
     res.status(status).json({ status, message });
