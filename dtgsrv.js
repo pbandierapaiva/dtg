@@ -1,5 +1,6 @@
 //################### Importação da bibliotecas ############
 var express = require("express");
+const path = require('path');
 var cors = require("cors");
 var bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
@@ -177,6 +178,10 @@ app.use(cors());
 //verifica token de acesso se a página precisar de autenticação
 app.use(/^(?!\/auth).*$/, (req, res, next) => {
   //console.log('headers: ',req.headers);
+  if (req.url == "/") {
+    next();
+    return;
+  }
 
   if (
     req.headers.authorization === undefined ||
@@ -206,10 +211,10 @@ app.use(/^(?!\/auth).*$/, (req, res, next) => {
     res.status(status).json({ status, message });
   }
 });
-
+app.use(express.static(path.join(__dirname, '/spa')));
 // Alo mundo
 app.get("/", function (req, res) {
-  res.send("Alo mundo!!!<br/> <b>Servidor DTG </b> alterado Capa2");
+ res.render('index.html');
 });
 
 //################################## webservices #########################
