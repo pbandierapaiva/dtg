@@ -163,6 +163,41 @@ async function medEstaAutenticado({ login, senha }) {
   }
 }
 
+//verifica se o login e senha do paciente estão corretos
+async function pacienteEstaAutenticado({ login, senha }) {
+  //console.log('senha:', senha)
+  senha = hash.reset().update(senha).digest("hex");
+  sql =
+    " select u.senha senha, u.nome nome,  p.aceite aceite, u.cpf, u.id_usuario id_usuario, p.id_inst id_inst " +
+    " from usuario u, paciente p " +
+    " where " +
+    " u.id_usuario=p.id_paciente and " +
+    " u.ativo=1 and " +
+    " u.login = '" +
+    login +
+    "' ";
+
+  let senha_banco = await select_mdb(sql);
+  //console.log('senha cripto:', senha)
+  //console.log('senha_banco:',senha_banco[0].senha)
+  if (typeof senha_banco[0] == "undefined") {
+    return false;
+  }
+  if (senha == senha_banco[0].senha) {
+    const usuario = {
+      login: login,
+      nome: senha_banco[0].nome,
+      cpf: senha_banco[0].cpf,
+      aceite: senha_banco[0].aceite,
+      id_usuario: senha_banco[0].id_usuario,
+      id_inst: senha_banco[0].id_inst
+    };
+    return usuario;
+  } else {
+    return false;
+  }
+}
+
 //################# servidor ###########################
 app.get("/deploy", function (req, res) {
   git.pull().pull("origin", "master", { "--rebase": "true" });
@@ -1912,6 +1947,30 @@ app.post("/gravar_r_mola_clinicos", jsonParser, async (req, res) => {
     res.status(status).json({ status, message });
     return;
   }
+});
+
+//*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
+//##############################################################################Tela de login do paciente###############################################################################################
+
+//webservice de login do paciente
+app.post("/auth/login_paciente", jsonParser, async (req, res) => {
+  //receber login e senha
+  //console.log(req.body)
+  const { login, senha } = req.body;
+  
+  //fazer select no banco de dados
+  var credenciais_corretas = await pacienteEstaAutenticado({ login, senha });
+  if (credenciais_corretas === false) {
+    const status = 401;
+    const message = "Login ou senha incorretos!";
+    res.status(status).json({ status, message });
+    return;
+  }
+  //criar o token de acesso
+  const access_token = criarToken({ login, senha });
+  //retornar o usuario e o token
+  console.log(login + " está logado");
+  res.status(200).json({ access_token, credenciais: credenciais_corretas });
 });
 
 app.listen(port, () => {
