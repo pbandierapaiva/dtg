@@ -1004,7 +1004,7 @@ app.post("/excluir_indicacao", jsonParser, async (req, res) => {
   //definir o sql padrão
   let sql = "delete from indicacao where id_indicacao = " + id;
   let resultado = await delete_mdb(sql);
-  console.log('resultado', util.inspect( resultado.errno));
+  //console.log('resultado', util.inspect( resultado.errno));
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado });
     return;
@@ -1975,6 +1975,27 @@ app.post("/auth/login_paciente", jsonParser, async (req, res) => {
   //retornar o usuario e o token
   console.log(login + " está logado");
   res.status(200).json({ access_token, credenciais: credenciais_corretas });
+});
+//################################## tela de termo de aceite do paciente #########################
+//webservice de aceite do paciente
+app.post("/auth/aceite_paci", jsonParser, async (req, res) => {
+  //receber id_usuario
+  //console.log(req.body)
+  const { id_usuario } = req.body;
+  //console.log(id_usuario)
+  //fazer o update do aceite no banco de dados
+  sql = "update paciente set aceite=1 where id_paciente= ? ";
+  let resultado = await update_mdb(sql, [id_usuario]);
+  //console.log(resultado);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: 1 });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possivel fazer o aceite, usuário não encontrado!";
+    res.status(status).json({ status, message });
+    return;
+  }
 });
 
 app.listen(port, () => {
