@@ -1997,6 +1997,39 @@ app.post("/auth/aceite_paci", jsonParser, async (req, res) => {
     return;
   }
 });
+//################################## tela de alteração de senha #########################
+//webservice de alterar senha do paciente
+app.post("/auth/alterar_senha_paciente", jsonParser, async (req, res) => {
+  //receber login, senha, nova_senha
+  //console.log(req.body)
+  let { login, senha, nova_senha } = req.body;
+  //verificar se as cedenciais estão corretas
+  var credenciais_corretas = await pacienteEstaAutenticado({ login, senha });
+  if (credenciais_corretas === false) {
+    const status = 401;
+    const message = "Login ou senha incorretos!";
+    res.status(status).json({ status, message });
+    return;
+  }
+  //pega o id do usuario
+  id_usuario = credenciais_corretas.id_usuario;
+  //criptografa a senha
+  nova_senha = hash.reset().update(nova_senha).digest("hex");
+  //alterar a senha no banco de dados
+  sql = "update usuario set senha = ? where id_usuario= ?";
+  let resultado = await update_mdb(sql, [nova_senha, id_usuario]);
+
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: 1 });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possivel alterar a senha!";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`DTG server em http://localhost:${port}`);
