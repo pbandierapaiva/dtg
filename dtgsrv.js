@@ -1976,6 +1976,7 @@ app.post("/auth/login_paciente", jsonParser, async (req, res) => {
   console.log(login + " está logado");
   res.status(200).json({ access_token, credenciais: credenciais_corretas });
 });
+
 //################################## tela de termo de aceite do paciente #########################
 //webservice de aceite do paciente
 app.post("/auth/aceite_paci", jsonParser, async (req, res) => {
@@ -2030,6 +2031,33 @@ app.post("/auth/alterar_senha_paciente", jsonParser, async (req, res) => {
   }
 });
 
+//################################## tela de sobre #########################
+
+//webservice de consultar responsáveis do paciente
+app.post("/consultar_responsaveis_paci", jsonParser, async (req, res) => {
+  
+  //receber id_paciente
+  let { id_paciente } = req.body;
+  //select  de delegados
+ 
+  let sql =
+    " select  md.id_med_coord id_med_coord,  u.nome nome, md.uf_crm ufCrm, md.crm crm, md.categoria categoria" +
+    " from  usuario u, med_coord md " +
+    " where " +
+    " md.id_med_coord=u.id_usuario  " +    
+    " and u.ativo=1  " +
+    " and md.id_med_coord not in (select r.id_med_coord from responsaveis r where r.id_paciente= " + id_paciente + " )  " 
+    
+    ;
+  
+
+  ordem = " order by nome ";
+  sql += ordem;
+  //console.log(sql);
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
 
 app.listen(port, () => {
   console.log(`DTG server em http://localhost:${port}`);
