@@ -49,7 +49,7 @@ async function select_mdb(sql) {
     return rows_sem_meta;
   } catch (err) {
     console.log(err);
-    throw err;
+    return err;
   } finally {
     if (conn) {
       conn.end();
@@ -67,7 +67,7 @@ async function update_mdb(sql, values) {
     return rows;
   } catch (err) {
     console.log(err);
-    throw err;
+    return err;
   } finally {
     if (conn) {
       conn.end();
@@ -85,7 +85,7 @@ async function insert_mdb(sql, values) {
     return rows;
   } catch (err) {
     console.log(err);
-    throw err;
+    return err;
   } finally {
     if (conn) {
       conn.end();
@@ -105,7 +105,7 @@ async function delete_mdb(sql) {
     return rows;
   } catch (err) {
     console.log(err);
-    throw err;
+    return err;
   } finally {
     if (conn) {
       conn.end();
@@ -997,16 +997,20 @@ app.post("/consultar_indicacao", jsonParser, async (req, res) => {
 //webservice de exclusão de indicação
 app.post("/excluir_indicacao", jsonParser, async (req, res) => {
   //receber id
+
+  const util = require("util");
+
   let { id } = req.body;
   //definir o sql padrão
   let sql = "delete from indicacao where id_indicacao = " + id;
   let resultado = await delete_mdb(sql);
+  console.log('resultado', util.inspect( resultado.errno));
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado });
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível excluir os dados da forma de Indicação.";
+    const message = "Não foi possível excluir os dados da forma de Indicação. ("+resultado.errno+":"+resultado.code+")";
     res.status(status).json({ status, message });
     return;
   }
@@ -1418,7 +1422,7 @@ app.post("/alterar_paciente", jsonParser, async (req, res) => {
     escolaridade,
   } = req.body;
 
-  console.log("body", req.body);
+  //console.log("body", req.body);
 
   //alterar usuario
 
@@ -1436,7 +1440,7 @@ app.post("/alterar_paciente", jsonParser, async (req, res) => {
     " login = ? where id_usuario = ? ";
 
   //console.log('values',values);
-  console.log("sql", sql);
+  //console.log("sql", sql);
   let resultado = await update_mdb(sql, [
     nome,
     cep,
