@@ -31,6 +31,10 @@ const pm2 = require("pm2");
 //configuração do git
 const simpleGit = require("simple-git");
 const git = simpleGit();
+//configuração do socket.io
+
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
 
 //################# funções #####################
 
@@ -252,6 +256,33 @@ app.use(express.static(path.join(__dirname, '/spa')));
 app.get("/", function (req, res) {
  res.render('index.html');
 });
+
+//################################sockets#########################
+let usuarios = [];
+io.on('conexao', socket => {
+  console.log(`Socket conectado: ${socket.id}`);
+  socket.on('login', ({ id_usuario, id_paciente }, callback) => {
+    usuarios.push({id:socket.id,id_usuario:id_usuario,sala:id_paciente})
+    socket.join(id_paciente)
+    //socket.in(room).emit('notification', { title: 'Someone\'s here', description: `${user.name} just entered the room` })
+    //io.in(room).emit('users', getUsers(room))
+    callback()        
+  })
+  socket.on('enviarMensagem', mensagem => {
+    const usuario = usuarios.find(user => user.id == socket.id)
+    io.in(usuario.sala).emit('mensagem', { usuario: usuario.id_usuario, texto: mensagem });
+  })
+  socket.on("desconectar", () => {
+    console.log("Usuario desconectado");
+    const index = usuarios.findIndex((user) => user.id === socket.id);
+    let usuario = {};
+    if (index !== -1) { usuario = usuarios.splice(index, 1)[0]; }
+      //if (usuario) {
+        //io.in(usuario.sala).emit('notification', { title: 'Someone just left', description: `${usuario.id_usuario} just left the room` })
+        //io.in(usuario.sala).emit('users', getUsers(usuario.sala))
+    //}
+    })
+})
 
 //################################## webservices #########################
 //################################## MainLayout #########################
@@ -2059,6 +2090,6 @@ app.post("/consultar_responsaveis_paci", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`DTG server em http://localhost:${port}`);
 });
