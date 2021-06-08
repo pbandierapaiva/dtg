@@ -32,9 +32,17 @@ const pm2 = require("pm2");
 const simpleGit = require("simple-git");
 const git = simpleGit();
 //configuração do socket.io
-
+app.use(cors());
 const server = require('http').createServer(app);
-const io = require('socket.io')(server);
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*',
+    methods: ["GET", "POST"],
+    transports: ['websocket', 'polling']
+  }
+});
+
+
 
 //################# funções #####################
 
@@ -213,7 +221,7 @@ app.get("/pmstatus", function (req, res) {
   res.send(pm2.list(errback));
   pm2.disconnect();
 });
-app.use(cors());
+
 //verifica token de acesso se a página precisar de autenticação
 app.use(/^(?!\/auth).*$/, (req, res, next) => {
   //console.log('headers: ',req.headers);
@@ -259,8 +267,12 @@ app.get("/", function (req, res) {
 
 //################################sockets#########################
 let usuarios = [];
-io.on('conexao', socket => {
-  console.log(`Socket conectado: ${socket.id}`);
+io.on('connection', socket => {
+  console.log(`Socket conectado: `,socket.id);
+  socket.on('hello', mensagem => {
+    console.log(`Hello world: `, mensagem);
+  })
+  /*
   socket.on('login', ({ id_usuario, id_paciente }, callback) => {
     usuarios.push({id:socket.id,id_usuario:id_usuario,sala:id_paciente})
     socket.join(id_paciente)
@@ -282,6 +294,7 @@ io.on('conexao', socket => {
         //io.in(usuario.sala).emit('users', getUsers(usuario.sala))
     //}
     })
+    */
 })
 
 //################################## webservices #########################
