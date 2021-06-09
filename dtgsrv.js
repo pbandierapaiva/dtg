@@ -302,11 +302,15 @@ io.on('connection', socket => {
     //callback()        
   })
   
-  socket.on('enviarMensagem', ({ remetente, destinatario, msg }) => {
+  socket.on('enviarMensagem', ({ remetenteid,remetente, destinatario, msg }) => {
     const usuario = usuarios.find(user => user.id == socket.id)
-    mensagens.push({remetente, destinatario, msg})
-    io.in(usuario.sala).emit('mensagem', { usuario: remetente, texto: msg });
+    const idMsg = mensagens.length + 1
+    const objMsg = { idMsg, remetenteid, remetente, destinatario, msg, sala: usuario.sala }
+    mensagens.push(objMsg)
+    console.log("mensagens",mensagens)
+    io.in(usuario.sala).emit('mensagem', objMsg);
   })
+
   socket.on("disconnect", () => {
     console.log("Usuario desconectado");
     const index = usuarios.findIndex((user) => user.id === socket.id);
