@@ -267,24 +267,47 @@ app.get("/", function (req, res) {
 
 //################################sockets#########################
 let usuarios = [];
+let mensagens = [];
 io.on('connection', socket => {
   console.log(`Socket conectado: `,socket.id);
   socket.on('hello', mensagem => {
     console.log(`Hello world: `, mensagem);
   })
-  /*
-  socket.on('login', ({ id_usuario, id_paciente }, callback) => {
+  
+  socket.on('login', ({ id_usuario, id_paciente }) => {
     usuarios.push({id:socket.id,id_usuario:id_usuario,sala:id_paciente})
     socket.join(id_paciente)
+    console.log(usuarios);
     //socket.in(room).emit('notification', { title: 'Someone\'s here', description: `${user.name} just entered the room` })
     //io.in(room).emit('users', getUsers(room))
-    callback()        
+    //callback()        
   })
-  socket.on('enviarMensagem', mensagem => {
+  socket.on('logout', ( sala ) => {
+    try {
+      const index = usuarios.findIndex((user) => user.id === socket.id);
+      let usuario = {};
+      if (index !== -1) { usuario = usuarios.splice(index, 1)[0]; }
+      console.log('[socket]','Logout :', sala,usuario);
+      socket.leave(sala);
+       
+      //socket.to(room).emit('user left', socket.id);
+    }catch(e){
+      console.log('[error]','logout :', e);
+      //socket.emit('error','couldnt perform requested action');
+    }
+    
+    console.log(usuarios);
+    //socket.in(room).emit('notification', { title: 'Someone\'s here', description: `${user.name} just entered the room` })
+    //io.in(room).emit('users', getUsers(room))
+    //callback()        
+  })
+  
+  socket.on('enviarMensagem', ({ remetente, destinatario, msg }) => {
     const usuario = usuarios.find(user => user.id == socket.id)
-    io.in(usuario.sala).emit('mensagem', { usuario: usuario.id_usuario, texto: mensagem });
+    mensagens.push({remetente, destinatario, msg})
+    io.in(usuario.sala).emit('mensagem', { usuario: remetente, texto: msg });
   })
-  socket.on("desconectar", () => {
+  socket.on("disconnect", () => {
     console.log("Usuario desconectado");
     const index = usuarios.findIndex((user) => user.id === socket.id);
     let usuario = {};
@@ -294,7 +317,7 @@ io.on('connection', socket => {
         //io.in(usuario.sala).emit('users', getUsers(usuario.sala))
     //}
     })
-    */
+    
 })
 
 //################################## webservices #########################
