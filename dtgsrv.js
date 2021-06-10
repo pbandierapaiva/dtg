@@ -287,12 +287,14 @@ io.on('connection', socket => {
   //console.log(`Socket conectado: `,socket.id);  
   
   socket.on('login', ({ id_usuario, id_paciente }) => {
-    usuarios.push({id:socket.id,id_usuario:id_usuario,sala:id_paciente})
-    socket.join(id_paciente)
-    let mensagensAnteriores = mensagens.filter(msg => {
-      return msg.sala == id_paciente
-    })
-    io.emit('mensagensAnteriores', mensagensAnteriores);
+    if (!isNaN(id_usuario) && !isNaN(id_paciente)) {
+      usuarios.push({ id: socket.id, id_usuario: id_usuario, sala: id_paciente })
+      socket.join(id_paciente)
+      let mensagensAnteriores = mensagens.filter(msg => {
+        return msg.sala == id_paciente
+      })
+      socket.emit('mensagensAnteriores', mensagensAnteriores);
+    }
     //console.log(usuarios);
     //socket.in(room).emit('notification', { title: 'Someone\'s here', description: `${user.name} just entered the room` })
     //io.in(room).emit('users', getUsers(room))
@@ -331,8 +333,8 @@ io.on('connection', socket => {
       io.in(usuario.sala).emit('mensagem', objMsg);
     }
     else {
-      objMsg={ idMsg: 999, remetenteid, remetente, destinatario, msg: 'erro', sala: usuario.sala }
-      io.emit('mensagem', objMsg);
+      objMsg={ idMsg: 999, remetenteid, remetente, destinatario, msg: 'erro', sala: null }
+      socket.emit('mensagem', objMsg);
     }
   })
 
