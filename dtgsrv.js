@@ -2139,12 +2139,12 @@ app.post("/consultar_responsaveis_paci", jsonParser, async (req, res) => {
   //select  de delegados
  
   let sql =
-    " select  md.id_med_coord id_med_coord,  u.nome nome, md.uf_crm ufCrm, md.crm crm, md.categoria categoria" +
+    " select  md.id_med_coord id_med_coord,  u.nome nome, md.uf_crm ufCrm, md.crm crm, md.categoria categoria, u.tipo tipo" +
     " from  usuario u, med_coord md " +
     " where " +
     " md.id_med_coord=u.id_usuario  " +    
     " and u.ativo=1  " +
-    " and md.id_med_coord not in (select r.id_med_coord from responsaveis r where r.id_paciente= " + id_paciente + " )  " 
+    " and md.id_med_coord in (select r.id_med_coord from responsaveis r where r.id_paciente= " + id_paciente + " )  " 
     
     ;
   
