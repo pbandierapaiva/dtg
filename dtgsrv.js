@@ -224,6 +224,32 @@ async function incluirMensagemBanco(remetente, destinatario, msg) {
   }
 }
 
+//consultar mensagem  no banco de dados de um paciente
+ async function consultarMensagensBanco (id_paciente) {
+
+  //definir o sql padrão { idMsg, remetenteid, remetente, destinatario, msg, sala: usuario.sala }
+   let sql = " select " +
+     " m.id_msg idMsg, " +
+     " m.remetente remetenteid, " +
+     " u.nome remetente, " +
+     " m.destinatario destinatario, " +
+     " m.msg msg, " +
+     " '"+id_paciente+"' sala " +
+     " from  " +
+     " mensagens m,  " +
+     " usuario u " +
+     " where " +
+     " m.remetente = u.id_usuario and " +
+     " ( m.remetente = "+id_paciente+" or m.destinatario = "+id_paciente+")  " +
+     " order by m.id_msg";
+  
+  
+  let resultado = await select_mdb(sql);
+  return resultado
+  
+}
+
+
 
 //################# servidor ###########################
 app.get("/deploy", function (req, res) {
@@ -286,13 +312,18 @@ let mensagens = [];
 io.on('connection', socket => {
   //console.log(`Socket conectado: `,socket.id);  
   
-  socket.on('login', ({ id_usuario, id_paciente }) => {
+  socket.on('login', async ({ id_usuario, id_paciente }) => {
     if (!isNaN(id_usuario) && !isNaN(id_paciente)) {
       usuarios.push({ id: socket.id, id_usuario: id_usuario, sala: id_paciente })
       socket.join(id_paciente)
       let mensagensAnteriores = mensagens.filter(msg => {
         return msg.sala == id_paciente
       })
+      if (mensagensAnteriores.length == 0) {
+        mensagensAnteriores = await consultarMensagensBanco(id_paciente);
+        mensagens = mensagens.concat(mensagensAnteriores);
+        //console.log('msgAux', msgAux);
+      }
       socket.emit('mensagensAnteriores', mensagensAnteriores);
     }
     //console.log(usuarios);
