@@ -30,6 +30,7 @@ const pm2 = require("pm2");
 
 //configuração do git
 const simpleGit = require("simple-git");
+const { emit } = require("process");
 const git = simpleGit();
 //configuração do socket.io
 app.use(cors());
@@ -269,15 +270,16 @@ app.get("/", function (req, res) {
 let usuarios = [];
 let mensagens = [];
 io.on('connection', socket => {
-  console.log(`Socket conectado: `,socket.id);
-  socket.on('hello', mensagem => {
-    console.log(`Hello world: `, mensagem);
-  })
+  //console.log(`Socket conectado: `,socket.id);  
   
   socket.on('login', ({ id_usuario, id_paciente }) => {
     usuarios.push({id:socket.id,id_usuario:id_usuario,sala:id_paciente})
     socket.join(id_paciente)
-    console.log(usuarios);
+    let mensagensAnteriores = mensagens.filter(msg => {
+      return msg.sala == id_paciente
+    })
+    io.emit('mensagensAnteriores', mensagensAnteriores);
+    //console.log(usuarios);
     //socket.in(room).emit('notification', { title: 'Someone\'s here', description: `${user.name} just entered the room` })
     //io.in(room).emit('users', getUsers(room))
     //callback()        
@@ -296,7 +298,7 @@ io.on('connection', socket => {
       //socket.emit('error','couldnt perform requested action');
     }
     
-    console.log(usuarios);
+    //console.log(usuarios);
     //socket.in(room).emit('notification', { title: 'Someone\'s here', description: `${user.name} just entered the room` })
     //io.in(room).emit('users', getUsers(room))
     //callback()        
