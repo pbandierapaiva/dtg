@@ -211,6 +211,20 @@ async function pacienteEstaAutenticado({ login, senha }) {
   }
 }
 
+//grava mensagem enviada no banco de dados
+
+async function incluirMensagemBanco(remetente, destinatario, msg) {
+  let sql = "insert into mensagens (msg,remetente,destinatario,data) values(?,?,?,NOW())";
+  let values = [msg,remetente,destinatario];
+  let resultado = await insert_mdb(sql, values);
+  if (resultado.affectedRows > 0) {
+    return resultado.insertId;
+  } else {   
+    return false;
+  }
+}
+
+
 //################# servidor ###########################
 app.get("/deploy", function (req, res) {
   git.pull().pull("origin", "master", { "--rebase": "true" });
@@ -304,13 +318,22 @@ io.on('connection', socket => {
     //callback()        
   })
   
-  socket.on('enviarMensagem', ({ remetenteid,remetente, destinatario, msg }) => {
+  socket.on('enviarMensagem', async ({ remetenteid,remetente, destinatario, msg }) => {
     const usuario = usuarios.find(user => user.id == socket.id)
-    const idMsg = mensagens.length + 1
-    const objMsg = { idMsg, remetenteid, remetente, destinatario, msg, sala: usuario.sala }
-    mensagens.push(objMsg)
-    console.log("mensagens",mensagens)
-    io.in(usuario.sala).emit('mensagem', objMsg);
+    const idMsg = await incluirMensagemBanco(remetenteid, destinatario, msg)
+    let objMsg = {}
+    
+    console.log('idMSG', idMsg);
+    if (idMsg) {
+      objMsg = { idMsg, remetenteid, remetente, destinatario, msg, sala: usuario.sala }
+      mensagens.push(objMsg)
+      console.log("mensagens", mensagens)
+      io.in(usuario.sala).emit('mensagem', objMsg);
+    }
+    else {
+      objMsg={ idMsg: 999, remetenteid, remetente, destinatario, msg: 'erro', sala: usuario.sala }
+      io.emit('mensagem', objMsg);
+    }
   })
 
   socket.on("disconnect", () => {
