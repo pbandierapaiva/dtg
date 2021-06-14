@@ -181,10 +181,11 @@ async function pacienteEstaAutenticado({ login, senha }) {
   //console.log('senha:', senha)
   senha = hash.reset().update(senha).digest("hex");
   sql =
-    " select u.senha senha, u.nome nome,  p.aceite aceite, u.cpf, u.id_usuario id_usuario, p.id_inst id_inst " +
-    " from usuario u, paciente p " +
+    " select u.senha senha, u.nome nome,  p.aceite aceite, u.cpf, u.id_usuario id_usuario, p.id_inst id_inst, p.preceptor id_preceptor, u2.nome nome_preceptor  " +
+    " from usuario u, paciente p, usuario u2 " +
     " where " +
     " u.id_usuario=p.id_paciente and " +
+    " p.preceptor=u2.id_usuario and " +
     " u.ativo=1 and " +
     " u.login = '" +
     login +
@@ -203,7 +204,9 @@ async function pacienteEstaAutenticado({ login, senha }) {
       cpf: senha_banco[0].cpf,
       aceite: senha_banco[0].aceite,
       id_usuario: senha_banco[0].id_usuario,
-      id_inst: senha_banco[0].id_inst
+      id_inst: senha_banco[0].id_inst,
+      id_preceptor: senha_banco[0].id_preceptor,
+      nome_preceptor: senha_banco[0].nome_preceptor
     };
     return usuario;
   } else {
