@@ -2084,6 +2084,56 @@ app.post("/gravar_r_mola_clinicos", jsonParser, async (req, res) => {
     return;
   }
 });
+//################################## tela de CHAT #########################
+
+//webservice de consultar responsáveis do paciente
+app.post("/consultar_destinatarios", jsonParser, async (req, res) => {
+  
+  //receber id_med_coord,nome,cpf, preceptor,terminoCaso
+  let { id_med_coord,nome,cpf, preceptor} = req.body;
+  //select  de pecientes que médico possui alguma responsabilidade
+ 
+  let sql =
+    " select	" +
+    "  u.nome nome,	" +
+    "  u.cpf, " +
+    "  u.id_usuario id_usuario, " +
+    "  p.id_inst id_inst, " +
+    "  p.preceptor id_preceptor, " +
+    "  u2.nome nome_preceptor, " +
+    "  DATE_FORMAT((select max(data) from mensagens m  where remetente = p.id_paciente),'%d/%m/%Y %T') ultima_paciente, " +
+    "  DATE_FORMAT((select max(data) from mensagens m  where destinatario = p.id_paciente),'%d/%m/%Y %T') ultima_medico " +
+    " from " +
+    "  usuario u, " +
+    "  paciente p, " +
+    "  usuario u2 " +
+    " where" +
+    " 	u.id_usuario=p.id_paciente and " +
+    " 	p.preceptor=u2.id_usuario and " +
+    " 	u.ativo=1 and " +
+    " 	p.id_paciente in (select r.id_paciente from responsaveis r where id_med_coord=" + id_med_coord + ") ";
+  let where = "";
+  if (nome != "") {
+    where += " and UPPER(u.nome) like UPPER('%" + nome + "%') ";
+  }
+
+  if (cpf != "") {
+    where += " and u.cpf = " + cpf + " ";
+  }
+
+  if (preceptor != "") {
+    where += " and UPPER(u2.nome) like UPPER('%" + preceptor + "%') ";
+  }
+
+  sql += where;
+  ordem = " order by  ultima_paciente desc ";
+  sql += ordem;
+  //console.log(sql);
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+
 
 //*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
 //##############################################################################Tela de login do paciente###############################################################################################
@@ -2191,6 +2241,7 @@ app.post("/consultar_responsaveis_paci", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
+  
 server.listen(port, () => {
   console.log(`DTG server em http://localhost:${port}`);
 });
