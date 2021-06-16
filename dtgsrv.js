@@ -339,7 +339,7 @@ io.on('connection', socket => {
       const index = usuarios.findIndex((user) => user.id === socket.id);
       let usuario = {};
       if (index !== -1) { usuario = usuarios.splice(index, 1)[0]; }
-      console.log('[socket]','Logout :', sala,usuario);
+      //console.log('[socket]','Logout :', sala,usuario);
       socket.leave(sala);
        
       //socket.to(room).emit('user left', socket.id);
@@ -359,11 +359,11 @@ io.on('connection', socket => {
     const idMsg = await incluirMensagemBanco(remetenteid, destinatario, msg)
     let objMsg = {}
     
-    console.log('idMSG', idMsg);
+    //console.log('idMSG', idMsg);
     if (idMsg) {
       objMsg = { idMsg, remetenteid, remetente, destinatario, msg, sala: usuario.sala }
       mensagens.push(objMsg)
-      console.log("mensagens", mensagens)
+      //console.log("mensagens", mensagens)
       io.in(usuario.sala).emit('mensagem', objMsg);
     }
     else {
@@ -373,7 +373,7 @@ io.on('connection', socket => {
   })
 
   socket.on("disconnect", () => {
-    console.log("Usuario desconectado");
+    //console.log("Usuario desconectado");
     const index = usuarios.findIndex((user) => user.id === socket.id);
     let usuario = {};
     if (index !== -1) { usuario = usuarios.splice(index, 1)[0]; }

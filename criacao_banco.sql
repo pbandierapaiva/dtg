@@ -61,7 +61,7 @@ CREATE TABLE mensagens
 (
   id_msg INT NOT NULL AUTO_INCREMENT,
   msg VARCHAR(250) NOT NULL,
-  data DATE NOT NULL,
+  data DATETIME NOT NULL,
   remetente INT NOT NULL,
   destinatario INT NOT NULL,
   PRIMARY KEY (id_msg),
