@@ -418,7 +418,7 @@ app.post("/auth/loginSenhaIguais", jsonParser, async (req, res) => {
 //webservice de login
 app.post("/auth/login", jsonParser, async (req, res) => {
   //receber login e senha
-  //console.log(req.body)
+  console.log(req.body)
   const { login, senha } = req.body;
   
   //fazer select no banco de dados
