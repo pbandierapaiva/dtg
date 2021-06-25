@@ -1929,11 +1929,11 @@ app.post("/gravar_r_mola_partos", jsonParser, async (req, res) => {
   let resultado = await update_mdb(sql, values);
   //console.log(resultado)
   if (resultado.affectedRows > 0) {
-    res.status(200).json({ resultado: "dados dos partos prévios gravados com sucesso" });
+    res.status(200).json({ resultado: "dados de gestações prévias gravados com sucesso" });
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível gravar os dados dos partos prévios ";
+    const message = "Não foi possível gravar os dados de gestações prévias ";
     res.status(status).json({ status, message });
     return;
   }

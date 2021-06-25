@@ -69,6 +69,15 @@ CREATE TABLE mensagens
   FOREIGN KEY (destinatario) REFERENCES usuario(id_usuario)
 );
 
+CREATE TABLE cid
+(
+  id_cid INT NOT NULL,
+  cod_cid VARCHAR(6) NOT NULL,
+  descricao VARCHAR(250) NOT NULL,
+  ativo INT NOT NULL,
+  PRIMARY KEY (id_cid)
+);
+
 CREATE TABLE med_coord
 (
   crm VARCHAR(15) ,
@@ -129,14 +138,14 @@ CREATE TABLE registro_mola
   data_esvaz1 DATE,
   ig_esvaz1 INT,
   tipo_esvaz1 ENUM('aspiração eletrica', 'AMIU', 'curetagem', 'HTA com mola'),
-  local_esvaz1 ENUM('HSP', 'outros'),
+  local_esvaz1 ENUM('HUHSP', 'outros'),
   hosp_esvaz1 VARCHAR(250),
   nat_hosp_esvaz1 ENUM('público', 'particular'),
   data_esvaz2 DATE,
   interv_esvaz INT,
   ntg INT DEFAULT 0,
   beta INT DEFAULT 0,
-  us ENUM('não tem', 'típico de MH', 'alterações hidrópicas sugestivas de mola SEM embrião', 'alterações hidrópicas sugestivas de mola COM embrião', 'gestação não evolutiva SEM embrião', 'gestação não evolutiva COM embrião', 'imagem de restos ovulares', 'gemelar feto normal + mola'),
+  us ENUM('não tem', 'típico de MH', 'alterações hidrópicas sugestivas de mola SEM embrião', 'alterações hidrópicas sugestivas de mola COM embrião', 'gestação não evolutiva SEM embrião', 'gestação não evolutiva COM embrião', 'imagem de restos ovulares', 'gemelar feto normal + mola', 'óbito'),
   sangramento INT  DEFAULT 0,
   hb INT  DEFAULT 0,
   pressao_alta INT  DEFAULT 0,
@@ -147,19 +156,22 @@ CREATE TABLE registro_mola
   raiox INT  DEFAULT 0,
   entrada_servico ENUM('esvaziamento no HSP', 'para acompanhamento pós-esvaziamento', 'com suspeita ou diagnóstico de NTG', 'após tratamento de NTG'),
   data_ult DATE ,
-  term_caso ENUM('evasão (abandono do serviço com hCG positivo)', 'molar completo', 'molar incompleto', 'NTG completo', 'NTG incompleto'),
+  term_caso ENUM('evasão (abandono do serviço com hCG positivo)', 'molar completo', 'molar incompleto', 'NTG completo', 'NTG incompleto','Óbito'),
   dum_esvaz1 DATE ,
+  obs VARCHAR(1000),
   id_paciente INT NOT NULL,
   id_mac_antes INT,
   id_mac_apos INT,
   revisor INT,
   pessoa_ult INT,
+  id_cid INT,
   PRIMARY KEY (id_r_mola),
   FOREIGN KEY (id_paciente) REFERENCES paciente(id_paciente),
   FOREIGN KEY (id_mac_antes) REFERENCES mac(id_mac),
   FOREIGN KEY (id_mac_apos) REFERENCES mac(id_mac),
   FOREIGN KEY (revisor) REFERENCES med_coord(id_med_coord),
-  FOREIGN KEY (pessoa_ult) REFERENCES med_coord(id_med_coord)
+  FOREIGN KEY (pessoa_ult) REFERENCES med_coord(id_med_coord),
+  FOREIGN KEY (id_cid) REFERENCES cid(id_cid)
 );
 
 CREATE TABLE anatomia_patologica
