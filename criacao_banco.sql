@@ -71,8 +71,8 @@ CREATE TABLE mensagens
 
 CREATE TABLE cid
 (
-  id_cid INT NOT NULL,
-  cod_cid VARCHAR(6) NOT NULL,
+  id_cid INT NOT NULL AUTO_INCREMENT,
+  cod_cid VARCHAR(8) NOT NULL,
   descricao VARCHAR(250) NOT NULL,
   ativo INT NOT NULL DEFAULT 1,
   PRIMARY KEY (id_cid)
@@ -352,6 +352,16 @@ VALUES('Nenhum'),
 ('Injetável trimestral'),
 ('Injetável mensal'),
 ('Condom');
+
+
+INSERT INTO dtg.cid
+(cod_cid, descricao, ativo)
+VALUES('O01.0', 'Mola hidatiforme clássica', 1),
+('O01.1', 'Mola hidatiforme incompleta ou parcial', 1),
+('O01.9', 'Mola hidatiforme não especificada', 1),
+('D39.2', 'Mola Invasora', 1),
+('C58', 'Coriocarcinoma', 1),
+('M9104/1', 'Tumor Trofoblástico do Sítio Placentário', 1);
 
 
 create or replace
