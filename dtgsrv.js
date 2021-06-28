@@ -1245,6 +1245,151 @@ app.post("/incluir_resultado_ap", jsonParser, async (req, res) => {
   }
 });
 
+//################################## tela de consulta CID #########################
+//webservice de consultar CID
+app.post("/consultar_cid", jsonParser, async (req, res) => {
+  //receber cod_cid, descricao, ativo
+
+  let { cod_cid, descricao } = req.body;
+  //definir o sql padrão
+  let sql =
+    " select " +
+    " id_cid, " +
+    " cod_cid, " +
+    " descricao," +
+    " ativo " +   
+    " from cid ";
+  //variável que receberá o where
+  let where = "";
+  //se codigo do CID foi enviado define um like no sql
+  if (cod_cid != "") {
+    where += "  UPPER(cod_cid) like UPPER('%" + cod_cid + "%') ";
+  }
+  //se descricao foi enviado define um like no sql
+  if (descricao != "") {
+    where += "  UPPER(descricao) like UPPER('%" + descricao + "%') ";
+  }  
+
+  if (where != "") {
+    where = " where " + where;
+  }
+
+  sql += where;
+
+  ordem = " order by descricao ";
+  sql += ordem;
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+/*
+//webservice de exclusão de Intituição
+app.post("/excluir_instituicao", jsonParser, async (req, res) => {
+  //receber id
+  let { id } = req.body;
+  //definir o sql padrão
+  let sql = "delete from instituicao where id_inst = " + id;
+  let resultado = await delete_mdb(sql);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível excluir os dados da instituição.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
+//webservice ativar ou inativar instituição
+app.post("/ativa_inativar_instituicao", jsonParser, async (req, res) => {
+  //receber id_inst
+
+  let { id_inst, valor } = req.body;
+
+  //alterar o campo ativo no banco de dados
+  sql = "update instituicao set ativo = ?  where id_inst = ?";
+  let resultado = await update_mdb(sql, [valor, id_inst]);
+
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: 1 });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possivel ativar/inativar a instituição!";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
+//################################## tela de Cadastro de Instituição #########################
+
+//webservice de incluir Instituição
+app.post("/incluir_instituicao", jsonParser, async (req, res) => {
+  //receber dados para inclusão
+  let {
+    nome,
+    cep,
+    logradouro,
+    numero,
+    complemento,
+    uf,
+    cidade,
+    bairro,
+  } = req.body;
+  //definir o sql padrão
+  let sql =
+    "insert into instituicao ( " +
+    " nome_inst , " +
+    " logradouro_inst ," +
+    " num_inst ," +
+    " cep_inst , " +
+    " bairro_inst , " +
+    " cidade_inst , " +
+    " uf_inst , " +
+    " complemento_inst  " +
+    ") values(?,?,?,?,?,?,?,?)";
+  let values = [nome, logradouro, numero, cep, bairro, cidade, uf, complemento];
+  let resultado = await insert_mdb(sql, values);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: [values, resultado.insertId] });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível incluir os dados da Instituição.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
+//webservice de carrega dados de um instituição
+app.post("/dados_instituicao", jsonParser, async (req, res) => {
+  //receber descricao
+
+  let { id_inst } = req.body;
+  //definir o sql padrão
+
+  let sql =
+    " select " +
+    " id_inst id, " +
+    " nome_inst nome, " +
+    " logradouro_inst logradouro," +
+    " num_inst numero," +
+    " cep_inst cep, " +
+    " bairro_inst bairro, " +
+    " cidade_inst cidade, " +
+    " uf_inst uf, " +
+    " complemento_inst complemento, " +
+    " ativo ativo " +
+    " from instituicao " +
+    " where " +
+    " id_inst = " + id_inst;
+  
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+*/
 //################################## tela de consulta de pacientes #########################
 //webservice de consultar pacientes
 app.post("/consultar_pacientes", jsonParser, async (req, res) => {
@@ -2103,7 +2248,7 @@ app.post("/gravar_r_mola_clinicos", jsonParser, async (req, res) => {
     return;
   }
 });
-//################################## tela de CHAT #########################
+//################################## tela de CHAT ######################### ***** tela descontinuada ****
 
 //webservice de consultar responsáveis do paciente
 app.post("/consultar_destinatarios", jsonParser, async (req, res) => {
