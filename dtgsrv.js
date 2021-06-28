@@ -1168,20 +1168,6 @@ app.post("/incluir_indicacao", jsonParser, async (req, res) => {
   }
 });
 
-//################################## tela de consulta de Instituições #########################
-//webservice de consultar MAC (Método anticoncepcional)
-app.get("/combo_inst", jsonParser, async (req, res) => {
-  //definir o sql padrão
-  let sql =
-    " select id_inst id, nome_inst " +
-    " from instituicao " +
-    " where  ativo = 1 " +
-    " order by nome_inst ";
-
-  let resultado = await select_mdb(sql);
-
-  res.status(200).json({ resultado });
-});
 
 //################################## tela de consulta de resultado da Anatomia Patológica #########################
 //webservice de consulta resultado da anatomia patológica
@@ -1333,35 +1319,7 @@ app.post("/incluir_cid", jsonParser, async (req, res) => {
     return;
   }
 });
-/*
-//webservice de carrega dados de um instituição
-app.post("/dados_instituicao", jsonParser, async (req, res) => {
-  //receber descricao
 
-  let { id_inst } = req.body;
-  //definir o sql padrão
-
-  let sql =
-    " select " +
-    " id_inst id, " +
-    " nome_inst nome, " +
-    " logradouro_inst logradouro," +
-    " num_inst numero," +
-    " cep_inst cep, " +
-    " bairro_inst bairro, " +
-    " cidade_inst cidade, " +
-    " uf_inst uf, " +
-    " complemento_inst complemento, " +
-    " ativo ativo " +
-    " from instituicao " +
-    " where " +
-    " id_inst = " + id_inst;
-  
-  let resultado = await select_mdb(sql);
-
-  res.status(200).json({ resultado });
-});
-*/
 //################################## tela de consulta de pacientes #########################
 //webservice de consultar pacientes
 app.post("/consultar_pacientes", jsonParser, async (req, res) => {
@@ -2377,6 +2335,35 @@ app.post("/consultar_responsaveis_paci", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
+
+//################################## dados para Combobox #########################
+//webservice de combo de Instituições
+app.get("/combo_inst", jsonParser, async (req, res) => {
+  //definir o sql padrão
+  let sql =
+    " select id_inst id, nome_inst " +
+    " from instituicao " +
+    " where  ativo = 1 " +
+    " order by nome_inst ";
+
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+
+//webservice de combo de CID
+app.get("/combo_inst", jsonParser, async (req, res) => {
+  //definir o sql padrão
+  let sql =
+    " select id_cid, cod_cid, descricao " +
+    " from cid " +
+    " where  ativo = 1 " +
+    " order by descricao ";
+
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
   
 server.listen(port, () => {
   console.log(`DTG server em http://localhost:${port}`);
