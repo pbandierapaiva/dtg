@@ -74,7 +74,7 @@ CREATE TABLE cid
   id_cid INT NOT NULL,
   cod_cid VARCHAR(6) NOT NULL,
   descricao VARCHAR(250) NOT NULL,
-  ativo INT NOT NULL,
+  ativo INT NOT NULL DEFAULT 1,
   PRIMARY KEY (id_cid)
 );
 
