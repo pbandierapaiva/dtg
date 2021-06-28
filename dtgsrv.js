@@ -1282,33 +1282,16 @@ app.post("/consultar_cid", jsonParser, async (req, res) => {
 
   res.status(200).json({ resultado });
 });
-/*
-//webservice de exclusão de Intituição
-app.post("/excluir_instituicao", jsonParser, async (req, res) => {
-  //receber id
-  let { id } = req.body;
-  //definir o sql padrão
-  let sql = "delete from instituicao where id_inst = " + id;
-  let resultado = await delete_mdb(sql);
-  if (resultado.affectedRows > 0) {
-    res.status(200).json({ resultado });
-    return;
-  } else {
-    const status = 409;
-    const message = "Não foi possível excluir os dados da instituição.";
-    res.status(status).json({ status, message });
-    return;
-  }
-});
 
-//webservice ativar ou inativar instituição
-app.post("/ativa_inativar_instituicao", jsonParser, async (req, res) => {
+
+//webservice ativar ou inativar CID
+app.post("/ativar_inativar_cid", jsonParser, async (req, res) => {
   //receber id_inst
 
   let { id_inst, valor } = req.body;
 
   //alterar o campo ativo no banco de dados
-  sql = "update instituicao set ativo = ?  where id_inst = ?";
+  sql = "update cid set ativo = ?  where id_inst = ?";
   let resultado = await update_mdb(sql, [valor, id_inst]);
 
   if (resultado.affectedRows > 0) {
@@ -1316,12 +1299,12 @@ app.post("/ativa_inativar_instituicao", jsonParser, async (req, res) => {
     return;
   } else {
     const status = 409;
-    const message = "Não foi possivel ativar/inativar a instituição!";
+    const message = "Não foi possivel ativar/inativar o CID!";
     res.status(status).json({ status, message });
     return;
   }
 });
-
+/*
 //################################## tela de Cadastro de Instituição #########################
 
 //webservice de incluir Instituição
