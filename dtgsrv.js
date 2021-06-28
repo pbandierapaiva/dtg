@@ -1834,7 +1834,9 @@ app.post("/dados_r_mola_gerais", jsonParser, async (req, res) => {
     " altura, " +
     " imc, " +
     " term_caso, " +
-    " date_format(dum_consulta,'%Y-%m-%d') dum_consulta" +
+    " date_format(dum_consulta,'%Y-%m-%d') dum_consulta," +
+    " id_cid, " +
+    " obs " +
     " from registro_mola " +
     " where " +
     " id_r_mola = " + id_r_mola;
