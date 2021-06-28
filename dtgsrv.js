@@ -1853,7 +1853,9 @@ app.post("/gravar_r_mola_gerais", jsonParser, async (req, res) => {
     altura,
     imc,
     term_caso,
-    dum_consulta,
+    dum_consulta,    
+    id_cid,
+    obs,
     id_r_mola
   } = req.body;
 
@@ -1865,9 +1867,11 @@ app.post("/gravar_r_mola_gerais", jsonParser, async (req, res) => {
     " altura = ?, " +
     " imc = ?, " +
     " term_caso = ?, " +
-    " dum_consulta = ? " +    
+    " dum_consulta = ?, " + 
+    " id_cid = ?, " +
+    " obs = ? " +    
     " where id_r_mola = ? ";
-  let values = [idade, peso, altura, imc, term_caso, dum_consulta, id_r_mola];
+  let values = [idade, peso, altura, imc, term_caso, dum_consulta, id_cid, obs, id_r_mola ];
   //console.log('values',values)
   let resultado = await update_mdb(sql, values);
   //console.log(resultado)
