@@ -2352,7 +2352,7 @@ app.get("/combo_inst", jsonParser, async (req, res) => {
 });
 
 //webservice de combo de CID
-app.get("/combo_inst", jsonParser, async (req, res) => {
+app.get("/combo_cid", jsonParser, async (req, res) => {
   //definir o sql padrão
   let sql =
     " select id_cid, cod_cid, descricao " +
