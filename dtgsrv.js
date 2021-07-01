@@ -32,6 +32,13 @@ const pm2 = require("pm2");
 const simpleGit = require("simple-git");
 const { emit } = require("process");
 const git = simpleGit();
+
+//conifguração para upload de arquivos
+const formidable = require('formidable');
+const fs = require('fs');
+const folder = path.join(__dirname, 'arquivos');
+
+
 //configuração do socket.io
 app.use(cors());
 const server = require('http').createServer(app);
@@ -418,7 +425,7 @@ app.post("/auth/loginSenhaIguais", jsonParser, async (req, res) => {
 //webservice de login
 app.post("/auth/login", jsonParser, async (req, res) => {
   //receber login e senha
-  console.log(req.body)
+  //console.log(req.body)
   const { login, senha } = req.body;
   
   //fazer select no banco de dados
@@ -1272,13 +1279,13 @@ app.post("/consultar_cid", jsonParser, async (req, res) => {
 
 //webservice ativar ou inativar CID
 app.post("/ativar_inativar_cid", jsonParser, async (req, res) => {
-  //receber id_inst
+  //receber id_cid
 
-  let { id_inst, valor } = req.body;
+  let { id_cid, valor } = req.body;
 
   //alterar o campo ativo no banco de dados
-  sql = "update cid set ativo = ?  where id_inst = ?";
-  let resultado = await update_mdb(sql, [valor, id_inst]);
+  sql = "update cid set ativo = ?  where id_cid = ?";
+  let resultado = await update_mdb(sql, [valor, id_cid]);
 
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado: 1 });
@@ -2228,7 +2235,26 @@ app.post("/consultar_destinatarios", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
+//##############################################################################Tela de Upload de imagens###############################################################################################
+//webservice de upload
+app.post('/upload', (req, res) => {
+    const form = new formidable.IncomingForm()
 
+    form.uploadDir = folder
+    form.parse(req, (_, fields, files) => {
+        console.log('\n-----------')
+        console.log('Fields', fields)
+        //console.log('Received:', files[undefined].path)
+        //console.log('Received:', files[undefined].name)
+        console.log()
+        const oldpath = files[undefined].path;
+        const newpath = path.join(folder, files[undefined].name)
+        console.log('oldpath:', oldpath)
+        console.log('Received:', newpath)
+        fs.renameSync(oldpath, newpath);
+        res.send('Thank you')
+    })
+})
 //*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
 //##############################################################################Tela de login do paciente###############################################################################################
 
