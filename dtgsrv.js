@@ -2241,18 +2241,22 @@ app.post('/upload', (req, res) => {
     const form = new formidable.IncomingForm()
 
     form.uploadDir = folder
-    form.parse(req, (_, fields, files) => {
-        console.log('\n-----------')
-        console.log('Fields', fields)
+    form.parse(req, (err, fields, files) => {
+      console.log('\n-----------')      
+      console.log('Fields', fields)
+      console.log('files', files[Object.keys(files)[0]].path)
+      console.log('error', err)
         //console.log('Received:', files[undefined].path)
         //console.log('Received:', files[undefined].name)
-        console.log()
-        const oldpath = files[undefined].path;
-        const newpath = path.join(folder, files[undefined].name)
-        console.log('oldpath:', oldpath)
-        console.log('Received:', newpath)
-        fs.renameSync(oldpath, newpath);
-        res.send('Thank you')
+      console.log()
+            
+      const oldpath = files[Object.keys(files)[0]].path;
+      const newpath = path.join(folder, files[Object.keys(files)[0]].name)
+      console.log('oldpath:', oldpath)
+      console.log('Received:', newpath)
+      fs.renameSync(oldpath, newpath);
+      res.send('Thank you')
+      
     })
 })
 //*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
