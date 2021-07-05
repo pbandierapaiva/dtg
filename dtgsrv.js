@@ -2255,7 +2255,8 @@ app.post('/upload', (req, res) => {
       console.log('oldpath:', oldpath)
       console.log('Received:', newpath)
       fs.renameSync(oldpath, newpath);
-      res.send('Thank you')
+      //res.send('Thank you')
+      res.status(200).json({ newpath });
       
     })
 })
