@@ -36,6 +36,7 @@ const git = simpleGit();
 //conifguração para upload de arquivos
 const formidable = require('formidable');
 const fs = require('fs');
+const stream = require('stream')
 const folder = path.join(__dirname, 'arquivos');
 
 
@@ -2281,6 +2282,43 @@ app.post('/upload', (req, res) => {
       }
     })
 })
+
+
+//webservice de retorno de imagem
+app.get('/arquivo/:id', jsonParser, async (req, res) => {
+  if (!isNaN(req.params.id)) {
+    let sqlArquivo = "select url_img from imagens where id_imagem = " + req.params.id
+    let resultado = await select_mdb(sqlArquivo);
+  //console.log('senha cripto:', senha)
+  //console.log('senha_banco:',senha_banco[0].senha)
+    if (typeof resultado[0] == "undefined") {
+      const status = 409;
+      const message = "Imagem não encontrada";
+      res.status(status).json({ status, message });
+      return;
+    }
+    const r = fs.createReadStream(resultado[0].url_img) // or any other way to get a readable stream
+    const ps = new stream.PassThrough() // <---- this makes a trick with stream error handling
+    stream.pipeline(
+      r,
+      ps, // <---- this makes a trick with stream error handling
+      (err) => {
+        if (err) {
+          console.log(err) // No such file or any other kind of error
+          return res.sendStatus(409); 
+        }
+      })
+    ps.pipe(res) 
+    return;
+  }
+  else {
+    const status = 409;
+    const message = "id inválido";
+    res.status(status).json({ status, message });
+    return;
+  }
+})
+
 //*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
 //##############################################################################Tela de login do paciente###############################################################################################
 
