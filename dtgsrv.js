@@ -30,7 +30,7 @@ const pm2 = require("pm2");
 
 //configuração do git
 const simpleGit = require("simple-git");
-const { emit } = require("process");
+const { emit, exit } = require("process");
 const git = simpleGit();
 
 //conifguração para upload de arquivos
@@ -1894,11 +1894,7 @@ app.post("/incluir_r_mola", jsonParser, async (req, res) => {
   } catch (err) {
     console.log(err);
     throw err;
-  } finally {
-    if (conn) {
-      conn.end();
-    }
-  }
+  } 
 });
 
 //################################## tela de cadastro do registro mola - componente de dados gerais  #########################
@@ -2241,23 +2237,48 @@ app.post('/upload', (req, res) => {
     const form = new formidable.IncomingForm()
 
     form.uploadDir = folder
-    form.parse(req, (err, fields, files) => {
-      console.log('\n-----------')      
-      console.log('Fields', fields)
-      console.log('files', files[Object.keys(files)[0]].path)
-      console.log('error', err)
+    form.parse(req, async (err, fields, files) => {
+      //console.log('\n-----------')      
+      //console.log('Fields', fields)
+      //console.log('files', files[Object.keys(files)[0]].name.split('.').pop())
+      
+      let extensaoDoArquivo = files[Object.keys(files)[0]].name.split('.').pop()
+      let arquivoSemId = path.join(folder, (fields.id_r_mola + fields.tipo))
         //console.log('Received:', files[undefined].path)
         //console.log('Received:', files[undefined].name)
-      console.log()
-            
-      const oldpath = files[Object.keys(files)[0]].path;
-      const newpath = path.join(folder, files[Object.keys(files)[0]].name)
-      console.log('oldpath:', oldpath)
-      console.log('Received:', newpath)
-      fs.renameSync(oldpath, newpath);
-      //res.send('Thank you')
-      res.status(200).json({ newpath });
+      //console.log()
       
+      try {
+
+        //neste inser o nome do arquivo é composto do arquivoSemId(caminho + id_r_mola + tipo) + (o ultimo id da tabela imagens + 1) + extensão
+          let sqlImagens =
+            " INSERT INTO dtg.imagens "+
+            " (tp_exam, url_img, data_upload, id_r_mola) "+
+            " VALUES(?, concat(?,(select max(i.id_imagem) + 1 from imagens i),'.',?), NOW(), ?);";
+
+          let valuesImagens = [fields.tipo, arquivoSemId, extensaoDoArquivo,fields.id_r_mola];
+          let resultado = await insert_mdb(sqlImagens, valuesImagens);
+        if (resultado.affectedRows > 0) {
+            const oldpath = files[Object.keys(files)[0]].path;
+            const newpath = arquivoSemId+resultado.insertId+'.'+extensaoDoArquivo 
+            //console.log('oldpath:', oldpath)
+            //console.log('Received:', newpath)
+            fs.renameSync(oldpath, newpath);
+            
+            res.status(200).json({ id_imagem: [resultado.insertId] });
+            return;
+          } else {
+            const status = 409;
+            const message =
+              "Não foi possível incluir os dados do registro mola.";
+            
+            res.status(status).json({ status, message });
+            return;
+          }    
+      } catch (err) {
+        console.log(err);
+        throw err;
+      }
     })
 })
 //*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
