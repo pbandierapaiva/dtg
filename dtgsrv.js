@@ -2255,7 +2255,7 @@ app.post('/upload', (req, res) => {
         let sqlImagens =
           " INSERT INTO dtg.imagens "+
           " (tp_exam, url_img, data_upload, id_r_mola) "+
-          " VALUES (?, concat(?,(select max(i.id_imagem) + 1 from imagens i),'.',?), NOW(), ?)";
+          " VALUES (?, concat(?,(select max(i.id_imagem) + 1 from dtg.imagens i),'.',?), NOW(), ?)";
         let valuesImagens = [fields.tipo, arquivoSemId, extensaoDoArquivo, fields.id_r_mola];
         console.log('sql', sqlImagens);
         console.log('values', valuesImagens);
