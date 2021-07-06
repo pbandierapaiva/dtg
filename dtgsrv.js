@@ -2252,13 +2252,14 @@ app.post('/upload', (req, res) => {
       try {
 
         //neste inser o nome do arquivo é composto do arquivoSemId(caminho + id_r_mola + tipo) + (o ultimo id da tabela imagens + 1) + extensão
-          let sqlImagens =
-            " INSERT INTO dtg.imagens "+
-            " (tp_exam, url_img, data_upload, id_r_mola) "+
-            " VALUES (?, concat(?,(select max(i.id_imagem) + 1 from imagens i),'.',?), NOW(), ?);";
-
-          let valuesImagens = [fields.tipo, arquivoSemId, extensaoDoArquivo,fields.id_r_mola];
-          let resultado = await insert_mdb(sqlImagens, valuesImagens);
+        let sqlImagens =
+          " INSERT INTO dtg.imagens "+
+          " (tp_exam, url_img, data_upload, id_r_mola) "+
+          " VALUES (?, concat(?,(select max(i.id_imagem) + 1 from imagens i),'.',?), NOW(), ?)";
+        let valuesImagens = [fields.tipo, arquivoSemId, extensaoDoArquivo, fields.id_r_mola];
+        console.log('sql', sqlImagens);
+        console.log('values', valuesImagens);
+        let resultado = await insert_mdb(sqlImagens, valuesImagens);
         if (resultado.affectedRows > 0) {
             const oldpath = files[Object.keys(files)[0]].path;
             const newpath = arquivoSemId+resultado.insertId+'.'+extensaoDoArquivo 
