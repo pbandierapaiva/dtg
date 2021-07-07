@@ -2490,25 +2490,25 @@ app.post("/consultar_raiox", jsonParser, async (req, res) => {
 
   res.status(200).json({ resultado });
 });
-/*
-//webservice de exclusão de hcg
-app.post("/excluir_hcg", jsonParser, async (req, res) => {
-  //receber id_hcg
-  let { id_hcg } = req.body;
+
+//webservice de exclusão de raiox
+app.post("/excluir_raiox", jsonParser, async (req, res) => {
+  //receber id_raiox
+  let { id_raiox } = req.body;
   //definir o sql padrão
-  let sql = "delete from hcg where id_hcg = " + id_hcg;
+  let sql = "delete from raiox where id_raiox = " + id_raiox;
   let resultado = await delete_mdb(sql);
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado });
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível excluir os dados do hCG.";
+    const message = "Não foi possível excluir os dados do Raio-X.";
     res.status(status).json({ status, message });
     return;
   }
 });
-
+/*
 //################################## tela de Cadastro de hCG #########################
 //webservice de incluir hCG
 app.post("/incluir_hcg", jsonParser, async (req, res) => {
