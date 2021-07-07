@@ -2639,36 +2639,38 @@ app.post("/excluir_ultrassom", jsonParser, async (req, res) => {
     return;
   }
 });
-/*
-//################################## tela de Cadastro de Raio-X (raiox rx)  #########################
-//webservice de incluir raiox
-app.post("/incluir_raiox", jsonParser, async (req, res) => {
+
+//################################## tela de Cadastro de ultrassom  #########################
+//webservice de incluir ultrassom
+app.post("/incluir_ultrassom", jsonParser, async (req, res) => {
   //receber dados para inclusão
   let {
-    data_raiox,    
-    id_imagem,
+    data_ultrassom,    
+    ultrassom,
+    laudo_ultrassom,
     cadastrante
   } = req.body;
   //definir o sql padrão
   let sql =
-    "insert into raiox ( " +
-    " data_raiox, " +   
-    " id_imagem, " +
+    "insert into ultrassom ( " +
+    " data_ultrassom, " +   
+    " ultrassom, " +
+    " laudo_ultrassom, " +
     " cadastrante " +
-    " ) values (?,?,?)";
-  let values = [data_raiox, id_imagem, cadastrante];
+    " ) values (?,?,?,?)";
+  let values = [data_ultrassom, ultrassom, laudo_ultrassom, cadastrante];
   let resultado = await insert_mdb(sql, values);
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado: [values, resultado.insertId] });
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível incluir os dados do Raio-X.";
+    const message = "Não foi possível incluir os dados do ultrassom.";
     res.status(status).json({ status, message });
     return;
   }
 });
-
+/*
 //webservice de carrega dados de um exame de Raio-X
 app.post("/dados_raiox", jsonParser, async (req, res) => {
   //receber id_raiox
