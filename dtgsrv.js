@@ -2349,25 +2349,25 @@ app.post("/consultar_hcg", jsonParser, async (req, res) => {
 
   res.status(200).json({ resultado });
 });
-/*
-//webservice de exclusão de Intituição
-app.post("/excluir_instituicao", jsonParser, async (req, res) => {
-  //receber id
-  let { id } = req.body;
+
+//webservice de exclusão de hcg
+app.post("/excluir_hcg", jsonParser, async (req, res) => {
+  //receber id_hcg
+  let { id_hcg } = req.body;
   //definir o sql padrão
-  let sql = "delete from instituicao where id_inst = " + id;
+  let sql = "delete from hcg where id_hcg = " + id_hcg;
   let resultado = await delete_mdb(sql);
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado });
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível excluir os dados da instituição.";
+    const message = "Não foi possível excluir os dados do hCG.";
     res.status(status).json({ status, message });
     return;
   }
 });
-
+/*
 //webservice ativar ou inativar instituição
 app.post("/ativa_inativar_instituicao", jsonParser, async (req, res) => {
   //receber id_inst
