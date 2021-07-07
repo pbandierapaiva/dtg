@@ -2594,6 +2594,138 @@ app.post("/alterar_raiox", jsonParser, async (req, res) => {
 });
 
 
+//################################## tela de consulta de ultrassom #########################
+//webservice de consultar ultrassom
+app.post("/consultar_ultrassom", jsonParser, async (req, res) => {
+  //receber id_r_mola
+
+  let { id_r_mola } = req.body;
+  //definir o sql padrão
+
+  let sql =
+    " select " +
+    " ul.id_ultrassom id_ultrassom, " +
+    " DATE_FORMAT(ul.data_ultrassom,'%d/%m/%Y') data_ultrassom, " +    
+    " ul.ultrassom ultrassom, " +
+    " ul.laudo_ultrassom laudo_ultrassom, " +
+    " u2.nome revisor, " +
+    " u.nome cadastrante " +    
+    " from ultrassom ul " +
+    " join usuario u on ul.cadastrante=u.id_usuario " +
+    " left join usuario u2 on ul.revisor=u2.id_usuario " +
+    " where " +
+    " ul.id_r_mola = " + id_r_mola +
+    " order by id_ultrassom ";
+
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+/*
+//webservice de exclusão de raiox
+app.post("/excluir_raiox", jsonParser, async (req, res) => {
+  //receber id_raiox
+  let { id_raiox } = req.body;
+  //definir o sql padrão
+  let sql = "delete from raiox where id_raiox = " + id_raiox;
+  let resultado = await delete_mdb(sql);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível excluir os dados do Raio-X.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
+//################################## tela de Cadastro de Raio-X (raiox rx)  #########################
+//webservice de incluir raiox
+app.post("/incluir_raiox", jsonParser, async (req, res) => {
+  //receber dados para inclusão
+  let {
+    data_raiox,    
+    id_imagem,
+    cadastrante
+  } = req.body;
+  //definir o sql padrão
+  let sql =
+    "insert into raiox ( " +
+    " data_raiox, " +   
+    " id_imagem, " +
+    " cadastrante " +
+    " ) values (?,?,?)";
+  let values = [data_raiox, id_imagem, cadastrante];
+  let resultado = await insert_mdb(sql, values);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: [values, resultado.insertId] });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível incluir os dados do Raio-X.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
+//webservice de carrega dados de um exame de Raio-X
+app.post("/dados_raiox", jsonParser, async (req, res) => {
+  //receber id_raiox
+  let { id_raiox } = req.body;
+  //definir o sql padrão
+  let sql =
+    " select " +
+    " r.id_raiox id_raiox, " +
+    " DATE_FORMAT(r.data_raiox,'%d/%m/%Y') data_raiox, " +
+    " r.id_imagem id_imagem, " +
+    " r.revisor id_revisor, " +
+    " u2.nome revisor, " +
+    " r.cadastrante id_cadastrante, " +
+    " u.nome cadastrante " +    
+    " from raiox r " +
+    " join usuario u on r.cadastrante=u.id_usuario " +
+    " left join usuario u2 on r.revisor=u2.id_usuario " +
+    " where " +
+    " r.id_raiox = " + id_raiox ;
+  
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+
+//webservice de alterar Raio-X
+app.post("/alterar_raiox", jsonParser, async (req, res) => {
+  //receber dados para alterar
+  let {
+    data_raiox,    
+    id_imagem,
+    id_raiox
+  } = req.body;
+
+  
+  let sql =
+    "update raiox set " +
+    " data_raiox  = ?, " +    
+    " id_imagem = ? " +
+    " where id_raiox = ? ";
+  let values = [data_raiox, id_imagem, id_raiox];
+  //console.log('sql',sql)
+  //console.log('values', values)
+  let resultado = await update_mdb(sql, values);
+  //console.log(resultado)
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: "Raio-X alterado com sucesso" });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível alterar o Raio-X ";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
+*/
 
 //*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
 //##############################################################################Tela de login do paciente###############################################################################################
