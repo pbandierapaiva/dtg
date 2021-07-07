@@ -2367,29 +2367,6 @@ app.post("/excluir_hcg", jsonParser, async (req, res) => {
     return;
   }
 });
-/*
-//webservice ativar ou inativar instituição
-app.post("/ativa_inativar_instituicao", jsonParser, async (req, res) => {
-  //receber id_inst
-
-  let { id_inst, valor } = req.body;
-
-  //alterar o campo ativo no banco de dados
-  sql = "update instituicao set ativo = ?  where id_inst = ?";
-  let resultado = await update_mdb(sql, [valor, id_inst]);
-
-  if (resultado.affectedRows > 0) {
-    res.status(200).json({ resultado: 1 });
-    return;
-  } else {
-    const status = 409;
-    const message = "Não foi possivel ativar/inativar a instituição!";
-    res.status(status).json({ status, message });
-    return;
-  }
-});
-*/
-
 
 //################################## tela de Cadastro de hCG #########################
 //webservice de incluir hCG
@@ -2421,35 +2398,36 @@ app.post("/incluir_hcg", jsonParser, async (req, res) => {
     return;
   }
 });
-/*
-//webservice de carrega dados de um instituição
-app.post("/dados_instituicao", jsonParser, async (req, res) => {
-  //receber descricao
 
-  let { id_inst } = req.body;
+//webservice de carrega dados de um exame de hCG
+app.post("/dados_hcg", jsonParser, async (req, res) => {
+  //receber id_r_mola
+  let { id_r_mola } = req.body;
   //definir o sql padrão
 
   let sql =
     " select " +
-    " id_inst id, " +
-    " nome_inst nome, " +
-    " logradouro_inst logradouro," +
-    " num_inst numero," +
-    " cep_inst cep, " +
-    " bairro_inst bairro, " +
-    " cidade_inst cidade, " +
-    " uf_inst uf, " +
-    " complemento_inst complemento, " +
-    " ativo ativo " +
-    " from instituicao " +
+    " h.id_hcg id_hcg, " +
+    " DATE_FORMAT(h.data_hcg,'%d/%m/%Y') data_hcg, " +
+    " h.result_hcg result_hcg, " +
+    " h.lab_hcg lab_hcg, " +
+    " h.id_imagem id_imagem, " +
+    " h.revisor id_revisor, " +
+    " u2.nome revisor, " +
+    " h.cadastrante id_cadastrante, " +
+    " u.nome cadastrante " +    
+    " from hcg h " +
+    " join usuario u on h.cadastrante=u.id_usuario " +
+    " left join usuario u2 on h.revisor=u2.id_usuario " +
     " where " +
-    " id_inst = " + id_inst;
+    " h.id_r_mola = " + id_r_mola +
+    " order by id_hcg ";
   
   let resultado = await select_mdb(sql);
 
   res.status(200).json({ resultado });
 });
-
+/*
 //webservice de alterar Instituição
 app.post("/alterar_instituicao", jsonParser, async (req, res) => {
   //receber dados para alterar
