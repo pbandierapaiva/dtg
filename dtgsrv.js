@@ -2257,8 +2257,8 @@ app.post('/upload', (req, res) => {
           " (tp_exam, url_img, data_upload, id_r_mola) "+
           " VALUES (?, concat(?,(select nvl(max(i.id_imagem),0) + 1 from dtg.imagens i),'.',?), NOW(), ?)";
         let valuesImagens = [fields.tipo, arquivoSemId, extensaoDoArquivo, fields.id_r_mola];
-        console.log('sql', sqlImagens);
-        console.log('values', valuesImagens);
+       // console.log('sql', sqlImagens);
+       // console.log('values', valuesImagens);
         let resultado = await insert_mdb(sqlImagens, valuesImagens);
         if (resultado.affectedRows > 0) {
             const oldpath = files[Object.keys(files)[0]].path;
@@ -2319,6 +2319,187 @@ app.get('/arquivo/:id', jsonParser, async (req, res) => {
     return;
   }
 })
+
+
+//################################## tela de consulta de hCG #########################
+//webservice de consultar hCG
+app.post("/consultar_hcg", jsonParser, async (req, res) => {
+  //receber id_r_mola
+
+  let { id_r_mola } = req.body;
+  //definir o sql padrão
+
+  let sql =
+    " select " +
+    " h.id_hcg id_hcg, " +
+    " DATE_FORMAT(h.data_hcg,'%d/%m/%Y') data_hcg, " +
+    " h.result_hcg result_hcg, " +
+    " h.lab_hcg lab_hcg, " +
+    " h.id_imagem id_imagem, " +
+    " u2.nome revisor, " +
+    " u.nome cadastrante " +    
+    " from hcg h " +
+    " join usuario u on h.cadastrante=u.id_usuario " +
+    " left join usuario u2 on h.revisor=u2.id_usuario " +
+    " where " +
+    " h.id_r_mola = " + id_r_mola +
+    " order by id_hcg ";
+
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+/*
+//webservice de exclusão de Intituição
+app.post("/excluir_instituicao", jsonParser, async (req, res) => {
+  //receber id
+  let { id } = req.body;
+  //definir o sql padrão
+  let sql = "delete from instituicao where id_inst = " + id;
+  let resultado = await delete_mdb(sql);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível excluir os dados da instituição.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
+//webservice ativar ou inativar instituição
+app.post("/ativa_inativar_instituicao", jsonParser, async (req, res) => {
+  //receber id_inst
+
+  let { id_inst, valor } = req.body;
+
+  //alterar o campo ativo no banco de dados
+  sql = "update instituicao set ativo = ?  where id_inst = ?";
+  let resultado = await update_mdb(sql, [valor, id_inst]);
+
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: 1 });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possivel ativar/inativar a instituição!";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
+//################################## tela de Cadastro de Instituição #########################
+//webservice de incluir Instituição
+app.post("/incluir_instituicao", jsonParser, async (req, res) => {
+  //receber dados para inclusão
+  let {
+    nome,
+    cep,
+    logradouro,
+    numero,
+    complemento,
+    uf,
+    cidade,
+    bairro,
+  } = req.body;
+  //definir o sql padrão
+  let sql =
+    "insert into instituicao ( " +
+    " nome_inst , " +
+    " logradouro_inst ," +
+    " num_inst ," +
+    " cep_inst , " +
+    " bairro_inst , " +
+    " cidade_inst , " +
+    " uf_inst , " +
+    " complemento_inst  " +
+    ") values(?,?,?,?,?,?,?,?)";
+  let values = [nome, logradouro, numero, cep, bairro, cidade, uf, complemento];
+  let resultado = await insert_mdb(sql, values);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: [values, resultado.insertId] });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível incluir os dados da Instituição.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
+//webservice de carrega dados de um instituição
+app.post("/dados_instituicao", jsonParser, async (req, res) => {
+  //receber descricao
+
+  let { id_inst } = req.body;
+  //definir o sql padrão
+
+  let sql =
+    " select " +
+    " id_inst id, " +
+    " nome_inst nome, " +
+    " logradouro_inst logradouro," +
+    " num_inst numero," +
+    " cep_inst cep, " +
+    " bairro_inst bairro, " +
+    " cidade_inst cidade, " +
+    " uf_inst uf, " +
+    " complemento_inst complemento, " +
+    " ativo ativo " +
+    " from instituicao " +
+    " where " +
+    " id_inst = " + id_inst;
+  
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+
+//webservice de alterar Instituição
+app.post("/alterar_instituicao", jsonParser, async (req, res) => {
+  //receber dados para alterar
+  let {
+    nome,
+    cep,
+    logradouro,
+    numero,
+    complemento,
+    uf,
+    cidade,
+    bairro,
+    id_inst
+  } = req.body;
+
+  //alterar senha do usuario
+  let sql =
+    "update instituicao set " +
+    " nome_inst  = ?, " +
+    " logradouro_inst = ?, " +
+    " num_inst = ?, " +
+    " cep_inst = ?, " +
+    " bairro_inst = ?, " +
+    " cidade_inst = ?, " +
+    " uf_inst = ?, " +
+    " complemento_inst = ? " +
+    " where id_inst = ? ";
+  let values = [nome, logradouro, numero, cep, bairro, cidade, uf, complemento, id_inst];
+  //console.log('sql',sql)
+  //console.log('values', values)
+  let resultado = await update_mdb(sql, values);
+  //console.log(resultado)
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: "instituição alterada com sucesso" });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível alterar a instituição ";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+*/
+
 
 //*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
 //##############################################################################Tela de login do paciente###############################################################################################
