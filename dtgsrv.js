@@ -2375,6 +2375,7 @@ app.post("/incluir_hcg", jsonParser, async (req, res) => {
   let {
     data_hcg,
     result_hcg,
+    lab_hcg,
     id_imagem,
     cadastrante
   } = req.body;
@@ -2383,10 +2384,11 @@ app.post("/incluir_hcg", jsonParser, async (req, res) => {
     "insert into hcg ( " +
     " data_hcg, " +
     " result_hcg, " +
+    " lab_hcg, " +
     " id_imagem, " +
     " cadastrante " +
     " ) values (?,?,?,?)";
-  let values = [data_hcg, result_hcg, id_imagem, cadastrante];
+  let values = [data_hcg, result_hcg, lab_hcg, id_imagem, cadastrante];
   let resultado = await insert_mdb(sql, values);
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado: [values, resultado.insertId] });
@@ -2402,9 +2404,8 @@ app.post("/incluir_hcg", jsonParser, async (req, res) => {
 //webservice de carrega dados de um exame de hCG
 app.post("/dados_hcg", jsonParser, async (req, res) => {
   //receber id_r_mola
-  let { id_r_mola } = req.body;
+  let { id_hcg } = req.body;
   //definir o sql padrão
-
   let sql =
     " select " +
     " h.id_hcg id_hcg, " +
@@ -2420,57 +2421,49 @@ app.post("/dados_hcg", jsonParser, async (req, res) => {
     " join usuario u on h.cadastrante=u.id_usuario " +
     " left join usuario u2 on h.revisor=u2.id_usuario " +
     " where " +
-    " h.id_r_mola = " + id_r_mola +
+    " h.id_hcg = " + id_hcg +
     " order by id_hcg ";
   
   let resultado = await select_mdb(sql);
 
   res.status(200).json({ resultado });
 });
-/*
-//webservice de alterar Instituição
-app.post("/alterar_instituicao", jsonParser, async (req, res) => {
+
+//webservice de alterar hCG
+app.post("/alterar_hcg", jsonParser, async (req, res) => {
   //receber dados para alterar
   let {
-    nome,
-    cep,
-    logradouro,
-    numero,
-    complemento,
-    uf,
-    cidade,
-    bairro,
-    id_inst
+    data_hcg,
+    result_hcg,
+    lab_hcg,
+    id_imagem,
+    id_hcg
   } = req.body;
 
-  //alterar senha do usuario
+  
   let sql =
-    "update instituicao set " +
-    " nome_inst  = ?, " +
-    " logradouro_inst = ?, " +
-    " num_inst = ?, " +
-    " cep_inst = ?, " +
-    " bairro_inst = ?, " +
-    " cidade_inst = ?, " +
-    " uf_inst = ?, " +
-    " complemento_inst = ? " +
-    " where id_inst = ? ";
-  let values = [nome, logradouro, numero, cep, bairro, cidade, uf, complemento, id_inst];
+    "update hcg set " +
+    " data_hcg  = ?, " +
+    " result_hcg = ?, " +
+    " lab_hcg = ?, " +
+    " id_imagem = ? " +
+    " where id_hcg = ? ";
+  let values = [data_hcg, result_hcg, lab_hcg, id_imagem, id_hcg];
   //console.log('sql',sql)
   //console.log('values', values)
   let resultado = await update_mdb(sql, values);
   //console.log(resultado)
   if (resultado.affectedRows > 0) {
-    res.status(200).json({ resultado: "instituição alterada com sucesso" });
+    res.status(200).json({ resultado: "hCG alterada com sucesso" });
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível alterar a instituição ";
+    const message = "Não foi possível alterar o hCG ";
     res.status(status).json({ status, message });
     return;
   }
 });
-*/
+
 
 
 //*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
