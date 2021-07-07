@@ -2696,39 +2696,41 @@ app.post("/dados_ultrassom", jsonParser, async (req, res) => {
 
   res.status(200).json({ resultado });
 });
-/*
-//webservice de alterar Raio-X
-app.post("/alterar_raiox", jsonParser, async (req, res) => {
+
+//webservice de alterar ultrassom
+app.post("/alterar_ultrassom", jsonParser, async (req, res) => {
   //receber dados para alterar
   let {
-    data_raiox,    
-    id_imagem,
-    id_raiox
+    data_ultrassom,    
+    ultrassom,
+    laudo_ultrassom,
+    id_ultrassom
   } = req.body;
 
   
   let sql =
-    "update raiox set " +
-    " data_raiox  = ?, " +    
-    " id_imagem = ? " +
-    " where id_raiox = ? ";
-  let values = [data_raiox, id_imagem, id_raiox];
+    "update ultrassom set " +
+    " data_ultrassom  = ?, " +    
+    " ultrassom = ?, " +
+    " laudo_ultrassom = ? " +
+    " where id_ultrassom = ? ";
+  let values = [data_ultrassom, ultrassom, laudo_ultrassom, id_ultrassom];
   //console.log('sql',sql)
   //console.log('values', values)
   let resultado = await update_mdb(sql, values);
   //console.log(resultado)
   if (resultado.affectedRows > 0) {
-    res.status(200).json({ resultado: "Raio-X alterado com sucesso" });
+    res.status(200).json({ resultado: "Ultrassom alterado com sucesso" });
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível alterar o Raio-X ";
+    const message = "Não foi possível alterar o ultrassom ";
     res.status(status).json({ status, message });
     return;
   }
 });
 
-*/
+
 
 //*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
 //##############################################################################Tela de login do paciente###############################################################################################
