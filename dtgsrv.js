@@ -2464,6 +2464,147 @@ app.post("/alterar_hcg", jsonParser, async (req, res) => {
   }
 });
 
+//################################## tela de consulta de Raio X (raiox - rx) #########################
+//webservice de consultar Raio x
+app.post("/consultar_raiox", jsonParser, async (req, res) => {
+  //receber id_r_mola
+
+  let { id_r_mola } = req.body;
+  //definir o sql padrão
+
+  let sql =
+    " select " +
+    " r.id_raiox id_raiox, " +
+    " DATE_FORMAT(r.data_raiox,'%d/%m/%Y') data_raiox, " +    
+    " r.id_imagem id_imagem, " +
+    " u2.nome revisor, " +
+    " u.nome cadastrante " +    
+    " from raiox r " +
+    " join usuario u on r.cadastrante=u.id_usuario " +
+    " left join usuario u2 on r.revisor=u2.id_usuario " +
+    " where " +
+    " r.id_r_mola = " + id_r_mola +
+    " order by id_raiox ";
+
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+/*
+//webservice de exclusão de hcg
+app.post("/excluir_hcg", jsonParser, async (req, res) => {
+  //receber id_hcg
+  let { id_hcg } = req.body;
+  //definir o sql padrão
+  let sql = "delete from hcg where id_hcg = " + id_hcg;
+  let resultado = await delete_mdb(sql);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível excluir os dados do hCG.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
+//################################## tela de Cadastro de hCG #########################
+//webservice de incluir hCG
+app.post("/incluir_hcg", jsonParser, async (req, res) => {
+  //receber dados para inclusão
+  let {
+    data_hcg,
+    result_hcg,
+    lab_hcg,
+    id_imagem,
+    cadastrante
+  } = req.body;
+  //definir o sql padrão
+  let sql =
+    "insert into hcg ( " +
+    " data_hcg, " +
+    " result_hcg, " +
+    " lab_hcg, " +
+    " id_imagem, " +
+    " cadastrante " +
+    " ) values (?,?,?,?)";
+  let values = [data_hcg, result_hcg, lab_hcg, id_imagem, cadastrante];
+  let resultado = await insert_mdb(sql, values);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: [values, resultado.insertId] });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível incluir os dados do hCG.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
+//webservice de carrega dados de um exame de hCG
+app.post("/dados_hcg", jsonParser, async (req, res) => {
+  //receber id_r_mola
+  let { id_hcg } = req.body;
+  //definir o sql padrão
+  let sql =
+    " select " +
+    " h.id_hcg id_hcg, " +
+    " DATE_FORMAT(h.data_hcg,'%d/%m/%Y') data_hcg, " +
+    " h.result_hcg result_hcg, " +
+    " h.lab_hcg lab_hcg, " +
+    " h.id_imagem id_imagem, " +
+    " h.revisor id_revisor, " +
+    " u2.nome revisor, " +
+    " h.cadastrante id_cadastrante, " +
+    " u.nome cadastrante " +    
+    " from hcg h " +
+    " join usuario u on h.cadastrante=u.id_usuario " +
+    " left join usuario u2 on h.revisor=u2.id_usuario " +
+    " where " +
+    " h.id_hcg = " + id_hcg +
+    " order by id_hcg ";
+  
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+
+//webservice de alterar hCG
+app.post("/alterar_hcg", jsonParser, async (req, res) => {
+  //receber dados para alterar
+  let {
+    data_hcg,
+    result_hcg,
+    lab_hcg,
+    id_imagem,
+    id_hcg
+  } = req.body;
+
+  
+  let sql =
+    "update hcg set " +
+    " data_hcg  = ?, " +
+    " result_hcg = ?, " +
+    " lab_hcg = ?, " +
+    " id_imagem = ? " +
+    " where id_hcg = ? ";
+  let values = [data_hcg, result_hcg, lab_hcg, id_imagem, id_hcg];
+  //console.log('sql',sql)
+  //console.log('values', values)
+  let resultado = await update_mdb(sql, values);
+  //console.log(resultado)
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: "hCG alterada com sucesso" });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível alterar o hCG ";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+*/
 
 
 //*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
