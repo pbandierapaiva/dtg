@@ -2670,32 +2670,33 @@ app.post("/incluir_ultrassom", jsonParser, async (req, res) => {
     return;
   }
 });
-/*
-//webservice de carrega dados de um exame de Raio-X
-app.post("/dados_raiox", jsonParser, async (req, res) => {
-  //receber id_raiox
-  let { id_raiox } = req.body;
+
+//webservice de carrega dados de um exame de ultrassom
+app.post("/dados_ultrassom", jsonParser, async (req, res) => {
+  //receber id_ultrassom
+  let { id_ultrassom } = req.body;
   //definir o sql padrão
   let sql =
     " select " +
-    " r.id_raiox id_raiox, " +
+    " ul.id_ultrassom id_ultrassom, " +
     " DATE_FORMAT(r.data_raiox,'%d/%m/%Y') data_raiox, " +
-    " r.id_imagem id_imagem, " +
-    " r.revisor id_revisor, " +
+    " ul.ultrassom ultrassom, " +
+    " ul.laudo_ultrassom laudo_ultrassom, " +
+    " ul.revisor id_revisor, " +
     " u2.nome revisor, " +
-    " r.cadastrante id_cadastrante, " +
+    " ul.cadastrante id_cadastrante, " +
     " u.nome cadastrante " +    
-    " from raiox r " +
-    " join usuario u on r.cadastrante=u.id_usuario " +
-    " left join usuario u2 on r.revisor=u2.id_usuario " +
+    " from ultrassom ul " +
+    " join usuario u on ul.cadastrante=u.id_usuario " +
+    " left join usuario u2 on ul.revisor=u2.id_usuario " +
     " where " +
-    " r.id_raiox = " + id_raiox ;
+    " ul.id_ultrassom = " + id_ultrassom ;
   
   let resultado = await select_mdb(sql);
 
   res.status(200).json({ resultado });
 });
-
+/*
 //webservice de alterar Raio-X
 app.post("/alterar_raiox", jsonParser, async (req, res) => {
   //receber dados para alterar
