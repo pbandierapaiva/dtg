@@ -2508,40 +2508,36 @@ app.post("/excluir_raiox", jsonParser, async (req, res) => {
     return;
   }
 });
-/*
-//################################## tela de Cadastro de hCG #########################
-//webservice de incluir hCG
-app.post("/incluir_hcg", jsonParser, async (req, res) => {
+
+//################################## tela de Cadastro de Raio-X (raiox rx)  #########################
+//webservice de incluir raiox
+app.post("/incluir_raiox", jsonParser, async (req, res) => {
   //receber dados para inclusão
   let {
-    data_hcg,
-    result_hcg,
-    lab_hcg,
+    data_raiox,    
     id_imagem,
     cadastrante
   } = req.body;
   //definir o sql padrão
   let sql =
     "insert into hcg ( " +
-    " data_hcg, " +
-    " result_hcg, " +
-    " lab_hcg, " +
+    " data_raiox, " +   
     " id_imagem, " +
     " cadastrante " +
     " ) values (?,?,?,?)";
-  let values = [data_hcg, result_hcg, lab_hcg, id_imagem, cadastrante];
+  let values = [data_raiox, id_imagem, cadastrante];
   let resultado = await insert_mdb(sql, values);
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado: [values, resultado.insertId] });
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível incluir os dados do hCG.";
+    const message = "Não foi possível incluir os dados do Raio-X.";
     res.status(status).json({ status, message });
     return;
   }
 });
-
+/*
 //webservice de carrega dados de um exame de hCG
 app.post("/dados_hcg", jsonParser, async (req, res) => {
   //receber id_r_mola
