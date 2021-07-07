@@ -2561,42 +2561,38 @@ app.post("/dados_raiox", jsonParser, async (req, res) => {
 
   res.status(200).json({ resultado });
 });
-/*
-//webservice de alterar hCG
-app.post("/alterar_hcg", jsonParser, async (req, res) => {
+
+//webservice de alterar Raio-X
+app.post("/alterar_raiox", jsonParser, async (req, res) => {
   //receber dados para alterar
   let {
-    data_hcg,
-    result_hcg,
-    lab_hcg,
+    data_raiox,    
     id_imagem,
-    id_hcg
+    id_raiox
   } = req.body;
 
   
   let sql =
-    "update hcg set " +
-    " data_hcg  = ?, " +
-    " result_hcg = ?, " +
-    " lab_hcg = ?, " +
+    "update raiox set " +
+    " data_raiox  = ?, " +    
     " id_imagem = ? " +
-    " where id_hcg = ? ";
-  let values = [data_hcg, result_hcg, lab_hcg, id_imagem, id_hcg];
+    " where id_raiox = ? ";
+  let values = [data_raiox, id_imagem, id_raiox];
   //console.log('sql',sql)
   //console.log('values', values)
   let resultado = await update_mdb(sql, values);
   //console.log(resultado)
   if (resultado.affectedRows > 0) {
-    res.status(200).json({ resultado: "hCG alterada com sucesso" });
+    res.status(200).json({ resultado: "Raio-X alterado com sucesso" });
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível alterar o hCG ";
+    const message = "Não foi possível alterar o Raio-X ";
     res.status(status).json({ status, message });
     return;
   }
 });
-*/
+
 
 
 //*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
