@@ -2965,33 +2965,33 @@ app.post("/incluir_quimioterapia", jsonParser, async (req, res) => {
     return;
   }
 });
-/*
-//webservice de carrega dados de um exame de tomografia
-app.post("/dados_tomografia", jsonParser, async (req, res) => {
-  //receber id_tomografia
-  let { id_tomografia } = req.body;
+
+//webservice de carrega dados de um exame de quimioterapia
+app.post("/dados_quimioterapia", jsonParser, async (req, res) => {
+  //receber id_quimio
+  let { id_quimio } = req.body;
   //definir o sql padrão
   let sql =
     " select " +
-    " t.id_tomografia id_tomografia, " +
-    " DATE_FORMAT(t.data_tomografia,'%d/%m/%Y') data_tomografia, " +
-    " t.tomografia tomografia, " +
-    " t.laudo_tomografia laudo_tomografia, " +
-    " t.revisor id_revisor, " +
-    " u2.nome revisor, " +
-    " t.cadastrante id_cadastrante, " +
-    " u.nome cadastrante " +    
-    " from tomografia t " +
-    " join usuario u on t.cadastrante=u.id_usuario " +
-    " left join usuario u2 on t.revisor=u2.id_usuario " +
+    " q.id_quimio id_quimio, " +
+    " q.ciclo ciclo, " +
+    " DATE_FORMAT(q.inicio,'%d/%m/%Y') inicio, " +
+    " DATE_FORMAT(q.fim,'%d/%m/%Y') fim, " +
+    " q.droga droga, " +
+    " q.toxicidade toxicidade, " +
+    " q.obs obs, " +
+    " q.grau_estad grau_estad, " +
+    " q.result_hcg_pre result_hcg_pre, " +
+    " q.id_r_mola id_r_mola " +
+    " from quimioterapia q " + 
     " where " +
-    " t.id_tomografia = " + id_tomografia ;
+    " q.id_quimio = " + id_quimio ;
   
   let resultado = await select_mdb(sql);
 
   res.status(200).json({ resultado });
 });
-
+/*
 //webservice de alterar tomografia
 app.post("/alterar_tomografia", jsonParser, async (req, res) => {
   //receber dados para alterar
