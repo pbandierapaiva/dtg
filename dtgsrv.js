@@ -2757,26 +2757,26 @@ app.post("/consultar_tomografia", jsonParser, async (req, res) => {
 
   res.status(200).json({ resultado });
 });
-/*
-//webservice de exclusão de ultrassom
-app.post("/excluir_ultrassom", jsonParser, async (req, res) => {
-  //receber id_ultrassom
-  let { id_ultrassom } = req.body;
+
+//webservice de exclusão de tomografia
+app.post("/excluir_tomografia", jsonParser, async (req, res) => {
+  //receber id_tomografia
+  let { id_tomografia } = req.body;
   //definir o sql padrão
-  let sql = "delete from ultrassom where id_ultrassom = " + id_ultrassom;
+  let sql = "delete from tomografia where id_tomografia = " + id_tomografia;
   let resultado = await delete_mdb(sql);
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado });
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível excluir os dados do ultrassom.";
+    const message = "Não foi possível excluir os dados do tomografia.";
     res.status(status).json({ status, message });
     return;
   }
 });
 
-*/
+
 
 //################################## tela de Cadastro de tomografia  #########################
 //webservice de incluir tomografia
