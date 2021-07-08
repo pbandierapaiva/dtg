@@ -2787,40 +2787,40 @@ app.post("/dados_tomografia", jsonParser, async (req, res) => {
 
   res.status(200).json({ resultado });
 });
-/*
-//webservice de alterar ultrassom
-app.post("/alterar_ultrassom", jsonParser, async (req, res) => {
+
+//webservice de alterar tomografia
+app.post("/alterar_tomografia", jsonParser, async (req, res) => {
   //receber dados para alterar
   let {
-    data_ultrassom,    
-    ultrassom,
-    laudo_ultrassom,
-    id_ultrassom
+    data_tomografia,    
+    tomografia,
+    laudo_tomografia,
+    id_tomografia
   } = req.body;
 
   
   let sql =
-    "update ultrassom set " +
-    " data_ultrassom  = ?, " +    
-    " ultrassom = ?, " +
-    " laudo_ultrassom = ? " +
-    " where id_ultrassom = ? ";
-  let values = [data_ultrassom, ultrassom, laudo_ultrassom, id_ultrassom];
+    "update tomografia set " +
+    " data_tomografia  = ?, " +    
+    " tomografia = ?, " +
+    " laudo_tomografia = ? " +
+    " where id_tomografia = ? ";
+  let values = [data_tomografia, tomografia, laudo_tomografia, id_tomografia];
   //console.log('sql',sql)
   //console.log('values', values)
   let resultado = await update_mdb(sql, values);
   //console.log(resultado)
   if (resultado.affectedRows > 0) {
-    res.status(200).json({ resultado: "Ultrassom alterado com sucesso" });
+    res.status(200).json({ resultado: "Tomografia alterado com sucesso" });
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível alterar o ultrassom ";
+    const message = "Não foi possível alterar o tomografia ";
     res.status(status).json({ status, message });
     return;
   }
 });
-*/
+
 
 //*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
 //##############################################################################Tela de login do paciente###############################################################################################
