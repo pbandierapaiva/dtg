@@ -2915,6 +2915,117 @@ app.post("/excluir_quimioterapia", jsonParser, async (req, res) => {
   }
 });
 
+
+//################################## tela de Cadastro de quimioterapia  #########################
+//webservice de incluir quimioterapia
+app.post("/incluir_quimioterapia", jsonParser, async (req, res) => {
+  //receber dados para inclusão
+  let {
+    inicio,    
+    fim,
+    droga,
+    toxicidade,
+    obs,
+    grau_estad,
+    nivel_estad,
+    result_hcg_pre,
+    id_r_mola
+  } = req.body;
+  //definir o sql padrão
+  let sql =
+    "insert into quimioterapia ( " +
+    " ciclo, " +   
+    " inicio, " +
+    " fim, " +
+    " droga, " +
+    " toxicidade, " +
+    " obs, " +
+    " grau_estad, " +
+    " nivel_estad, " +
+    " result_hcg_pre, " +
+    " id_r_mola " +
+    " ) values ((select nvl(max(q.ciclo),0) from quimioterapia where id_r_mola = "+id_r_mola+"),?,?,?,?,?,?,?,?,?)";
+  let values = [inicio, 
+                fim,
+                droga,
+                toxicidade,
+                obs,
+                grau_estad,
+                nivel_estad,
+                result_hcg_pre,
+                id_r_mola];
+  let resultado = await insert_mdb(sql, values);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: [values, resultado.insertId] });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível incluir os dados da quimioterapia.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+/*
+//webservice de carrega dados de um exame de tomografia
+app.post("/dados_tomografia", jsonParser, async (req, res) => {
+  //receber id_tomografia
+  let { id_tomografia } = req.body;
+  //definir o sql padrão
+  let sql =
+    " select " +
+    " t.id_tomografia id_tomografia, " +
+    " DATE_FORMAT(t.data_tomografia,'%d/%m/%Y') data_tomografia, " +
+    " t.tomografia tomografia, " +
+    " t.laudo_tomografia laudo_tomografia, " +
+    " t.revisor id_revisor, " +
+    " u2.nome revisor, " +
+    " t.cadastrante id_cadastrante, " +
+    " u.nome cadastrante " +    
+    " from tomografia t " +
+    " join usuario u on t.cadastrante=u.id_usuario " +
+    " left join usuario u2 on t.revisor=u2.id_usuario " +
+    " where " +
+    " t.id_tomografia = " + id_tomografia ;
+  
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+
+//webservice de alterar tomografia
+app.post("/alterar_tomografia", jsonParser, async (req, res) => {
+  //receber dados para alterar
+  let {
+    data_tomografia,    
+    tomografia,
+    laudo_tomografia,
+    id_tomografia
+  } = req.body;
+
+  
+  let sql =
+    "update tomografia set " +
+    " data_tomografia  = ?, " +    
+    " tomografia = ?, " +
+    " laudo_tomografia = ? " +
+    " where id_tomografia = ? ";
+  let values = [data_tomografia, tomografia, laudo_tomografia, id_tomografia];
+  //console.log('sql',sql)
+  //console.log('values', values)
+  let resultado = await update_mdb(sql, values);
+  //console.log(resultado)
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: "Tomografia alterado com sucesso" });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível alterar o tomografia ";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+*/
+
 //*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
 //##############################################################################Tela de login do paciente###############################################################################################
 
