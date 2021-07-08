@@ -2731,6 +2731,96 @@ app.post("/alterar_ultrassom", jsonParser, async (req, res) => {
 });
 
 
+//################################## tela de Cadastro de tomografia  #########################
+//webservice de incluir tomografia
+app.post("/incluir_tomografia", jsonParser, async (req, res) => {
+  //receber dados para inclusão
+  let {
+    data_tomografia,    
+    tomografia,
+    laudo_tomografia,
+    cadastrante
+  } = req.body;
+  //definir o sql padrão
+  let sql =
+    "insert into tomografia ( " +
+    " data_tomografia, " +   
+    " tomografia, " +
+    " laudo_tomografia, " +
+    " cadastrante " +
+    " ) values (?,?,?,?)";
+  let values = [data_tomografia, tomografia, laudo_tomografia, cadastrante];
+  let resultado = await insert_mdb(sql, values);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: [values, resultado.insertId] });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível incluir os dados da tomografia.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+/*
+//webservice de carrega dados de um exame de ultrassom
+app.post("/dados_ultrassom", jsonParser, async (req, res) => {
+  //receber id_ultrassom
+  let { id_ultrassom } = req.body;
+  //definir o sql padrão
+  let sql =
+    " select " +
+    " ul.id_ultrassom id_ultrassom, " +
+    " DATE_FORMAT(r.data_raiox,'%d/%m/%Y') data_raiox, " +
+    " ul.ultrassom ultrassom, " +
+    " ul.laudo_ultrassom laudo_ultrassom, " +
+    " ul.revisor id_revisor, " +
+    " u2.nome revisor, " +
+    " ul.cadastrante id_cadastrante, " +
+    " u.nome cadastrante " +    
+    " from ultrassom ul " +
+    " join usuario u on ul.cadastrante=u.id_usuario " +
+    " left join usuario u2 on ul.revisor=u2.id_usuario " +
+    " where " +
+    " ul.id_ultrassom = " + id_ultrassom ;
+  
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+
+//webservice de alterar ultrassom
+app.post("/alterar_ultrassom", jsonParser, async (req, res) => {
+  //receber dados para alterar
+  let {
+    data_ultrassom,    
+    ultrassom,
+    laudo_ultrassom,
+    id_ultrassom
+  } = req.body;
+
+  
+  let sql =
+    "update ultrassom set " +
+    " data_ultrassom  = ?, " +    
+    " ultrassom = ?, " +
+    " laudo_ultrassom = ? " +
+    " where id_ultrassom = ? ";
+  let values = [data_ultrassom, ultrassom, laudo_ultrassom, id_ultrassom];
+  //console.log('sql',sql)
+  //console.log('values', values)
+  let resultado = await update_mdb(sql, values);
+  //console.log(resultado)
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: "Ultrassom alterado com sucesso" });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível alterar o ultrassom ";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+*/
 
 //*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
 //##############################################################################Tela de login do paciente###############################################################################################
