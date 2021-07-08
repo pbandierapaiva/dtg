@@ -2776,8 +2776,6 @@ app.post("/excluir_tomografia", jsonParser, async (req, res) => {
   }
 });
 
-
-
 //################################## tela de Cadastro de tomografia  #########################
 //webservice de incluir tomografia
 app.post("/incluir_tomografia", jsonParser, async (req, res) => {
@@ -2869,6 +2867,53 @@ app.post("/alterar_tomografia", jsonParser, async (req, res) => {
 });
 
 
+//################################## tela de consulta de quimioterapia #########################
+//webservice de consultar quimioterapia
+app.post("/consultar_quimioterapia", jsonParser, async (req, res) => {
+  //receber id_r_mola
+
+  let { id_r_mola } = req.body;
+  //definir o sql padrão
+
+  let sql =
+    " select " +
+    " q.id_quimio id_quimio, " +
+    " q.ciclo ciclo, " +
+    " DATE_FORMAT(q.inicio,'%d/%m/%Y') inicio, " +
+    " DATE_FORMAT(q.fim,'%d/%m/%Y') fim, " +
+    " q.droga droga, " +
+    " q.toxicidade toxicidade, " +
+    " q.obs obs, " +
+    " q.grau_estad grau_estad, " +
+    " q.result_hcg_pre result_hcg_pre " +
+    " from quimioterapia q " +    
+    " where " +
+    " q.id_r_mola = " + id_r_mola +
+    " order by id_quimio ";
+
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+/*
+//webservice de exclusão de tomografia
+app.post("/excluir_tomografia", jsonParser, async (req, res) => {
+  //receber id_tomografia
+  let { id_tomografia } = req.body;
+  //definir o sql padrão
+  let sql = "delete from tomografia where id_tomografia = " + id_tomografia;
+  let resultado = await delete_mdb(sql);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível excluir os dados do tomografia.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+*/
 //*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
 //##############################################################################Tela de login do paciente###############################################################################################
 
