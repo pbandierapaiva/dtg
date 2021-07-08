@@ -2895,25 +2895,26 @@ app.post("/consultar_quimioterapia", jsonParser, async (req, res) => {
 
   res.status(200).json({ resultado });
 });
-/*
-//webservice de exclusão de tomografia
-app.post("/excluir_tomografia", jsonParser, async (req, res) => {
-  //receber id_tomografia
-  let { id_tomografia } = req.body;
+
+
+//webservice de exclusão de quimioterapia
+app.post("/excluir_quimioterapia", jsonParser, async (req, res) => {
+  //receber id_quimio
+  let { id_quimio } = req.body;
   //definir o sql padrão
-  let sql = "delete from tomografia where id_tomografia = " + id_tomografia;
+  let sql = "delete from quimioterapia where id_quimio = " + id_quimio;
   let resultado = await delete_mdb(sql);
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado });
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível excluir os dados do tomografia.";
+    const message = "Não foi possível excluir os dados do quimioterapia.";
     res.status(status).json({ status, message });
     return;
   }
 });
-*/
+
 //*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
 //##############################################################################Tela de login do paciente###############################################################################################
 
