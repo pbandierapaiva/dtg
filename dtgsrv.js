@@ -2944,7 +2944,7 @@ app.post("/incluir_quimioterapia", jsonParser, async (req, res) => {
     " nivel_estad, " +
     " result_hcg_pre, " +
     " id_r_mola " +
-    " ) values ((select nvl(max(q.ciclo),0) from quimioterapia where id_r_mola = "+id_r_mola+"),?,?,?,?,?,?,?,?,?)";
+    " ) values ((select nvl(max(q.ciclo),0) + 1 from quimioterapia where id_r_mola = "+id_r_mola+"),?,?,?,?,?,?,?,?,?)";
   let values = [inicio, 
                 fim,
                 droga,
