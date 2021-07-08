@@ -2763,7 +2763,7 @@ app.post("/incluir_tomografia", jsonParser, async (req, res) => {
 });
 
 //webservice de carrega dados de um exame de tomografia
-app.post("/dados_ultrassom", jsonParser, async (req, res) => {
+app.post("/dados_tomografia", jsonParser, async (req, res) => {
   //receber id_tomografia
   let { id_tomografia } = req.body;
   //definir o sql padrão
