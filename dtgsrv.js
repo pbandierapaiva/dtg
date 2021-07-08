@@ -2679,7 +2679,7 @@ app.post("/dados_ultrassom", jsonParser, async (req, res) => {
   let sql =
     " select " +
     " ul.id_ultrassom id_ultrassom, " +
-    " DATE_FORMAT(r.data_raiox,'%d/%m/%Y') data_raiox, " +
+    " DATE_FORMAT(ul.data_ultrassom,'%d/%m/%Y') data_ultrassom, " +
     " ul.ultrassom ultrassom, " +
     " ul.laudo_ultrassom laudo_ultrassom, " +
     " ul.revisor id_revisor, " +
@@ -2761,33 +2761,33 @@ app.post("/incluir_tomografia", jsonParser, async (req, res) => {
     return;
   }
 });
-/*
-//webservice de carrega dados de um exame de ultrassom
+
+//webservice de carrega dados de um exame de tomografia
 app.post("/dados_ultrassom", jsonParser, async (req, res) => {
-  //receber id_ultrassom
-  let { id_ultrassom } = req.body;
+  //receber id_tomografia
+  let { id_tomografia } = req.body;
   //definir o sql padrão
   let sql =
     " select " +
-    " ul.id_ultrassom id_ultrassom, " +
-    " DATE_FORMAT(r.data_raiox,'%d/%m/%Y') data_raiox, " +
-    " ul.ultrassom ultrassom, " +
-    " ul.laudo_ultrassom laudo_ultrassom, " +
-    " ul.revisor id_revisor, " +
+    " t.id_tomografia id_tomografia, " +
+    " DATE_FORMAT(t.data_tomografia,'%d/%m/%Y') data_tomografia, " +
+    " t.tomografia tomografia, " +
+    " t.laudo_tomografia laudo_tomografia, " +
+    " t.revisor id_revisor, " +
     " u2.nome revisor, " +
-    " ul.cadastrante id_cadastrante, " +
+    " t.cadastrante id_cadastrante, " +
     " u.nome cadastrante " +    
-    " from ultrassom ul " +
-    " join usuario u on ul.cadastrante=u.id_usuario " +
-    " left join usuario u2 on ul.revisor=u2.id_usuario " +
+    " from tomografia t " +
+    " join usuario u on t.cadastrante=u.id_usuario " +
+    " left join usuario u2 on t.revisor=u2.id_usuario " +
     " where " +
-    " ul.id_ultrassom = " + id_ultrassom ;
+    " t.id_tomografia = " + id_tomografia ;
   
   let resultado = await select_mdb(sql);
 
   res.status(200).json({ resultado });
 });
-
+/*
 //webservice de alterar ultrassom
 app.post("/alterar_ultrassom", jsonParser, async (req, res) => {
   //receber dados para alterar
