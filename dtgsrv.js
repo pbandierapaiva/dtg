@@ -2730,6 +2730,53 @@ app.post("/alterar_ultrassom", jsonParser, async (req, res) => {
   }
 });
 
+//################################## tela de consulta de tomografia #########################
+//webservice de consultar tomografia
+app.post("/consultar_tomografia", jsonParser, async (req, res) => {
+  //receber id_r_mola
+
+  let { id_r_mola } = req.body;
+  //definir o sql padrão
+
+  let sql =
+    " select " +
+    " t.id_tomografia id_tomografia, " +
+    " DATE_FORMAT(t.data_tomografia,'%d/%m/%Y') data_tomografia, " +    
+    " t.tomografia tomografia, " +
+    " t.laudo_tomografia laudo_tomografia, " +
+    " u2.nome revisor, " +
+    " u.nome cadastrante " +    
+    " from tomografia t " +
+    " join usuario u on t.cadastrante=u.id_usuario " +
+    " left join usuario u2 on t.revisor=u2.id_usuario " +
+    " where " +
+    " t.id_r_mola = " + id_r_mola +
+    " order by id_tomografia ";
+
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+/*
+//webservice de exclusão de ultrassom
+app.post("/excluir_ultrassom", jsonParser, async (req, res) => {
+  //receber id_ultrassom
+  let { id_ultrassom } = req.body;
+  //definir o sql padrão
+  let sql = "delete from ultrassom where id_ultrassom = " + id_ultrassom;
+  let resultado = await delete_mdb(sql);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível excluir os dados do ultrassom.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
+*/
 
 //################################## tela de Cadastro de tomografia  #########################
 //webservice de incluir tomografia
