@@ -3233,38 +3233,36 @@ app.post("/excluir_calendario", jsonParser, async (req, res) => {
     return;
   }
 });
-/*
-//################################## tela de Cadastro de Raio-X (raiox rx)  #########################
-//webservice de incluir raiox
-app.post("/incluir_raiox", jsonParser, async (req, res) => {
+
+//################################## tela de Cadastro do calendário menstrual  #########################
+//webservice de incluir calendário menstrual
+app.post("/incluir_calendario", jsonParser, async (req, res) => {
   //receber dados para inclusão
   let {
-    data_raiox,    
-    id_imagem,
+    dum,        
     cadastrante,
     id_r_mola
   } = req.body;
   //definir o sql padrão
   let sql =
-    "insert into raiox ( " +
-    " data_raiox, " +   
-    " id_imagem, " +
+    "insert into calendario_dum ( " +
+    " dum, " +      
     " cadastrante, " +
     " id_r_mola " +
-    " ) values (?,?,?,?)";
-  let values = [data_raiox, id_imagem, cadastrante, id_r_mola];
+    " ) values (?,?,?)";
+  let values = [dum, cadastrante, id_r_mola];
   let resultado = await insert_mdb(sql, values);
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado: [values, resultado.insertId] });
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível incluir os dados do Raio-X.";
+    const message = "Não foi possível incluir os dados do calendário menstrual.";
     res.status(status).json({ status, message });
     return;
   }
 });
-
+/*
 //webservice de carrega dados de um exame de Raio-X
 app.post("/dados_raiox", jsonParser, async (req, res) => {
   //receber id_raiox
