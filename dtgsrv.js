@@ -3286,39 +3286,37 @@ app.post("/dados_calendario", jsonParser, async (req, res) => {
 
   res.status(200).json({ resultado });
 });
-/*
-//webservice de alterar Raio-X
-app.post("/alterar_raiox", jsonParser, async (req, res) => {
+
+//webservice de alterar o calendário menstrual
+app.post("/alterar_calendario", jsonParser, async (req, res) => {
   //receber dados para alterar
   let {
-    data_raiox,    
-    id_imagem,
-    id_raiox
+    dum,
+    id_calend_dum
   } = req.body;
 
   
   let sql =
-    "update raiox set " +
-    " data_raiox  = ?, " +    
-    " id_imagem = ? " +
-    " where id_raiox = ? ";
-  let values = [data_raiox, id_imagem, id_raiox];
+    "update calendario_dum set " +
+    " dum  = ? " +    
+    " where id_calend_dum = ? ";
+  let values = [dum, id_calend_dum];
   //console.log('sql',sql)
   //console.log('values', values)
   let resultado = await update_mdb(sql, values);
   //console.log(resultado)
   if (resultado.affectedRows > 0) {
-    res.status(200).json({ resultado: "Raio-X alterado com sucesso" });
+    res.status(200).json({ resultado: "Calendário menstrual alterado com sucesso" });
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível alterar o Raio-X ";
+    const message = "Não foi possível alterar o calendário menstrual ";
     res.status(status).json({ status, message });
     return;
   }
 });
 
- */
+ 
 
 //*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
 //##############################################################################Tela de login do paciente###############################################################################################
