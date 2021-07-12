@@ -3058,7 +3058,8 @@ app.post("/consultar_ap", jsonParser, async (req, res) => {
     " ap.id_ap id_ap, " +
     " ap.ap_proprio ap_proprio, " +
     " DATE_FORMAT(ap.ap_data,'%d/%m/%Y') ap_data, " +
-    " ap.id_resultado_ap id_resultado_ap " +    
+    " ap.id_resultado_ap id_resultado_ap " +
+    " from anatomia_patologica ap " +
     " where " +
     " ap.id_r_mola = " + id_r_mola +
     " order by id_ap ";
@@ -3067,26 +3068,26 @@ app.post("/consultar_ap", jsonParser, async (req, res) => {
 
   res.status(200).json({ resultado });
 });
-/*
 
-//webservice de exclusão de quimioterapia
-app.post("/excluir_quimioterapia", jsonParser, async (req, res) => {
-  //receber id_quimio
-  let { id_quimio } = req.body;
+
+//webservice de exclusão de anatomia patologica (AP)
+app.post("/excluir_ap", jsonParser, async (req, res) => {
+  //receber id_ap
+  let { id_ap } = req.body;
   //definir o sql padrão
-  let sql = "delete from quimioterapia where id_quimio = " + id_quimio;
+  let sql = "delete from anatomia_patologica where id_ap = " + id_ap;
   let resultado = await delete_mdb(sql);
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado });
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível excluir os dados do quimioterapia.";
+    const message = "Não foi possível excluir os dados da anatomia patologica.";
     res.status(status).json({ status, message });
     return;
   }
 });
-
+/*
 
 //################################## tela de Cadastro de quimioterapia  #########################
 //webservice de incluir quimioterapia
