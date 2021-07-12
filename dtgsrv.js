@@ -3045,6 +3045,179 @@ app.post("/alterar_quimioterapia", jsonParser, async (req, res) => {
 });
 
 
+//################################## tela de consulta de anatomia patologica (AP) #########################
+//webservice de consultar anatomia patologica (AP)
+app.post("/consultar_ap", jsonParser, async (req, res) => {
+  //receber id_r_mola
+
+  let { id_r_mola } = req.body;
+  //definir o sql padrão
+
+  let sql =
+    " select " +
+    " ap.id_ap id_ap, " +
+    " ap.ap_proprio ap_proprio, " +
+    " DATE_FORMAT(ap.ap_data,'%d/%m/%Y') ap_data, " +
+    " ap.id_resultado_ap id_resultado_ap " +    
+    " where " +
+    " ap.id_r_mola = " + id_r_mola +
+    " order by id_ap ";
+
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+/*
+
+//webservice de exclusão de quimioterapia
+app.post("/excluir_quimioterapia", jsonParser, async (req, res) => {
+  //receber id_quimio
+  let { id_quimio } = req.body;
+  //definir o sql padrão
+  let sql = "delete from quimioterapia where id_quimio = " + id_quimio;
+  let resultado = await delete_mdb(sql);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível excluir os dados do quimioterapia.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
+
+//################################## tela de Cadastro de quimioterapia  #########################
+//webservice de incluir quimioterapia
+app.post("/incluir_quimioterapia", jsonParser, async (req, res) => {
+  //receber dados para inclusão
+  let {
+    inicio,    
+    fim,
+    droga,
+    toxicidade,
+    obs,
+    grau_estad,
+    nivel_estad,
+    result_hcg_pre,
+    id_r_mola
+  } = req.body;
+  //definir o sql padrão
+  let sql =
+    "insert into quimioterapia ( " +
+    " ciclo, " +   
+    " inicio, " +
+    " fim, " +
+    " droga, " +
+    " toxicidade, " +
+    " obs, " +
+    " grau_estad, " +
+    " nivel_estad, " +
+    " result_hcg_pre, " +
+    " id_r_mola " +
+    " ) values ((select nvl(max(q.ciclo),0) + 1 from quimioterapia where id_r_mola = "+id_r_mola+"),?,?,?,?,?,?,?,?,?)";
+  let values = [inicio, 
+                fim,
+                droga,
+                toxicidade,
+                obs,
+                grau_estad,
+                nivel_estad,
+                result_hcg_pre,
+                id_r_mola];
+  let resultado = await insert_mdb(sql, values);
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: [values, resultado.insertId] });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível incluir os dados da quimioterapia.";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
+//webservice de carrega dados de um exame de quimioterapia
+app.post("/dados_quimioterapia", jsonParser, async (req, res) => {
+  //receber id_quimio
+  let { id_quimio } = req.body;
+  //definir o sql padrão
+  let sql =
+    " select " +
+    " q.id_quimio id_quimio, " +
+    " q.ciclo ciclo, " +
+    " DATE_FORMAT(q.inicio,'%d/%m/%Y') inicio, " +
+    " DATE_FORMAT(q.fim,'%d/%m/%Y') fim, " +
+    " q.droga droga, " +
+    " q.toxicidade toxicidade, " +
+    " q.obs obs, " +
+    " q.grau_estad grau_estad, " +
+    " q.result_hcg_pre result_hcg_pre, " +
+    " q.id_r_mola id_r_mola " +
+    " from quimioterapia q " + 
+    " where " +
+    " q.id_quimio = " + id_quimio ;
+  
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+
+//webservice de alterar quimioterapia
+app.post("/alterar_quimioterapia", jsonParser, async (req, res) => {
+  //receber dados para alterar
+  let {
+    inicio,    
+    fim,
+    droga,
+    toxicidade,
+    obs,
+    grau_estad,
+    nivel_estad,
+    result_hcg_pre,
+    id_quimio
+  } = req.body;
+
+  
+  let sql =
+    "update tomografia set " +
+    " inicio  = ?, " +    
+    " fim = ?, " +
+    " droga = ?, " +
+    " toxicidade  = ?, " +    
+    " obs = ?, " +
+    " droga = ?, " +
+    " grau_estad  = ?, " +    
+    " nivel_estad = ?, " +
+    " result_hcg_pre = ? " +
+    " where id_quimio = ? ";
+  let values = [inicio,    
+                fim,
+                droga,
+                toxicidade,
+                obs,
+                grau_estad,
+                nivel_estad,
+                result_hcg_pre,
+                id_quimio];
+  //console.log('sql',sql)
+  //console.log('values', values)
+  let resultado = await update_mdb(sql, values);
+  //console.log(resultado)
+  if (resultado.affectedRows > 0) {
+    res.status(200).json({ resultado: "Quimioterapia alterado com sucesso" });
+    return;
+  } else {
+    const status = 409;
+    const message = "Não foi possível alterar o quimioterapia ";
+    res.status(status).json({ status, message });
+    return;
+  }
+});
+
+ */
+
 //*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
 //##############################################################################Tela de login do paciente###############################################################################################
 
