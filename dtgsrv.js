@@ -3151,60 +3151,44 @@ app.post("/dados_ap", jsonParser, async (req, res) => {
 
   res.status(200).json({ resultado });
 });
-/*
-//webservice de alterar quimioterapia
-app.post("/alterar_quimioterapia", jsonParser, async (req, res) => {
+
+//webservice de alterar anatomia patologica (AP)
+app.post("/alterar_ap", jsonParser, async (req, res) => {
   //receber dados para alterar
   let {
-    inicio,    
-    fim,
-    droga,
-    toxicidade,
-    obs,
-    grau_estad,
-    nivel_estad,
-    result_hcg_pre,
-    id_quimio
+    ap_proprio,    
+    ap_data,
+    id_resultado_ap,
+    id_ap
   } = req.body;
 
   
   let sql =
-    "update tomografia set " +
-    " inicio  = ?, " +    
-    " fim = ?, " +
-    " droga = ?, " +
-    " toxicidade  = ?, " +    
-    " obs = ?, " +
-    " droga = ?, " +
-    " grau_estad  = ?, " +    
-    " nivel_estad = ?, " +
-    " result_hcg_pre = ? " +
-    " where id_quimio = ? ";
-  let values = [inicio,    
-                fim,
-                droga,
-                toxicidade,
-                obs,
-                grau_estad,
-                nivel_estad,
-                result_hcg_pre,
-                id_quimio];
+    "update anatomia_patologica set " +
+    " ap_proprio  = ?, " +    
+    " ap_data = ?, " +
+    " id_resultado_ap = ? " +
+    " where id_ap = ? ";
+  let values = [ap_proprio,    
+                ap_data,
+                id_resultado_ap,
+                id_ap];
   //console.log('sql',sql)
   //console.log('values', values)
   let resultado = await update_mdb(sql, values);
   //console.log(resultado)
   if (resultado.affectedRows > 0) {
-    res.status(200).json({ resultado: "Quimioterapia alterado com sucesso" });
+    res.status(200).json({ resultado: "Anatomia patologica alterado com sucesso" });
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível alterar o quimioterapia ";
+    const message = "Não foi possível alterar o anatomia patologica ";
     res.status(status).json({ status, message });
     return;
   }
 });
 
- */
+ 
 
 //*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
 //##############################################################################Tela de login do paciente###############################################################################################
