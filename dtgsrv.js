@@ -2517,16 +2517,18 @@ app.post("/incluir_raiox", jsonParser, async (req, res) => {
   let {
     data_raiox,    
     id_imagem,
-    cadastrante
+    cadastrante,
+    id_r_mola
   } = req.body;
   //definir o sql padrão
   let sql =
     "insert into raiox ( " +
     " data_raiox, " +   
     " id_imagem, " +
-    " cadastrante " +
-    " ) values (?,?,?)";
-  let values = [data_raiox, id_imagem, cadastrante];
+    " cadastrante, " +
+    " id_r_mola " +
+    " ) values (?,?,?,?)";
+  let values = [data_raiox, id_imagem, cadastrante, id_r_mola];
   let resultado = await insert_mdb(sql, values);
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado: [values, resultado.insertId] });
