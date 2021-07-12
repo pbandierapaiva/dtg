@@ -2652,7 +2652,8 @@ app.post("/incluir_ultrassom", jsonParser, async (req, res) => {
     data_ultrassom,    
     ultrassom,
     laudo_ultrassom,
-    cadastrante
+    cadastrante,
+    id_r_mola
   } = req.body;
   //definir o sql padrão
   let sql =
@@ -2660,9 +2661,10 @@ app.post("/incluir_ultrassom", jsonParser, async (req, res) => {
     " data_ultrassom, " +   
     " ultrassom, " +
     " laudo_ultrassom, " +
-    " cadastrante " +
-    " ) values (?,?,?,?)";
-  let values = [data_ultrassom, ultrassom, laudo_ultrassom, cadastrante];
+    " cadastrante, " +
+    " id_r_mola " +
+    " ) values (?,?,?,?,?)";
+  let values = [data_ultrassom, ultrassom, laudo_ultrassom, cadastrante, id_r_mola];
   let resultado = await insert_mdb(sql, values);
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado: [values, resultado.insertId] });
