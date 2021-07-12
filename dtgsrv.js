@@ -2790,7 +2790,8 @@ app.post("/incluir_tomografia", jsonParser, async (req, res) => {
     data_tomografia,    
     tomografia,
     laudo_tomografia,
-    cadastrante
+    cadastrante,
+    id_r_mola
   } = req.body;
   //definir o sql padrão
   let sql =
@@ -2798,9 +2799,10 @@ app.post("/incluir_tomografia", jsonParser, async (req, res) => {
     " data_tomografia, " +   
     " tomografia, " +
     " laudo_tomografia, " +
-    " cadastrante " +
-    " ) values (?,?,?,?)";
-  let values = [data_tomografia, tomografia, laudo_tomografia, cadastrante];
+    " cadastrante, " +
+    " id_r_mola " +
+    " ) values (?,?,?,?,?)";
+  let values = [data_tomografia, tomografia, laudo_tomografia, cadastrante, id_r_mola];
   let resultado = await insert_mdb(sql, values);
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado: [values, resultado.insertId] });
