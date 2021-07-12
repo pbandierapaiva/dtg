@@ -3262,32 +3262,31 @@ app.post("/incluir_calendario", jsonParser, async (req, res) => {
     return;
   }
 });
-/*
-//webservice de carrega dados de um exame de Raio-X
-app.post("/dados_raiox", jsonParser, async (req, res) => {
-  //receber id_raiox
-  let { id_raiox } = req.body;
+
+//webservice de carrega dados do calendário menstrual
+app.post("/dados_calendario", jsonParser, async (req, res) => {
+  //receber id_calend_dum
+  let { id_calend_dum } = req.body;
   //definir o sql padrão
   let sql =
     " select " +
-    " r.id_raiox id_raiox, " +
-    " DATE_FORMAT(r.data_raiox,'%d/%m/%Y') data_raiox, " +
-    " r.id_imagem id_imagem, " +
-    " r.revisor id_revisor, " +
+    " cd.id_calend_dum id_calend_dum, " +
+    " DATE_FORMAT(cd.dum,'%d/%m/%Y') dum, " +    
+    " cd.revisor id_revisor, " +
     " u2.nome revisor, " +
-    " r.cadastrante id_cadastrante, " +
+    " cd.cadastrante id_cadastrante, " +
     " u.nome cadastrante " +    
-    " from raiox r " +
-    " join usuario u on r.cadastrante=u.id_usuario " +
-    " left join usuario u2 on r.revisor=u2.id_usuario " +
+    " from calendario_dum cd " +
+    " join usuario u on cd.cadastrante=u.id_usuario " +
+    " left join usuario u2 on cd.revisor=u2.id_usuario " +
     " where " +
-    " r.id_raiox = " + id_raiox ;
+    " cd.id_calend_dum = " + id_calend_dum ;
   
   let resultado = await select_mdb(sql);
 
   res.status(200).json({ resultado });
 });
-
+/*
 //webservice de alterar Raio-X
 app.post("/alterar_raiox", jsonParser, async (req, res) => {
   //receber dados para alterar
