@@ -3122,33 +3122,28 @@ app.post("/incluir_ap", jsonParser, async (req, res) => {
     return;
   }
 });
-/*
-//webservice de carrega dados de um exame de quimioterapia
-app.post("/dados_quimioterapia", jsonParser, async (req, res) => {
-  //receber id_quimio
-  let { id_quimio } = req.body;
+
+//webservice de carrega dados de um exame de anatomia patologica (AP)
+app.post("/dados_ap", jsonParser, async (req, res) => {
+  //receber id_ap
+  let { id_ap } = req.body;
   //definir o sql padrão
   let sql =
     " select " +
-    " q.id_quimio id_quimio, " +
-    " q.ciclo ciclo, " +
-    " DATE_FORMAT(q.inicio,'%d/%m/%Y') inicio, " +
-    " DATE_FORMAT(q.fim,'%d/%m/%Y') fim, " +
-    " q.droga droga, " +
-    " q.toxicidade toxicidade, " +
-    " q.obs obs, " +
-    " q.grau_estad grau_estad, " +
-    " q.result_hcg_pre result_hcg_pre, " +
-    " q.id_r_mola id_r_mola " +
-    " from quimioterapia q " + 
+    " ap.id_ap id_ap, " +
+    " ap.ap_proprio ap_proprio, " +
+    " DATE_FORMAT(ap.ap_data,'%d/%m/%Y') ap_data, " +
+    " ap.id_resultado_ap id_resultado_ap, " +
+    " ap.id_r_mola id_r_mola " +
+    " from anatomia_patologica ap " + 
     " where " +
-    " q.id_quimio = " + id_quimio ;
+    " ap.id_ap = " + id_ap ;
   
   let resultado = await select_mdb(sql);
 
   res.status(200).json({ resultado });
 });
-
+/*
 //webservice de alterar quimioterapia
 app.post("/alterar_quimioterapia", jsonParser, async (req, res) => {
   //receber dados para alterar
