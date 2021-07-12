@@ -3215,25 +3215,25 @@ app.post("/consultar_calendario", jsonParser, async (req, res) => {
 
   res.status(200).json({ resultado });
 });
-/*
-//webservice de exclusão de raiox
-app.post("/excluir_raiox", jsonParser, async (req, res) => {
-  //receber id_raiox
-  let { id_raiox } = req.body;
+
+//webservice de exclusão do calendário menstrual
+app.post("/excluir_calendario", jsonParser, async (req, res) => {
+  //receber id_calend_dum
+  let { id_calend_dum } = req.body;
   //definir o sql padrão
-  let sql = "delete from raiox where id_raiox = " + id_raiox;
+  let sql = "delete from calendario_dum where id_calend_dum = " + id_calend_dum;
   let resultado = await delete_mdb(sql);
   if (resultado.affectedRows > 0) {
     res.status(200).json({ resultado });
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível excluir os dados do Raio-X.";
+    const message = "Não foi possível excluir os dados do calendário menstrual.";
     res.status(status).json({ status, message });
     return;
   }
 });
-
+/*
 //################################## tela de Cadastro de Raio-X (raiox rx)  #########################
 //webservice de incluir raiox
 app.post("/incluir_raiox", jsonParser, async (req, res) => {
