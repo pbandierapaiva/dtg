@@ -3087,45 +3087,29 @@ app.post("/excluir_ap", jsonParser, async (req, res) => {
     return;
   }
 });
-/*
 
-//################################## tela de Cadastro de quimioterapia  #########################
-//webservice de incluir quimioterapia
-app.post("/incluir_quimioterapia", jsonParser, async (req, res) => {
+
+//################################## tela de Cadastro de anatomia patologica (AP)  #########################
+//webservice de incluir anatomia patologica (AP)
+app.post("/incluir_ap", jsonParser, async (req, res) => {
   //receber dados para inclusão
   let {
-    inicio,    
-    fim,
-    droga,
-    toxicidade,
-    obs,
-    grau_estad,
-    nivel_estad,
-    result_hcg_pre,
+    ap_proprio,    
+    ap_data,
+    id_resultado_ap,
     id_r_mola
   } = req.body;
   //definir o sql padrão
   let sql =
-    "insert into quimioterapia ( " +
-    " ciclo, " +   
-    " inicio, " +
-    " fim, " +
-    " droga, " +
-    " toxicidade, " +
-    " obs, " +
-    " grau_estad, " +
-    " nivel_estad, " +
-    " result_hcg_pre, " +
+    "insert into anatomia_patologica ( " +
+    " ap_proprio, " +   
+    " ap_data, " +
+    " id_resultado_ap, " +
     " id_r_mola " +
-    " ) values ((select nvl(max(q.ciclo),0) + 1 from quimioterapia where id_r_mola = "+id_r_mola+"),?,?,?,?,?,?,?,?,?)";
-  let values = [inicio, 
-                fim,
-                droga,
-                toxicidade,
-                obs,
-                grau_estad,
-                nivel_estad,
-                result_hcg_pre,
+    " ) values (?,?,?,?)";
+  let values = [ap_proprio,    
+                ap_data,
+                id_resultado_ap,
                 id_r_mola];
   let resultado = await insert_mdb(sql, values);
   if (resultado.affectedRows > 0) {
@@ -3133,12 +3117,12 @@ app.post("/incluir_quimioterapia", jsonParser, async (req, res) => {
     return;
   } else {
     const status = 409;
-    const message = "Não foi possível incluir os dados da quimioterapia.";
+    const message = "Não foi possível incluir os dados da anatomia patologica.";
     res.status(status).json({ status, message });
     return;
   }
 });
-
+/*
 //webservice de carrega dados de um exame de quimioterapia
 app.post("/dados_quimioterapia", jsonParser, async (req, res) => {
   //receber id_quimio
