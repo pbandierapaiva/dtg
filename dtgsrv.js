@@ -2256,7 +2256,7 @@ app.post('/upload', (req, res) => {
         let sqlImagens =
           " INSERT INTO dtg.imagens "+
           " (tp_exam, url_img, data_upload, id_r_mola) "+
-          " VALUES (?, concat(?,(select nvl(max(i.id_imagem),0) + 1 from dtg.imagens i),'.',?), NOW(), ?)";
+          " VALUES (?, concat(?,(select ifnull(max(i.id_imagem),0) + 1 from dtg.imagens i),'.',?), NOW(), ?)";
         let valuesImagens = [fields.tipo, arquivoSemId, extensaoDoArquivo, fields.id_r_mola];
        // console.log('sql', sqlImagens);
        // console.log('values', valuesImagens);
@@ -2953,7 +2953,7 @@ app.post("/incluir_quimioterapia", jsonParser, async (req, res) => {
     " nivel_estad, " +
     " result_hcg_pre, " +
     " id_r_mola " +
-    " ) values ((select nvl(max(q.ciclo),0) + 1 from quimioterapia where id_r_mola = "+id_r_mola+"),?,?,?,?,?,?,?,?,?)";
+    " ) values ((select ifnull(max(q.ciclo),0) + 1 from quimioterapia where id_r_mola = "+id_r_mola+"),?,?,?,?,?,?,?,?,?)";
   let values = [inicio, 
                 fim,
                 droga,
