@@ -189,7 +189,7 @@ async function pacienteEstaAutenticado({ login, senha }) {
   //console.log('senha:', senha)
   senha = hash.reset().update(senha).digest("hex");
   sql =
-    " select u.senha senha, u.nome nome,  p.aceite aceite, u.cpf, u.id_usuario id_usuario, p.id_inst id_inst, p.preceptor id_preceptor, u2.nome nome_preceptor  " +
+    " select u.senha senha, u.nome nome,  p.aceite aceite, u.cpf, u.id_usuario id_usuario, p.id_inst id_inst, p.preceptor id_preceptor, u2.nome nome_preceptor, (select max(rm.id_r_mola) from registro_mola rm where u.id_usuario=rm.id_paciente) id_ultima_mola " +
     " from usuario u, paciente p, usuario u2 " +
     " where " +
     " u.id_usuario=p.id_paciente and " +
@@ -214,7 +214,8 @@ async function pacienteEstaAutenticado({ login, senha }) {
       id_usuario: senha_banco[0].id_usuario,
       id_inst: senha_banco[0].id_inst,
       id_preceptor: senha_banco[0].id_preceptor,
-      nome_preceptor: senha_banco[0].nome_preceptor
+      nome_preceptor: senha_banco[0].nome_preceptor,
+      id_ultima_mola: senha_banco[0].id_ultima_mola
     };
     return usuario;
   } else {
