@@ -1,4 +1,5 @@
 {
-  "watch": ["server", "client"],
-  "ignore_watch" : ["node_modules", "arquivos"]  
+    "script": "dtgsrv.js",
+    "watch": true,
+    "ignore_watch" : ["node_modules", "arquivos"]  
 }
