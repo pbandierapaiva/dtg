@@ -2344,7 +2344,7 @@ app.post("/consultar_hcg", jsonParser, async (req, res) => {
     " left join usuario u2 on h.revisor=u2.id_usuario " +
     " where " +
     " h.id_r_mola = " + id_r_mola +
-    " order by id_hcg ";
+    " order by h.data_hcg ";
 
   let resultado = await select_mdb(sql);
 
@@ -2486,7 +2486,7 @@ app.post("/consultar_raiox", jsonParser, async (req, res) => {
     " left join usuario u2 on r.revisor=u2.id_usuario " +
     " where " +
     " r.id_r_mola = " + id_r_mola +
-    " order by id_raiox ";
+    " order by r.data_raiox ";
 
   let resultado = await select_mdb(sql);
 
@@ -2620,7 +2620,7 @@ app.post("/consultar_ultrassom", jsonParser, async (req, res) => {
     " left join usuario u2 on ul.revisor=u2.id_usuario " +
     " where " +
     " ul.id_r_mola = " + id_r_mola +
-    " order by id_ultrassom ";
+    " order by ul.data_ultrassom ";
 
   let resultado = await select_mdb(sql);
 
@@ -2758,7 +2758,7 @@ app.post("/consultar_tomografia", jsonParser, async (req, res) => {
     " left join usuario u2 on t.revisor=u2.id_usuario " +
     " where " +
     " t.id_r_mola = " + id_r_mola +
-    " order by id_tomografia ";
+    " order by t.data_tomografia ";
 
   let resultado = await select_mdb(sql);
 
