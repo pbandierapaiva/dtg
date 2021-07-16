@@ -2894,6 +2894,7 @@ app.post("/consultar_quimioterapia", jsonParser, async (req, res) => {
     " q.toxicidade toxicidade, " +
     " q.obs obs, " +
     " q.grau_estad grau_estad, " +
+    " q.nivel_estad nivel_estad, " +
     " q.result_hcg_pre result_hcg_pre " +
     " from quimioterapia q " +    
     " where " +
@@ -2953,7 +2954,7 @@ app.post("/incluir_quimioterapia", jsonParser, async (req, res) => {
     " nivel_estad, " +
     " result_hcg_pre, " +
     " id_r_mola " +
-    " ) values ((select ifnull(max(q.ciclo),0) + 1 from quimioterapia where id_r_mola = "+id_r_mola+"),?,?,?,?,?,?,?,?,?)";
+    " ) values ((select ifnull(max(q.ciclo),0) + 1 from quimioterapia q where q.id_r_mola = "+id_r_mola+"),?,?,?,?,?,?,?,?,?)";
   let values = [inicio, 
                 fim,
                 droga,
@@ -2990,6 +2991,7 @@ app.post("/dados_quimioterapia", jsonParser, async (req, res) => {
     " q.toxicidade toxicidade, " +
     " q.obs obs, " +
     " q.grau_estad grau_estad, " +
+    " q.nivel_estad nivel_estad, " +
     " q.result_hcg_pre result_hcg_pre, " +
     " q.id_r_mola id_r_mola " +
     " from quimioterapia q " + 
@@ -3023,8 +3025,7 @@ app.post("/alterar_quimioterapia", jsonParser, async (req, res) => {
     " fim = ?, " +
     " droga = ?, " +
     " toxicidade  = ?, " +    
-    " obs = ?, " +
-    " droga = ?, " +
+    " obs = ?, " +    
     " grau_estad  = ?, " +    
     " nivel_estad = ?, " +
     " result_hcg_pre = ? " +
