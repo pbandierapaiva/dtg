@@ -3020,7 +3020,7 @@ app.post("/alterar_quimioterapia", jsonParser, async (req, res) => {
 
   
   let sql =
-    "update tomografia set " +
+    "update quimioterapia set " +
     " inicio  = ?, " +    
     " fim = ?, " +
     " droga = ?, " +
