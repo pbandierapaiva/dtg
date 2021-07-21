@@ -223,6 +223,35 @@ async function pacienteEstaAutenticado({ login, senha }) {
   }
 }
 
+async function enviarMensagemAutomatica({ id_paciente, id_remetente, id_destinatario, msg }) {
+  //verifica se as mensagens da paciente estão carregadas cadso contrário carregas as mensagens
+  let mensagensAnteriores = mensagens.filter(msg => {
+    return msg.sala == id_paciente
+  })
+  if (mensagensAnteriores.length == 0) {
+    mensagensAnteriores = await consultarMensagensBanco(id_paciente);
+    mensagens = mensagens.concat(mensagensAnteriores);
+    //console.log('msgAux', msgAux);
+  }
+  const idMsg = await incluirMensagemBanco(id_remetente, id_destinatario, msg)
+  let sqlNomeRemetente = "select nome from usuario where id_usuario = " + id_remetente
+  let resultadoRemetente = await select_mdb(sqlNomeRemetente);
+  let remetente = resultadoRemetente[0].nome;
+  let objMsg = {}
+
+  //console.log('idMSG', idMsg);
+  if (idMsg) {
+    objMsg = { idMsg, remetenteid: id_remetente, remetente, destinatario: id_destinatario, msg, sala: id_paciente }
+    mensagens.push(objMsg)
+    //console.log("mensagens", mensagens)
+
+    io.in(id_paciente).emit('mensagem', objMsg);
+  }
+  else {
+    objMsg={ idMsg: 999, remetenteid: id_remetente, remetente, destinatario: id_destinatario, msg: 'erro', sala: null }
+    socket.emit('mensagem', objMsg);
+  }
+}
 //grava mensagem enviada no banco de dados
 
 async function incluirMensagemBanco(remetente, destinatario, msg) {
@@ -2394,6 +2423,13 @@ app.post("/incluir_hcg", jsonParser, async (req, res) => {
   let values = [data_hcg, result_hcg, lab_hcg, id_imagem, cadastrante, id_r_mola];
   let resultado = await insert_mdb(sql, values);
   if (resultado.affectedRows > 0) {
+    let sqlIdPaciente = "select id_paciente from registro_mola where id_r_mola=" + id_r_mola;
+    let resultadoIdPaciente = await select_mdb(sqlIdPaciente);
+    let id_paciente = resultadoIdPaciente[0].id_paciente;
+    let id_destinatario = id_paciente;
+    let id_remetente = cadastrante;
+    let msg = "[mensagem automática] Um exame de hCG acabou de ser enviado!";
+		enviarMensagemAutomatica({ id_paciente, id_remetente, id_destinatario, msg })
     res.status(200).json({ resultado: [values, resultado.insertId] });
     return;
   } else {
@@ -2532,6 +2568,13 @@ app.post("/incluir_raiox", jsonParser, async (req, res) => {
   let values = [data_raiox, id_imagem, cadastrante, id_r_mola];
   let resultado = await insert_mdb(sql, values);
   if (resultado.affectedRows > 0) {
+    let sqlIdPaciente = "select id_paciente from registro_mola where id_r_mola=" + id_r_mola;
+    let resultadoIdPaciente = await select_mdb(sqlIdPaciente);
+    let id_paciente = resultadoIdPaciente[0].id_paciente;
+    let id_destinatario = id_paciente;
+    let id_remetente = cadastrante;
+    let msg = "[mensagem automática] Um exame de raio-x acabou de ser enviado!";
+		enviarMensagemAutomatica({ id_paciente, id_remetente, id_destinatario, msg })
     res.status(200).json({ resultado: [values, resultado.insertId] });
     return;
   } else {
@@ -2668,6 +2711,13 @@ app.post("/incluir_ultrassom", jsonParser, async (req, res) => {
   let values = [data_ultrassom, ultrassom, laudo_ultrassom, cadastrante, id_r_mola];
   let resultado = await insert_mdb(sql, values);
   if (resultado.affectedRows > 0) {
+    let sqlIdPaciente = "select id_paciente from registro_mola where id_r_mola=" + id_r_mola;
+    let resultadoIdPaciente = await select_mdb(sqlIdPaciente);
+    let id_paciente = resultadoIdPaciente[0].id_paciente;
+    let id_destinatario = id_paciente;
+    let id_remetente = cadastrante;
+    let msg = "[mensagem automática] Um exame de ultrassom acabou de ser enviado!";
+		enviarMensagemAutomatica({ id_paciente, id_remetente, id_destinatario, msg })
     res.status(200).json({ resultado: [values, resultado.insertId] });
     return;
   } else {
@@ -2806,6 +2856,13 @@ app.post("/incluir_tomografia", jsonParser, async (req, res) => {
   let values = [data_tomografia, tomografia, laudo_tomografia, cadastrante, id_r_mola];
   let resultado = await insert_mdb(sql, values);
   if (resultado.affectedRows > 0) {
+    let sqlIdPaciente = "select id_paciente from registro_mola where id_r_mola=" + id_r_mola;
+    let resultadoIdPaciente = await select_mdb(sqlIdPaciente);
+    let id_paciente = resultadoIdPaciente[0].id_paciente;
+    let id_destinatario = id_paciente;
+    let id_remetente = cadastrante;
+    let msg = "[mensagem automática] Um exame de tomografia acabou de ser enviado!";
+		enviarMensagemAutomatica({ id_paciente, id_remetente, id_destinatario, msg })
     res.status(200).json({ resultado: [values, resultado.insertId] });
     return;
   } else {
