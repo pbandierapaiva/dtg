@@ -3378,7 +3378,7 @@ app.post("/alterar_calendario", jsonParser, async (req, res) => {
  //################################## tela de relatório de abandono de paciente #########################
 //webservice para relatorio de abandono de paciente
 app.post("/relatorio/abandono_paciente", jsonParser, async (req, res) => {
-  //receber nome, cpf, preceptor, termino_caso, situacao,categoria, id_inst, usuario_logado
+  //receber nome, cpf, preceptor, id_inst, usuario_logado
   let { nome, cpf, preceptor, id_inst, usuario_logado } = req.body;
   let sql =
     " select *,DATEDIFF(CURDATE(),ultima_paciente) dias_ult_msg from ( "
@@ -3390,7 +3390,11 @@ app.post("/relatorio/abandono_paciente", jsonParser, async (req, res) => {
     "  u.cpf cpf, " +
     "  rm.id_r_mola id_r_mola,  " +
     "  DATE_FORMAT((select max(data) from mensagens m  where remetente = p.id_paciente),'%d/%m/%Y %T') ultima_paciente, " +
-    "  DATE_FORMAT((select max(data) from mensagens m  where destinatario = p.id_paciente),'%d/%m/%Y %T') ultima_medico " +
+    "  DATE_FORMAT((select max(data) from mensagens m  where destinatario = p.id_paciente),'%d/%m/%Y %T') ultima_medico, " +
+    "  p.tel_proprio tel_proprio, " +
+    "  p.tel_contato tel_contato, " +
+    "  p.nome_contato nome_contato, " +
+    "  p.email email " +
     " from  " +
     "  usuario u,paciente p, " +
     "  usuario u2, " +
