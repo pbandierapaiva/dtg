@@ -3375,7 +3375,59 @@ app.post("/alterar_calendario", jsonParser, async (req, res) => {
   }
 });
 
- 
+ //################################## tela de relatório de abandono de paciente #########################
+//webservice para relatorio de abandono de paciente
+app.post("/relatorio/abandono_paciente", jsonParser, async (req, res) => {
+  //receber nome, cpf, preceptor, termino_caso, situacao,categoria, id_inst, usuario_logado
+  let { nome, cpf, preceptor, id_inst, usuario_logado } = req.body;
+  let sql =
+    " select *,DATEDIFF(CURDATE(),ultima_paciente) dias_ult_msg from ( "
+    " select " +
+    "  p.id_paciente id_paciente, " +
+    "  u.nome nome_paciente, " +
+    "  u2.nome nome_preceptor, " +
+    "  u.ativo ativo, " +
+    "  u.cpf cpf, " +
+    "  rm.id_r_mola id_r_mola,  " +
+    "  DATE_FORMAT((select max(data) from mensagens m  where remetente = p.id_paciente),'%d/%m/%Y %T') ultima_paciente, " +
+    "  DATE_FORMAT((select max(data) from mensagens m  where destinatario = p.id_paciente),'%d/%m/%Y %T') ultima_medico " +
+    " from  " +
+    "  usuario u,paciente p, " +
+    "  usuario u2, " +
+    "  registro_mola rm " +
+    " where " +
+    "  u.id_usuario=p.id_paciente  " +
+    "  and p.id_paciente=rm.id_paciente  " +
+    "  and p.preceptor=u2.id_usuario  " +    
+    "  and p.id_inst= " + id_inst +
+    "  and p.id_paciente in (select id_paciente from responsaveis where id_med_coord = "+usuario_logado+")";
+  let where = "";
+  if (nome != "") {
+    where += " and UPPER(u.nome) like UPPER('%" + nome + "%') ";
+  }
+
+  if (cpf != "") {
+    where += " and u.cpf = " + cpf + " ";
+  }
+
+  if (preceptor != "") {
+    where += " and UPPER(u2.nome) like UPPER('%" + preceptor + "%') ";
+  }
+
+  
+
+  sql += where + " ) a " +
+        " where "+
+        " DATEDIFF(CURDATE(),a.ultima_paciente) >=21 ";
+
+  ordem = " order by nome_paciente ";
+  sql += ordem;
+  //console.log(sql);
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+
 
 //*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
 //##############################################################################Tela de login do paciente###############################################################################################
