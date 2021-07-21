@@ -3375,7 +3375,7 @@ app.post("/alterar_calendario", jsonParser, async (req, res) => {
   }
 });
 
- //################################## tela de relatório de abandono de paciente #########################
+//################################## tela de relatório de abandono de paciente #########################
 //webservice para relatorio de abandono de paciente
 app.post("/relatorio/abandono_paciente", jsonParser, async (req, res) => {
   //receber nome, cpf, preceptor, id_inst, usuario_logado
@@ -3404,7 +3404,7 @@ app.post("/relatorio/abandono_paciente", jsonParser, async (req, res) => {
     "  and p.id_paciente=rm.id_paciente  " +
     "  and p.preceptor=u2.id_usuario  " +    
     "  and p.id_inst= " + id_inst +
-    "  and p.id_paciente in (select id_paciente from responsaveis where id_med_coord = "+usuario_logado+")";
+    "  and p.id_paciente in (select id_paciente from responsaveis where id_med_coord = "+usuario_logado+" )";
   let where = "";
   if (nome != "") {
     where += " and UPPER(u.nome) like UPPER('%" + nome + "%') ";
@@ -3423,6 +3423,50 @@ app.post("/relatorio/abandono_paciente", jsonParser, async (req, res) => {
   sql += where + " ) a " +
         " where "+
         " DATEDIFF(CURDATE(),a.ultima_paciente) >=21 ";
+
+  ordem = " order by nome_paciente ";
+  sql += ordem;
+  //console.log(sql);
+  let resultado = await select_mdb(sql);
+
+  res.status(200).json({ resultado });
+});
+
+//################################## tela de relatório de evolução de hCG #########################
+//webservice para relatorio de evolução do hCG
+app.post("/relatorio/evolucao_hcg", jsonParser, async (req, res) => {
+  //receber nome, cpf, preceptor,  usuario_logado
+  let { nome, cpf,  usuario_logado } = req.body;
+  let sql =
+    " select * , (select count(0) from hcg h3 where h3.data_hcg>=a.data_ult_positivo and h3.result_hcg <= 5 and h3.id_r_mola=a.id_r_mola) exames_negativos from " +
+    " ( " +
+    " select " +
+    "	rm.id_r_mola id_r_mola, " +
+    "	u.id_usuario id_paciente, " +
+    "	u.nome nome_paciente, " +
+    "	u.cpf cpf," +
+    "	(select max(h2.data_hcg) from hcg h2 where h2.result_hcg > 5	and h2.id_r_mola = rm.id_r_mola) data_ult_positivo, " +
+    " DATEDIFF(CURDATE(),(select max(h.data_hcg) from hcg h where h.result_hcg > 5	and h.id_r_mola = rm.id_r_mola)) dias_ult_positivo " +
+    " from " +
+    " registro_mola rm, " +
+    "	usuario u, " +
+    "	responsaveis r " +
+    " where " +
+    "	rm.id_paciente = u.id_usuario and " +
+    "	rm.id_paciente = r.id_paciente and " +
+    "	rm.term_caso is null and " +
+    "	r.id_med_coord = " + usuario_logado;
+  
+  let where = "";
+  if (nome != "") {
+    where += " and UPPER(u.nome) like UPPER('%" + nome + "%') ";
+  }
+
+  if (cpf != "") {
+    where += " and u.cpf = " + cpf + " ";
+  }
+
+  sql += where + " ) a ";
 
   ordem = " order by nome_paciente ";
   sql += ordem;
