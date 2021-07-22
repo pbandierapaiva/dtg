@@ -3389,8 +3389,8 @@ app.post("/relatorio/abandono_paciente", jsonParser, async (req, res) => {
     "  u.ativo ativo, " +
     "  u.cpf cpf, " +
     "  rm.id_r_mola id_r_mola,  " +
-    "  DATE_FORMAT((select max(data) from mensagens m  where remetente = p.id_paciente),'%d/%m/%Y %T') ultima_paciente, " +
-    "  DATE_FORMAT((select max(data) from mensagens m  where destinatario = p.id_paciente),'%d/%m/%Y %T') ultima_medico, " +
+    "  (select max(data) from mensagens m  where remetente = p.id_paciente) ultima_paciente, " +
+    "  (select max(data) from mensagens m  where destinatario = p.id_paciente) ultima_medico, " +
     "  p.tel_proprio tel_proprio, " +
     "  p.tel_contato tel_contato, " +
     "  p.nome_contato nome_contato, " +
