@@ -3381,7 +3381,7 @@ app.post("/relatorio/abandono_paciente", jsonParser, async (req, res) => {
   //receber nome, cpf, preceptor, id_inst, usuario_logado
   let { nome, cpf, preceptor, id_inst, usuario_logado } = req.body;
   let sql =
-    " select *,DATEDIFF(CURDATE(),ultima_paciente) dias_ult_msg from ( "
+    " select *,DATEDIFF(CURDATE(),ultima_paciente) dias_ult_msg from ( " +
     " select " +
     "  p.id_paciente id_paciente, " +
     "  u.nome nome_paciente, " +
