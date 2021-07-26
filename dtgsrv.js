@@ -3268,7 +3268,7 @@ app.post("/consultar_calendario", jsonParser, async (req, res) => {
     " left join usuario u2 on cd.revisor=u2.id_usuario " +
     " where " +
     " cd.id_r_mola = " + id_r_mola +
-    " order by id_calend_dum ";
+    " order by cd.dum ";
 
   let resultado = await select_mdb(sql);
 

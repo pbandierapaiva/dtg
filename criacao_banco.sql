@@ -280,10 +280,10 @@ CREATE TABLE calendario_dum
   dum DATE NOT NULL,
   id_r_mola INT NOT NULL,
   cadastrante INT NOT NULL,
-  revisor INT NOT NULL,
+  revisor INT,
   PRIMARY KEY (id_calend_dum),
   FOREIGN KEY (id_r_mola) REFERENCES registro_mola(id_r_mola),
-  FOREIGN KEY (cadastrante) REFERENCES med_coord(id_med_coord),
+  FOREIGN KEY (cadastrante) REFERENCES usuario(id_usuario),
   FOREIGN KEY (revisor) REFERENCES med_coord(id_med_coord)
 );
 
