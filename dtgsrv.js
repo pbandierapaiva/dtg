@@ -3615,7 +3615,7 @@ app.get("/combo_cid", jsonParser, async (req, res) => {
   
 //################################## controle de espaço em disco #########################
 //webservice de deletar imagens que não estão em nenhum exame
-app.get("/deletar_img_sem_exame", jsonParser, async (req, res) => {
+app.post("/deletar_img_sem_exame", jsonParser, async (req, res) => {
   //definir o sql padrão
   let sql =
     " select " +
