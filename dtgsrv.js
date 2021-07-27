@@ -6,6 +6,7 @@ var bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
 const mariadb = require("mariadb");
 const { SHA3 } = require("sha3");
+const checkDiskSpace = require('check-disk-space').default
 //################### configurações ########################
 //configuração do banco dedados
 const dbvar = require("./dtg.json");
@@ -3649,6 +3650,16 @@ app.post("/deletar_img_sem_exame", jsonParser, async (req, res) => {
     });
   }
   res.status(200).json({ espaco_liberado,  qtdarquivos});
+});
+
+//webservice de espaço no servidor
+app.get("/espaco_servidor", jsonParser, async (req, res) => {
+  checkDiskSpace(__dirname).then((diskSpace) => {
+    //console.log(diskSpace)
+    let espaco = diskSpace.size;
+    let espaco_livre = diskSpace.free;
+    res.status(200).json({ espaco,  espaco_livre});
+  })
 });
 
 server.listen(port, () => {
