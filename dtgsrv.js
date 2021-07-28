@@ -2323,13 +2323,18 @@ app.get('/arquivo/:id', jsonParser, async (req, res) => {
     let resultado = await select_mdb(sqlArquivo);
   //console.log('senha cripto:', senha)
   //console.log('senha_banco:',senha_banco[0].senha)
+    let url_img = "";
     if (typeof resultado[0] == "undefined") {
-      const status = 409;
-      const message = "Imagem não encontrada";
-      res.status(status).json({ status, message });
-      return;
+      url_img = __dirname+"\\nao_encontrada.jpg";
+      //const status = 409;
+      //const message = "Imagem não encontrada";
+      //res.status(status).json({ status, message });
+      //return;
     }
-    const r = fs.createReadStream(resultado[0].url_img) // or any other way to get a readable stream
+    else {
+      url_img = resultado[0].url_img
+    }
+    const r = fs.createReadStream(url_img) // or any other way to get a readable stream
     const ps = new stream.PassThrough() // <---- this makes a trick with stream error handling
     stream.pipeline(
       r,
