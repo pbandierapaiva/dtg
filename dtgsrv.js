@@ -2331,8 +2331,11 @@ app.get('/arquivo/:id', jsonParser, async (req, res) => {
       //res.status(status).json({ status, message });
       //return;
     }
-    else {
+    else if(fs.existsSync(resultado[0].url_img)){
       url_img = resultado[0].url_img
+    }
+    else {
+      url_img = __dirname+"\\nao_encontrada.jpg";
     }
     const r = fs.createReadStream(url_img) // or any other way to get a readable stream
     const ps = new stream.PassThrough() // <---- this makes a trick with stream error handling
@@ -3482,6 +3485,84 @@ app.post("/relatorio/evolucao_hcg", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
+//################################## controle de espaço em disco #########################
+//webservice de deletar imagens que não estão em nenhum exame
+app.post("/deletar_img_sem_exame", jsonParser, async (req, res) => {
+  //definir o sql padrão
+  let sql =
+    " select " +
+    "  i.id_imagem, " +
+    "  i.url_img " +
+    " from " +
+    "  imagens i " +
+    " where " +
+    "  i.id_imagem not in ( select  h.id_imagem id_imagem from hcg h  where h.id_imagem is not null " +
+    "    union select r.id_imagem id_imagem from raiox r  where r.id_imagem is not null " +
+    "    union select t.tomografia id_imagem from tomografia t  where t.tomografia is not null " +
+    "    union select t2.laudo_tomografia id_imagem from tomografia t2  where t2.laudo_tomografia is not null " +
+    "    union select u.ultrassom id_imagem from ultrassom u  where u.ultrassom is not null " +
+    "    union select u2.laudo_ultrassom id_imagem from ultrassom u2  where u2.laudo_ultrassom is not null ) ";
+
+  let resultado = await select_mdb(sql);
+  let espaco_liberado = 0;
+  let qtdarquivos = resultado.length;
+  if (qtdarquivos > 0) {
+    
+    resultado.forEach(async val => {
+      if (fs.existsSync(val.url_img)) {
+        //console.log('arquivo: ', val);
+        //console.log('tamanho:', Math.ceil(fs.statSync(val.url_img).size / 1024), 'Kb');
+        espaco_liberado += fs.statSync(val.url_img).size;
+        fs.unlinkSync(val.url_img);
+        
+      }
+      let sqlDel = "delete from imagens where id_imagem=" + val.id_imagem
+      await delete_mdb(sqlDel);
+    });
+  }
+  res.status(200).json({ espaco_liberado,  qtdarquivos});
+});
+
+//webservice de espaço no servidor
+app.get("/espaco_servidor", jsonParser, async (req, res) => {
+  checkDiskSpace(__dirname).then((diskSpace) => {
+    //console.log(diskSpace)
+    let espaco = diskSpace.size;
+    let espaco_livre = diskSpace.free;
+    res.status(200).json({ espaco,  espaco_livre});
+  })
+});
+
+//webservice de deletar imagens anteriores a uma data
+app.post("/deletar_img_anteriores", jsonParser, async (req, res) => {
+  //recebe data de referencia
+  let { data } = req.body;
+  //definir o sql padrão
+  let sql =
+    " select " +
+    "  i.id_imagem, " +
+    "  i.url_img " +
+    " from " +
+    "  imagens i " +
+    " where " +
+    "  data_upload <=  STR_TO_DATE('"+data+"', '%Y-%m-%d');";
+  console.log(sql);
+  let resultado = await select_mdb(sql);
+  let espaco_liberado = 0;
+  let qtdarquivos = resultado.length;
+  if (qtdarquivos > 0) {
+    
+    resultado.forEach(async val => {
+      if (fs.existsSync(val.url_img)) {      
+        espaco_liberado += fs.statSync(val.url_img).size;
+        fs.unlinkSync(val.url_img);
+        
+      }      
+    });
+  }
+  res.status(200).json({ espaco_liberado,  qtdarquivos});
+});
+
 
 //*****************************************************************************APP MOLA PACIENTE***************************************************************************************** */
 //##############################################################################Tela de login do paciente###############################################################################################
@@ -3619,53 +3700,7 @@ app.get("/combo_cid", jsonParser, async (req, res) => {
   res.status(200).json({ resultado });
 });
   
-//################################## controle de espaço em disco #########################
-//webservice de deletar imagens que não estão em nenhum exame
-app.post("/deletar_img_sem_exame", jsonParser, async (req, res) => {
-  //definir o sql padrão
-  let sql =
-    " select " +
-    "  i.id_imagem, " +
-    "  i.url_img " +
-    " from " +
-    "  imagens i " +
-    " where " +
-    "  i.id_imagem not in ( select  h.id_imagem id_imagem from hcg h  where h.id_imagem is not null " +
-    "    union select r.id_imagem id_imagem from raiox r  where r.id_imagem is not null " +
-    "    union select t.tomografia id_imagem from tomografia t  where t.tomografia is not null " +
-    "    union select t2.laudo_tomografia id_imagem from tomografia t2  where t2.laudo_tomografia is not null " +
-    "    union select u.ultrassom id_imagem from ultrassom u  where u.ultrassom is not null " +
-    "    union select u2.laudo_ultrassom id_imagem from ultrassom u2  where u2.laudo_ultrassom is not null ) ";
 
-  let resultado = await select_mdb(sql);
-  let espaco_liberado = 0;
-  let qtdarquivos = resultado.length;
-  if (qtdarquivos > 0) {
-    
-    resultado.forEach(async val => {
-      if (fs.existsSync(val.url_img)) {
-        //console.log('arquivo: ', val);
-        //console.log('tamanho:', Math.ceil(fs.statSync(val.url_img).size / 1024), 'Kb');
-        espaco_liberado += fs.statSync(val.url_img).size;
-        fs.unlinkSync(val.url_img);
-        
-      }
-      let sqlDel = "delete from imagens where id_imagem=" + val.id_imagem
-      await delete_mdb(sqlDel);
-    });
-  }
-  res.status(200).json({ espaco_liberado,  qtdarquivos});
-});
-
-//webservice de espaço no servidor
-app.get("/espaco_servidor", jsonParser, async (req, res) => {
-  checkDiskSpace(__dirname).then((diskSpace) => {
-    //console.log(diskSpace)
-    let espaco = diskSpace.size;
-    let espaco_livre = diskSpace.free;
-    res.status(200).json({ espaco,  espaco_livre});
-  })
-});
 
 server.listen(port, () => {
   console.log(`DTG server em http://localhost:${port}`);
