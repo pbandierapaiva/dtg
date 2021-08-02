@@ -197,7 +197,7 @@ CREATE TABLE quimioterapia
   obs VARCHAR(250),
   grau_estad ENUM('I', 'II', 'III', 'IV'),
   nivel_estad INT,
-  result_hcg_pre INT,
+  result_hcg_pre NUMERIC(9,2),
   id_r_mola INT NOT NULL,
   PRIMARY KEY (id_quimio),
   FOREIGN KEY (id_r_mola) REFERENCES registro_mola(id_r_mola)
@@ -291,7 +291,7 @@ CREATE TABLE hcg
 (
   id_hcg INT NOT NULL AUTO_INCREMENT,
   data_hcg DATE,
-  result_hcg INT,
+  result_hcg NUMERIC(9,2),
   lab_hcg VARCHAR(100),
   revisor INT,
   id_r_mola INT NOT NULL,
