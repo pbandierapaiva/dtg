@@ -234,7 +234,7 @@ async function enviarMensagemAutomatica({ id_paciente, id_remetente, id_destinat
     mensagens = mensagens.concat(mensagensAnteriores);
     //console.log('msgAux', msgAux);
   }
-  const idMsg = await incluirMensagemBanco(id_remetente, id_destinatario, msg)
+  const { idMsg, dataMsg } = await incluirMensagemBanco(id_remetente, id_destinatario, msg)
   let sqlNomeRemetente = "select nome from usuario where id_usuario = " + id_remetente
   let resultadoRemetente = await select_mdb(sqlNomeRemetente);
   let remetente = resultadoRemetente[0].nome;
@@ -242,14 +242,14 @@ async function enviarMensagemAutomatica({ id_paciente, id_remetente, id_destinat
 
   //console.log('idMSG', idMsg);
   if (idMsg) {
-    objMsg = { idMsg, remetenteid: id_remetente, remetente, destinatario: id_destinatario, msg, sala: id_paciente }
+    objMsg = { idMsg, remetenteid: id_remetente, remetente, destinatario: id_destinatario, msg, sala: id_paciente, data: dataMsg }
     mensagens.push(objMsg)
     //console.log("mensagens", mensagens)
 
     io.in(id_paciente).emit('mensagem', objMsg);
   }
   else {
-    objMsg={ idMsg: 999, remetenteid: id_remetente, remetente, destinatario: id_destinatario, msg: 'erro', sala: null }
+    objMsg={ idMsg: 999, remetenteid: id_remetente, remetente, destinatario: id_destinatario, msg: 'erro', sala: null, data: new Date().format('d/m/Y h:i:s')}
     socket.emit('mensagem', objMsg);
   }
 }
@@ -259,8 +259,13 @@ async function incluirMensagemBanco(remetente, destinatario, msg) {
   let sql = "insert into mensagens (msg,remetente,destinatario,data) values(?,?,?,NOW())";
   let values = [msg,remetente,destinatario];
   let resultado = await insert_mdb(sql, values);
+ 
   if (resultado.affectedRows > 0) {
-    return resultado.insertId;
+    //pega horário de envio da mensagem
+    let sqlData = "select date_format(data,'%d/%m/%Y %T') data from mensagens where id_msg = " + resultado.insertId
+    let resultadoData = await select_mdb(sqlData);
+    let data = resultadoData[0].data   
+    return { idMsg: resultado.insertId, dataMsg: data };
   } else {   
     return false;
   }
@@ -276,7 +281,8 @@ async function incluirMensagemBanco(remetente, destinatario, msg) {
      " u.nome remetente, " +
      " m.destinatario destinatario, " +
      " m.msg msg, " +
-     " '"+id_paciente+"' sala " +
+     " '"+id_paciente+"' sala, " +
+     " date_format(m.data,'%d/%m/%Y %T') data " +
      " from  " +
      " mensagens m,  " +
      " usuario u " +
@@ -395,18 +401,19 @@ io.on('connection', socket => {
   
   socket.on('enviarMensagem', async ({ remetenteid,remetente, destinatario, msg }) => {
     const usuario = usuarios.find(user => user.id == socket.id)
-    const idMsg = await incluirMensagemBanco(remetenteid, destinatario, msg)
+    const { idMsg, dataMsg } = await incluirMensagemBanco(remetenteid, destinatario, msg)
     let objMsg = {}
     
     //console.log('idMSG', idMsg);
     if (idMsg) {
-      objMsg = { idMsg, remetenteid, remetente, destinatario, msg, sala: usuario.sala }
+      objMsg = { idMsg, remetenteid, remetente, destinatario, msg, sala: usuario.sala, data: dataMsg }
       mensagens.push(objMsg)
       //console.log("mensagens", mensagens)
       io.in(usuario.sala).emit('mensagem', objMsg);
     }
     else {
-      objMsg={ idMsg: 999, remetenteid, remetente, destinatario, msg: 'erro', sala: null }
+      data =  new Date().toLocaleString()
+      objMsg={ idMsg: 999, remetenteid, remetente, destinatario, msg: 'erro', sala: null, data }
       socket.emit('mensagem', objMsg);
     }
   })
