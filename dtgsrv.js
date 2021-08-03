@@ -2444,7 +2444,7 @@ app.post("/incluir_hcg", jsonParser, async (req, res) => {
     let id_paciente = resultadoIdPaciente[0].id_paciente;
     let id_destinatario = id_paciente;
     let id_remetente = cadastrante;
-    let msg = "[mensagem automática] Um exame de hCG acabou de ser enviado!";
+    let msg = "[mensagem automática] Um exame de hCG acabou de ser enviado! id_hcg: "+resultado.insertId;
 		enviarMensagemAutomatica({ id_paciente, id_remetente, id_destinatario, msg })
     res.status(200).json({ resultado: [values, resultado.insertId] });
     return;
@@ -2589,7 +2589,7 @@ app.post("/incluir_raiox", jsonParser, async (req, res) => {
     let id_paciente = resultadoIdPaciente[0].id_paciente;
     let id_destinatario = id_paciente;
     let id_remetente = cadastrante;
-    let msg = "[mensagem automática] Um exame de raio-x acabou de ser enviado!";
+    let msg = "[mensagem automática] Um exame de raio-x acabou de ser enviado! id_raiox: "+resultado.insertId;
 		enviarMensagemAutomatica({ id_paciente, id_remetente, id_destinatario, msg })
     res.status(200).json({ resultado: [values, resultado.insertId] });
     return;
@@ -2732,7 +2732,7 @@ app.post("/incluir_ultrassom", jsonParser, async (req, res) => {
     let id_paciente = resultadoIdPaciente[0].id_paciente;
     let id_destinatario = id_paciente;
     let id_remetente = cadastrante;
-    let msg = "[mensagem automática] Um exame de ultrassom acabou de ser enviado!";
+    let msg = "[mensagem automática] Um exame de ultrassom acabou de ser enviado! id_ultrassom: "+resultado.insertId;
 		enviarMensagemAutomatica({ id_paciente, id_remetente, id_destinatario, msg })
     res.status(200).json({ resultado: [values, resultado.insertId] });
     return;
@@ -2877,7 +2877,7 @@ app.post("/incluir_tomografia", jsonParser, async (req, res) => {
     let id_paciente = resultadoIdPaciente[0].id_paciente;
     let id_destinatario = id_paciente;
     let id_remetente = cadastrante;
-    let msg = "[mensagem automática] Um exame de tomografia acabou de ser enviado!";
+    let msg = "[mensagem automática] Um exame de tomografia acabou de ser enviado! id_tomografia: "+resultado.insertId;
 		enviarMensagemAutomatica({ id_paciente, id_remetente, id_destinatario, msg })
     res.status(200).json({ resultado: [values, resultado.insertId] });
     return;
