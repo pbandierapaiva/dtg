@@ -1382,7 +1382,7 @@ app.post("/consultar_pacientes", jsonParser, async (req, res) => {
     "  cast(rm.term_caso as int) id_term_caso, " +
     "  rm.id_r_mola id_r_mola,  " +
     "  DATE_FORMAT((select max(data) from mensagens m  where remetente = p.id_paciente),'%d/%m/%Y %T') ultima_paciente, " +
-    "  DATE_FORMAT((select max(data) from mensagens m  where destinatario = p.id_paciente),'%d/%m/%Y %T') ultima_medico " +
+    "  DATE_FORMAT((select max(data) from mensagens m  where destinatario = p.id_paciente and destinatario != remetente ),'%d/%m/%Y %T') ultima_medico " +
     " from  " +
     "  usuario u,paciente p, " +
     "  usuario u2, " +
@@ -3406,7 +3406,7 @@ app.post("/relatorio/abandono_paciente", jsonParser, async (req, res) => {
     "  u.cpf cpf, " +
     "  rm.id_r_mola id_r_mola,  " +
     "  (select max(data) from mensagens m  where remetente = p.id_paciente) ultima_paciente, " +
-    "  (select max(data) from mensagens m  where destinatario = p.id_paciente) ultima_medico, " +
+    "  (select max(data) from mensagens m  where destinatario = p.id_paciente and destinatario!=remetente) ultima_medico, " +
     "  p.tel_proprio tel_proprio, " +
     "  p.tel_contato tel_contato, " +
     "  p.nome_contato nome_contato, " +
