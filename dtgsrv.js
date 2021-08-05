@@ -2332,7 +2332,7 @@ app.get('/arquivo/:id', jsonParser, async (req, res) => {
   //console.log('senha_banco:',senha_banco[0].senha)
     let url_img = "";
     if (typeof resultado[0] == "undefined") {
-      url_img = __dirname+"\\nao_encontrada.jpg";
+      url_img = __dirname+"/nao_encontrada.jpg";
       //const status = 409;
       //const message = "Imagem não encontrada";
       //res.status(status).json({ status, message });
